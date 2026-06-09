@@ -14,17 +14,7 @@
   <meta name="twitter:description" content="IT professional and software builder based in Kansas City, MO." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Zohn Wheeler",
-    "url": "https://zohnwheelerportfolio.pages.dev/",
-    "sameAs": ["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"],
-    "jobTitle": "Application Support Specialist",
-    "worksFor": { "@type": "Organization", "name": "Federal Agency" },
-    "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Missouri" },
-    "knowsAbout": ["JavaScript","TypeScript","Python","React","Node.js","AWS","Linux"]
-  }
+  {"@context":"https://schema.org","@type":"Person","name":"Zohn Wheeler","url":"https://zohnwheelerportfolio.pages.dev/","sameAs":["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"],"jobTitle":"Application Support Specialist","worksFor":{"@type":"Organization","name":"Federal Agency"},"alumniOf":{"@type":"CollegeOrUniversity","name":"University of Missouri"},"knowsAbout":["JavaScript","TypeScript","Python","React","Node.js","AWS","Linux"]}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,9 +22,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0a; --bg2: #111111; --surface: #161616; --surface2: #1e1e1e;
-      --border: #252525; --border2: #333333; --accent: #00e5ff; --accent2: #7c3aed;
-      --accent3: #f59e0b; --text: #ececec; --muted: #888888; --muted2: #666666;
+      --bg: #0a0a0a; --bg2: #111; --surface: #161616; --surface2: #1e1e1e;
+      --border: #252525; --border2: #333; --accent: #00e5ff; --accent2: #7c3aed;
+      --accent3: #f59e0b; --text: #ececec; --muted: #888; --muted2: #555;
       --font: 'Inter', system-ui, -apple-system, sans-serif;
       --mono: 'JetBrains Mono', 'Fira Code', monospace;
       --radius: 14px; --radius-sm: 8px; --max: 1120px;
@@ -48,185 +38,220 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
 
-    .bg-grid { position: fixed; inset: 0; z-index: -3; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px; opacity: 0.25; }
-    .bg-noise { position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px 180px; }
+    /* Background */
+    .bg-grid { position: fixed; inset: 0; z-index: -3; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px; opacity: 0.22; }
+    .bg-noise { position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px; }
     .glow { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: -1; }
     .glow-1 { width: 600px; height: 600px; background: rgba(0,229,255,0.05); top: -150px; right: -100px; }
-    .glow-2 { width: 500px; height: 500px; background: rgba(124,58,237,0.07); bottom: 5%; left: -120px; }
+    .glow-2 { width: 500px; height: 500px; background: rgba(124,58,237,0.06); bottom: 5%; left: -120px; }
     .glow-3 { width: 300px; height: 300px; background: rgba(245,158,11,0.04); top: 40%; right: 10%; }
-    .cursor-glow { position: fixed; width: 350px; height: 350px; border-radius: 50%; background: radial-gradient(circle, rgba(0,229,255,0.04), transparent 70%); pointer-events: none; z-index: 0; transform: translate(-50%, -50%); transition: left 0.08s, top 0.08s; }
+    .cursor-glow { position: fixed; width: 350px; height: 350px; border-radius: 50%; background: radial-gradient(circle, rgba(0,229,255,0.035), transparent 70%); pointer-events: none; z-index: 0; transform: translate(-50%,-50%); transition: left 0.06s, top 0.06s; }
 
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.8); backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color var(--trans); }
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid transparent; transition: border-color var(--trans); }
     nav.scrolled { border-bottom-color: var(--border); }
-    .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; letter-spacing: -0.02em; }
+    .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; letter-spacing: -0.02em; cursor: pointer; }
     .nav-logo span { color: var(--muted); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; transition: color var(--trans); position: relative; }
-    .nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform var(--trans); }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after { transform: scaleX(1); }
-    .nav-menu-btn { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-    .nav-menu-btn span { display: block; width: 22px; height: 2px; background: var(--text); transition: var(--trans); border-radius: 2px; }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; transition: color var(--trans); position: relative; padding-bottom: 2px; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform var(--trans); transform-origin: left; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active::after, .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-menu-btn { display: none; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 6px; width: 32px; height: 32px; background: none; border: none; }
+    .nav-menu-btn span { display: block; width: 22px; height: 2px; background: var(--text); transition: var(--trans); border-radius: 2px; transform-origin: center; }
+    .nav-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-menu-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+    /* Skip & progress */
     .skip-link { position: absolute; top: -40px; left: 1rem; background: var(--accent); color: #000; padding: 0.5rem 1rem; border-radius: 0 0 6px 6px; font-size: 0.85rem; font-weight: 600; transition: top 0.2s; z-index: 500; }
     .skip-link:focus { top: 0; }
-    #scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 2px; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.1s linear; }
+    #scroll-progress { position: fixed; top: 0; left: 0; z-index: 200; height: 2px; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
 
+    /* Sections */
     .section-wrap { padding: 6rem 2rem; max-width: var(--max); margin: 0 auto; }
-    .section-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.75rem; }
-    .section-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--accent); opacity: 0.4; }
-    .section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin-bottom: 1rem; }
+    .section-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; }
+    .section-label::after { content: ''; flex: 1; max-width: 48px; height: 1px; background: var(--accent); opacity: 0.4; }
+    .section-title { font-size: clamp(1.9rem, 4vw, 2.7rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin-bottom: 1rem; }
     hr.divider { border: none; border-top: 1px solid var(--border); max-width: var(--max); margin: 0 auto; }
 
-    .js .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    /* Animations */
+    .js .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .js .fade-up.visible { opacity: 1; transform: translateY(0); }
     .js .fade-up.d1 { transition-delay: 0.08s; }
     .js .fade-up.d2 { transition-delay: 0.16s; }
     .js .fade-up.d3 { transition-delay: 0.24s; }
     .js .fade-up.d4 { transition-delay: 0.32s; }
 
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.6rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all var(--trans); border: none; font-family: var(--font); }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all var(--trans); border: none; font-family: var(--font); }
     .btn-primary { background: var(--accent); color: #000; }
-    .btn-primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.25); }
+    .btn-primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,229,255,0.3); }
     .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
-    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; max-width: var(--max); margin: 0 auto; padding: 6rem 2rem 4rem; }
-    .hero-eyebrow { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
-    .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.4); } 50% { box-shadow: 0 0 0 6px rgba(0,229,255,0); } }
+    /* Hero */
+    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; max-width: var(--max); margin: 0 auto; padding: 7rem 2rem 4rem; }
+    .hero-eyebrow { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+    .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.4); } 50% { box-shadow: 0 0 0 6px rgba(0,229,255,0); } }
     .hero-title { font-size: clamp(3.2rem, 8.5vw, 6.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; margin-bottom: 1.5rem; }
     .hero-title .grad { background: linear-gradient(135deg, var(--accent) 0%, #00b4d8 40%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-sub { font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted); max-width: 520px; margin-bottom: 0.75rem; line-height: 1.65; }
-    .hero-role-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: 100px; font-family: var(--mono); font-size: 0.75rem; color: var(--accent); margin-bottom: 2rem; width: fit-content; }
+    .hero-sub { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--muted); max-width: 520px; margin-bottom: 0.75rem; line-height: 1.65; min-height: 1.8em; }
+    .hero-sub #typewriter::after { content: '|'; animation: blink 0.9s step-end infinite; color: var(--accent); margin-left: 1px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-role-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.18); border-radius: 100px; font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-bottom: 2rem; width: fit-content; }
     .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     .hero-stats { display: flex; gap: 3rem; margin-top: 4rem; padding-top: 2.5rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
-    .stat-num { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); font-family: var(--mono); }
+    .stat-num { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); font-family: var(--mono); line-height: 1; }
     .stat-num span { color: var(--accent); }
-    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; letter-spacing: 0.02em; }
 
-    .about-grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
+    /* About */
+    .about-grid { display: grid; grid-template-columns: 220px 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
     .profile-col { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-    .profile-img-wrap { position: relative; width: 100%; max-width: 240px; }
+    .profile-img-wrap { position: relative; width: 100%; max-width: 220px; }
     .profile-img-wrap::before { content: ''; position: absolute; inset: -3px; border-radius: 18px; background: linear-gradient(135deg, var(--accent), var(--accent2)); z-index: 0; }
     .profile-img { position: relative; z-index: 1; width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top; border-radius: 16px; display: block; border: 3px solid var(--bg); }
     .profile-placeholder { position: relative; z-index: 1; width: 100%; aspect-ratio: 3/4; border-radius: 16px; background: var(--surface2); border: 3px solid var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: var(--muted2); font-size: 0.75rem; font-family: var(--mono); }
-    .about-text p { color: var(--muted); margin-bottom: 1.1rem; font-size: 1rem; }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; font-size: 0.975rem; line-height: 1.75; }
     .about-text p strong { color: var(--text); font-weight: 600; }
-    .awards-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.5rem; }
-    .award-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; color: var(--muted); }
-    .award-item::before { content: '◆'; color: var(--accent3); font-size: 0.5rem; flex-shrink: 0; }
-    .skills-section-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); margin-bottom: 1rem; }
-    .skills-group { margin-bottom: 1.75rem; }
-    .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .skill-tag { display: flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0.85rem; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); transition: all var(--trans); }
+    .awards-list { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 1.5rem; }
+    .award-item { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .award-item::before { content: '◆'; color: var(--accent3); font-size: 0.45rem; flex-shrink: 0; margin-top: 0.45rem; }
+    .skills-section-label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.75rem; }
+    .skills-group { margin-bottom: 1.5rem; }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .skill-tag { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); transition: all var(--trans); cursor: default; }
     .skill-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.04); }
     .skill-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
     .skill-tag .dot.purple { background: var(--accent2); }
     .skill-tag .dot.amber { background: var(--accent3); }
-    .currently-building { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; margin-bottom: 0.25rem; padding: 0.45rem 0.9rem; background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15); border-radius: 100px; width: fit-content; }
-    .cb-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); }
-    .cb-link { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); }
+    .currently-building { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; margin-bottom: 0.25rem; padding: 0.4rem 0.85rem; background: rgba(0,229,255,0.04); border: 1px solid rgba(0,229,255,0.12); border-radius: 100px; width: fit-content; }
+    .cb-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted2); }
+    .cb-link { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); transition: opacity var(--trans); }
+    .cb-link:hover { opacity: 0.7; }
 
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
-    .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; transition: all var(--trans); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity var(--trans); }
-    .project-card:hover { border-color: rgba(0,229,255,0.35); transform: translateY(-4px); box-shadow: 0 16px 50px rgba(0,0,0,0.5); }
+    /* Projects */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
+    .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity 0.3s; }
+    .project-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,229,255,0.06); }
     .project-card:hover::before { opacity: 1; }
-    .project-card.featured { border-color: rgba(0,229,255,0.2); background: linear-gradient(135deg, var(--surface) 0%, rgba(0,229,255,0.02) 100%); }
-    .featured-badge { position: absolute; top: 1rem; right: 1rem; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent3); background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
+    .project-card.featured { border-color: rgba(0,229,255,0.18); }
+    .featured-badge { position: absolute; top: 1rem; right: 1rem; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent3); background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.18rem 0.5rem; border-radius: 4px; }
     .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
-    .project-icon { font-size: 1.6rem; }
-    .project-links { display: flex; gap: 0.6rem; }
-    .project-link { font-family: var(--mono); font-size: 0.72rem; color: var(--muted2); border: 1px solid var(--border); padding: 0.2rem 0.55rem; border-radius: 4px; transition: all var(--trans); }
+    .project-icon { font-size: 1.5rem; }
+    .project-links { display: flex; gap: 0.5rem; }
+    .project-link { font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); border: 1px solid var(--border); padding: 0.18rem 0.5rem; border-radius: 4px; transition: all var(--trans); }
     .project-link:hover { color: var(--accent); border-color: var(--accent); }
-    .project-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
-    .project-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.25rem; flex: 1; }
+    .project-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+    .project-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.25rem; flex: 1; }
     .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .tag { font-family: var(--mono); font-size: 0.7rem; padding: 0.2rem 0.55rem; border-radius: 4px; background: rgba(0,229,255,0.06); color: var(--accent); border: 1px solid rgba(0,229,255,0.12); }
+    .tag { font-family: var(--mono); font-size: 0.68rem; padding: 0.18rem 0.55rem; border-radius: 4px; background: rgba(0,229,255,0.05); color: var(--accent); border: 1px solid rgba(0,229,255,0.1); }
 
+    /* Experience */
     .timeline { margin-top: 3rem; position: relative; padding-left: 2.5rem; }
     .timeline::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: linear-gradient(to bottom, var(--accent), var(--accent2) 60%, transparent); }
     .timeline-item { position: relative; padding-bottom: 3.5rem; }
     .timeline-item:last-child { padding-bottom: 0; }
-    .timeline-dot { position: absolute; left: -2.875rem; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 3px rgba(0,229,255,0.15), 0 0 12px rgba(0,229,255,0.3); }
-    .timeline-item:nth-child(2) .timeline-dot { background: var(--accent2); box-shadow: 0 0 0 3px rgba(124,58,237,0.15), 0 0 12px rgba(124,58,237,0.3); }
+    .timeline-dot { position: absolute; left: -2.875rem; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 3px rgba(0,229,255,0.15), 0 0 10px rgba(0,229,255,0.3); }
+    .timeline-item:nth-child(2) .timeline-dot { background: var(--accent2); box-shadow: 0 0 0 3px rgba(124,58,237,0.15), 0 0 10px rgba(124,58,237,0.3); }
     .timeline-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
-    .timeline-role { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; }
-    .timeline-date { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.05em; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.15); padding: 0.2rem 0.6rem; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-    .timeline-item:nth-child(2) .timeline-date { color: var(--accent2); background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.15); }
-    .timeline-company { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+    .timeline-role { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .timeline-date { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.05em; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.14); padding: 0.18rem 0.6rem; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+    .timeline-item:nth-child(2) .timeline-date { color: var(--accent2); background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.14); }
+    .timeline-company { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
     .timeline-company strong { color: var(--text); font-weight: 600; }
     .timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
     .timeline-bullets li { font-size: 0.875rem; color: var(--muted); line-height: 1.65; padding-left: 1.25rem; position: relative; }
-    .timeline-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; top: 0.1rem; }
+    .timeline-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.72rem; top: 0.15rem; }
     .timeline-item:nth-child(2) .timeline-bullets li::before { color: var(--accent2); }
-    .clearance-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent3); background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); padding: 0.2rem 0.55rem; border-radius: 4px; margin-left: 0.5rem; }
+    .clearance-badge { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent3); background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
 
-    .edu-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; display: flex; gap: 2rem; align-items: flex-start; margin-top: 3rem; transition: all var(--trans); }
-    .edu-card:hover { border-color: rgba(124,58,237,0.35); transform: translateY(-2px); }
-    .edu-icon { font-size: 2.5rem; flex-shrink: 0; width: 64px; height: 64px; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-    .edu-degree { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
-    .edu-school { font-size: 0.95rem; color: var(--accent2); font-weight: 600; margin-bottom: 0.25rem; }
-    .edu-year { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; }
+    /* Education */
+    .edu-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; display: flex; gap: 2rem; align-items: flex-start; margin-top: 3rem; transition: border-color 0.3s, transform 0.3s; }
+    .edu-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
+    .edu-icon { font-size: 2.2rem; flex-shrink: 0; width: 60px; height: 60px; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.18); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .edu-degree { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .edu-school { font-size: 0.9rem; color: var(--accent2); font-weight: 600; margin-bottom: 0.2rem; }
+    .edu-year { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-bottom: 0.9rem; }
     .edu-awards { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .edu-award { font-size: 0.75rem; padding: 0.2rem 0.65rem; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.18); border-radius: 4px; color: var(--accent3); }
+    .edu-award { font-size: 0.73rem; padding: 0.2rem 0.6rem; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.18); border-radius: 4px; color: var(--accent3); }
 
+    /* Contact */
     #contact-section { text-align: center; }
-    .contact-title { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1rem; }
+    .contact-title { font-size: clamp(2.4rem, 5vw, 3.4rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1rem; }
     .contact-title .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .contact-sub { color: var(--muted); font-size: 1rem; max-width: 420px; margin: 0 auto 2.5rem; }
+    .contact-sub { color: var(--muted); font-size: 0.975rem; max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.7; }
     .contact-cta { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
     .contact-links { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 2.5rem; }
-    .contact-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.83rem; color: var(--muted); transition: all var(--trans); background: transparent; cursor: pointer; font-family: var(--font); }
+    .contact-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--muted); transition: all var(--trans); background: transparent; cursor: pointer; font-family: var(--font); }
     .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
-    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border2); color: var(--text); padding: 0.65rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.83rem; display: flex; align-items: center; gap: 0.5rem; opacity: 0; pointer-events: none; z-index: 300; transition: all 0.25s ease; white-space: nowrap; }
+    /* Toast */
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--surface2); border: 1px solid var(--border2); color: var(--text); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-size: 0.82rem; display: flex; align-items: center; gap: 0.5rem; opacity: 0; pointer-events: none; z-index: 300; transition: all 0.22s ease; white-space: nowrap; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast-icon { color: var(--accent); }
 
-    .cmd-overlay { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: flex-start; justify-content: center; padding-top: 15vh; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    /* Command palette */
+    .cmd-overlay { position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.65); backdrop-filter: blur(10px); display: flex; align-items: flex-start; justify-content: center; padding-top: 14vh; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
     .cmd-overlay.open { opacity: 1; pointer-events: all; }
-    .cmd-box { width: 100%; max-width: 560px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.6); transform: scale(0.96) translateY(-8px); transition: transform 0.2s; margin: 0 1rem; }
+    .cmd-box { width: 100%; max-width: 540px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04); transform: scale(0.97) translateY(-6px); transition: transform 0.18s; margin: 0 1rem; }
     .cmd-overlay.open .cmd-box { transform: scale(1) translateY(0); }
     .cmd-input-wrap { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
     .cmd-icon { color: var(--muted2); flex-shrink: 0; }
     .cmd-input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-family: var(--font); font-size: 1rem; }
     .cmd-input::placeholder { color: var(--muted2); }
-    .cmd-hint { font-family: var(--mono); font-size: 0.68rem; color: var(--muted2); }
-    .cmd-results { max-height: 360px; overflow-y: auto; padding: 0.5rem; }
-    .cmd-group-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); padding: 0.5rem 0.75rem 0.25rem; }
-    .cmd-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--trans); }
+    .cmd-hint { font-family: var(--mono); font-size: 0.65rem; color: var(--muted2); }
+    .cmd-results { max-height: 340px; overflow-y: auto; padding: 0.4rem; }
+    .cmd-group-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 0.5rem 0.75rem 0.2rem; }
+    .cmd-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--trans); }
     .cmd-item:hover, .cmd-item.active { background: var(--surface2); }
-    .cmd-item-icon { font-size: 1rem; width: 22px; text-align: center; flex-shrink: 0; }
+    .cmd-item-icon { font-size: 0.95rem; width: 20px; text-align: center; flex-shrink: 0; }
     .cmd-item-label { font-size: 0.875rem; flex: 1; }
-    .cmd-item-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); }
+    .cmd-item-meta { font-family: var(--mono); font-size: 0.67rem; color: var(--muted2); }
 
-    footer { text-align: center; padding: 2rem; font-family: var(--mono); font-size: 0.72rem; color: var(--muted2); border-top: 1px solid var(--border); }
-    footer a { color: var(--accent); }
+    /* Back to top */
+    #back-to-top { position: fixed; bottom: 2rem; right: 2rem; z-index: 150; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: translateY(8px); transition: all 0.25s; color: var(--muted); }
+    #back-to-top.visible { opacity: 1; transform: translateY(0); }
+    #back-to-top:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.06); }
 
-    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; } }
+    /* Footer */
+    footer { text-align: center; padding: 2.5rem 2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); border-top: 1px solid var(--border); }
+    footer a { color: var(--accent); transition: opacity var(--trans); }
+    footer a:hover { opacity: 0.7; }
+    .footer-inner { max-width: var(--max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+
+    /* Responsive */
+    @media (max-width: 960px) { .about-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; } .about-grid > :first-child { grid-column: 1 / -1; justify-self: center; } .profile-img-wrap { max-width: 200px; } }
     @media (max-width: 680px) {
-      nav { padding: 0.9rem 1.25rem; }
-      .nav-links { position: fixed; top: 0; right: -100%; width: 240px; height: 100vh; background: var(--surface); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: right var(--trans); border-left: 1px solid var(--border); z-index: 101; }
+      nav { padding: 0.85rem 1.25rem; }
+      .nav-links { position: fixed; top: 0; right: -100%; width: 260px; height: 100vh; background: var(--surface); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: right 0.3s cubic-bezier(0.4,0,0.2,1); border-left: 1px solid var(--border); z-index: 101; }
       .nav-links.open { right: 0; }
+      .nav-links a { font-size: 0.95rem; }
       .nav-menu-btn { display: flex; }
       .nav-cmd-label { display: none; }
       .section-wrap { padding: 4rem 1.25rem; }
       .hero-cta { flex-direction: column; }
       .hero-cta .btn { width: 100%; justify-content: center; }
-      .contact-cta { flex-direction: column; align-items: center; }
+      .hero-stats { gap: 2rem; }
+      .contact-cta { flex-direction: column; align-items: stretch; }
+      .contact-cta .btn { justify-content: center; }
       .timeline { padding-left: 1.75rem; }
       .timeline-dot { left: -2.125rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .edu-card { flex-direction: column; gap: 1rem; }
+      .timeline-header { flex-direction: column; gap: 0.35rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .edu-card { flex-direction: column; gap: 1rem; padding: 1.25rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      #back-to-top { bottom: 1.25rem; right: 1.25rem; }
     }
-    @media (max-width: 400px) { .hero-title { font-size: 2.6rem; } }
+    @media (max-width: 400px) { .hero-title { font-size: 2.8rem; } .hero-stats { flex-direction: column; gap: 1.25rem; } }
   </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
-  <div id="scroll-progress"></div>
+  <div id="scroll-progress" role="progressbar" aria-hidden="true"></div>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-noise" aria-hidden="true"></div>
   <div class="glow glow-1" aria-hidden="true"></div>
@@ -234,14 +259,14 @@
   <div class="glow glow-3" aria-hidden="true"></div>
   <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
 
-  <nav id="nav">
+  <nav id="nav" role="navigation" aria-label="Main">
     <a href="#hero" class="nav-logo">zohn<span>.dev</span></a>
     <ul class="nav-links" id="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="#" class="nav-cmd-label" id="cmd-trigger"><kbd style="font-family:var(--mono);font-size:0.7rem;padding:0.15rem 0.4rem;background:var(--surface);border:1px solid var(--border2);border-radius:4px;color:var(--muted);">⌘K</kbd></a></li>
+      <li><a href="#about" data-section="about">About</a></li>
+      <li><a href="#projects" data-section="projects">Projects</a></li>
+      <li><a href="#experience" data-section="experience">Experience</a></li>
+      <li><a href="#contact" data-section="contact">Contact</a></li>
+      <li class="nav-cmd-label"><a href="#" id="cmd-trigger" aria-label="Command palette"><kbd style="font-family:var(--mono);font-size:0.68rem;padding:0.15rem 0.45rem;background:var(--surface);border:1px solid var(--border2);border-radius:4px;color:var(--muted);">⌘K</kbd></a></li>
     </ul>
     <button class="nav-menu-btn" id="menu-btn" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -249,54 +274,75 @@
   </nav>
 
   <main id="main">
-    <!-- Hero -->
-    <section id="hero">
-      <div class="hero-eyebrow fade-up"><span class="dot" aria-hidden="true"></span>Kansas City, MO · Available for opportunities</div>
+
+    <!-- ── Hero ─────────────────────────────────────────── -->
+    <section id="hero" aria-label="Introduction">
+      <div class="hero-eyebrow fade-up">
+        <span class="dot" aria-hidden="true"></span>
+        Kansas City, MO · Open to opportunities
+      </div>
       <h1 class="hero-title fade-up d1">Zohn<br><span class="grad">Wheeler</span></h1>
-      <p class="hero-sub fade-up d2"><span id="typewriter">Application Support Specialist</span></p>
-      <div class="hero-role-badge fade-up d2">🔒 Treasury Systems Support · Federal Agency · Security Clearance</div>
+      <p class="hero-sub fade-up d2"><span id="typewriter" aria-live="polite"></span></p>
+      <div class="hero-role-badge fade-up d2">
+        🔒&nbsp; Treasury Systems · Federal Agency · Active Clearance
+      </div>
       <div class="hero-cta fade-up d3">
         <a href="#contact" class="btn btn-primary">Get in Touch</a>
         <a href="resume.html" class="btn btn-ghost" target="_blank" rel="noopener">View Résumé</a>
       </div>
       <div class="hero-stats fade-up d4">
-        <div class="stat-item"><div class="stat-num">2<span>+</span></div><div class="stat-label">Years in IT</div></div>
-        <div class="stat-item"><div class="stat-num">5<span>+</span></div><div class="stat-label">Projects Built</div></div>
-        <div class="stat-item"><div class="stat-num">TS<span>/</span>SCI</div><div class="stat-label">Clearance Level</div></div>
-        <div class="stat-item"><div class="stat-num">Full<span>-</span>Stack</div><div class="stat-label">Developer</div></div>
+        <div class="stat-item">
+          <div class="stat-num">2<span>+</span></div>
+          <div class="stat-label">Years Professional IT</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">5<span>+</span></div>
+          <div class="stat-label">Projects Shipped</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">TS<span>/</span>SCI</div>
+          <div class="stat-label">Security Clearance</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Full<span>-</span>Stack</div>
+          <div class="stat-label">Development</div>
+        </div>
       </div>
     </section>
 
     <hr class="divider" />
 
-    <!-- About -->
-    <section id="about">
+    <!-- ── About ─────────────────────────────────────────── -->
+    <section id="about" aria-label="About">
       <div class="section-wrap">
         <div class="section-label">About</div>
         <h2 class="section-title fade-up">Who I Am</h2>
         <div class="about-grid">
           <div class="profile-col fade-up">
             <div class="profile-img-wrap">
-              <img src="profile.jpeg" alt="Zohn Wheeler" class="profile-img" loading="eager" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-              <div class="profile-placeholder" style="display:none;">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <img src="profile.jpeg" alt="Zohn Wheeler" class="profile-img" loading="eager" decoding="async"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <div class="profile-placeholder" style="display:none;" aria-hidden="true">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
               </div>
             </div>
           </div>
+
           <div class="about-text fade-up d1">
-            <p>I'm an IT professional and software builder based in <strong>Kansas City, MO</strong>, currently supporting critical treasury systems at a federal agency with a security clearance.</p>
-            <p>My background spans full-stack development, systems administration, and enterprise IT support — bridging the gap between technical infrastructure and the people who rely on it.</p>
-            <p>Outside of work I build side projects and am always learning something new — recently focused on cloud infrastructure and AI tooling.</p>
+            <p>I'm an IT professional and software developer based in <strong>Kansas City, MO</strong>. I currently support mission-critical treasury systems for a federal agency, where I hold an active security clearance.</p>
+            <p>My work sits at the intersection of <strong>enterprise IT and software engineering</strong> — I've administered state-level infrastructure, automated workflows, and shipped full-stack projects from scratch. I care about systems that are reliable, secure, and actually enjoyable to use.</p>
+            <p>When I'm not on the clock I'm building side projects, digging into cloud infrastructure, and exploring AI tooling.</p>
             <div class="currently-building">
-              <span class="cb-label">▶ Currently building</span>
+              <span class="cb-label">▶&nbsp; Currently building</span>
               <a href="https://zohn-sports-stats.pages.dev/" class="cb-link" target="_blank" rel="noopener">zohn-sports-stats →</a>
             </div>
             <div class="awards-list">
               <div class="award-item">Dean's List — University of Missouri</div>
-              <div class="award-item">Capstone AI Bot — featured by Mizzou Engineering</div>
-              <div class="award-item">Active security clearance · Federal contractor</div>
+              <div class="award-item">Senior Capstone AI Bot — featured by Mizzou College of Engineering</div>
+              <div class="award-item">Active TS/SCI clearance · Federal contractor</div>
             </div>
           </div>
+
           <div class="fade-up d2">
             <div class="skills-group">
               <div class="skills-section-label">Languages</div>
@@ -306,7 +352,7 @@
                 <span class="skill-tag"><span class="dot"></span>Python</span>
                 <span class="skill-tag"><span class="dot"></span>SQL</span>
                 <span class="skill-tag"><span class="dot"></span>Bash</span>
-                <span class="skill-tag"><span class="dot"></span>HTML/CSS</span>
+                <span class="skill-tag"><span class="dot"></span>HTML / CSS</span>
               </div>
             </div>
             <div class="skills-group">
@@ -317,10 +363,11 @@
                 <span class="skill-tag"><span class="dot purple"></span>Git</span>
                 <span class="skill-tag"><span class="dot purple"></span>Linux</span>
                 <span class="skill-tag"><span class="dot purple"></span>Docker</span>
+                <span class="skill-tag"><span class="dot purple"></span>Active Directory</span>
               </div>
             </div>
             <div class="skills-group">
-              <div class="skills-section-label">Cloud & Infra</div>
+              <div class="skills-section-label">Cloud & Infrastructure</div>
               <div class="skills-grid">
                 <span class="skill-tag"><span class="dot amber"></span>AWS</span>
                 <span class="skill-tag"><span class="dot amber"></span>Cloudflare</span>
@@ -335,93 +382,112 @@
 
     <hr class="divider" />
 
-    <!-- Projects -->
-    <section id="projects">
+    <!-- ── Projects ──────────────────────────────────────── -->
+    <section id="projects" aria-label="Projects">
       <div class="section-wrap">
         <div class="section-label">Projects</div>
         <h2 class="section-title fade-up">Things I've Built</h2>
         <div class="projects-grid">
+
           <article class="project-card featured fade-up">
             <span class="featured-badge">Live</span>
             <div class="project-header">
               <span class="project-icon">🏆</span>
-              <div class="project-links"><a href="https://zohn-sports-stats.pages.dev/" class="project-link" target="_blank" rel="noopener">Live ↗</a></div>
+              <div class="project-links">
+                <a href="https://zohn-sports-stats.pages.dev/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
+              </div>
             </div>
             <h3 class="project-title">Sports Stats Dashboard</h3>
-            <p class="project-desc">Real-time sports statistics dashboard with live data, sortable tables, and responsive design. Deployed on Cloudflare Pages.</p>
-            <div class="project-tags"><span class="tag">JavaScript</span><span class="tag">APIs</span><span class="tag">Cloudflare</span><span class="tag">CSS Grid</span></div>
+            <p class="project-desc">Live sports statistics platform with real-time data, sortable tables, and a responsive layout built for speed. Deployed to Cloudflare's global edge network with zero-config CI/CD.</p>
+            <div class="project-tags">
+              <span class="tag">JavaScript</span><span class="tag">Live APIs</span><span class="tag">Cloudflare</span><span class="tag">CSS Grid</span>
+            </div>
           </article>
+
           <article class="project-card fade-up d1">
             <div class="project-header">
               <span class="project-icon">🤖</span>
-              <div class="project-links"><a href="https://engineering.missouri.edu/2024/information-technology-students-develop-an-educational-ai-bot-for-capstone-project/" class="project-link" target="_blank" rel="noopener">Article ↗</a></div>
+              <div class="project-links">
+                <a href="https://engineering.missouri.edu/2024/information-technology-students-develop-an-educational-ai-bot-for-capstone-project/" class="project-link" target="_blank" rel="noopener">Article ↗</a>
+              </div>
             </div>
             <h3 class="project-title">Educational AI Bot</h3>
-            <p class="project-desc">Senior capstone project featured by Mizzou College of Engineering — an AI-powered educational assistant designed to support student learning.</p>
-            <div class="project-tags"><span class="tag">Python</span><span class="tag">AI/ML</span><span class="tag">NLP</span><span class="tag">React</span></div>
+            <p class="project-desc">Senior capstone project recognized by Mizzou's College of Engineering. An AI-powered assistant that helps students navigate course material through natural language — built and shipped by a team of four.</p>
+            <div class="project-tags">
+              <span class="tag">Python</span><span class="tag">NLP</span><span class="tag">React</span><span class="tag">Team Project</span>
+            </div>
           </article>
+
           <article class="project-card fade-up d2">
             <div class="project-header">
-              <span class="project-icon">💼</span>
-              <div class="project-links"><a href="https://github.com/zohnner/ZohnWheelerPortfolio" class="project-link" target="_blank" rel="noopener">GitHub ↗</a></div>
+              <span class="project-icon">⚡</span>
+              <div class="project-links">
+                <a href="https://github.com/zohnner/ZohnWheelerPortfolio" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+              </div>
             </div>
             <h3 class="project-title">This Portfolio</h3>
-            <p class="project-desc">Hand-coded single-file portfolio with scroll animations, command palette (⌘K), typewriter effect, and Cloudflare Pages CI/CD.</p>
-            <div class="project-tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">Cloudflare</span></div>
+            <p class="project-desc">Zero-dependency, single-file portfolio. Features scroll animations via IntersectionObserver, a fuzzy-search command palette (⌘K), typewriter cycling, and automated Cloudflare Pages deploys on every git push.</p>
+            <div class="project-tags">
+              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">Vanilla JS</span><span class="tag">Cloudflare</span>
+            </div>
           </article>
+
         </div>
       </div>
     </section>
 
     <hr class="divider" />
 
-    <!-- Experience -->
-    <section id="experience">
+    <!-- ── Experience ─────────────────────────────────────── -->
+    <section id="experience" aria-label="Work experience">
       <div class="section-wrap">
         <div class="section-label">Experience</div>
         <h2 class="section-title fade-up">Where I've Worked</h2>
         <div class="timeline">
+
           <div class="timeline-item fade-up">
-            <div class="timeline-dot"></div>
+            <div class="timeline-dot" aria-hidden="true"></div>
             <div class="timeline-header">
               <span class="timeline-role">Application Support Specialist <span class="clearance-badge">🔒 Clearance</span></span>
               <span class="timeline-date">Mar 2026 – Present</span>
             </div>
             <div class="timeline-company"><strong>Federal Agency · Treasury Systems · Contract</strong></div>
             <ul class="timeline-bullets">
-              <li>Provide Tier 2/3 application support for enterprise financial systems used across federal treasury operations</li>
-              <li>Troubleshoot and resolve complex software and integration issues in secure, classified environments</li>
-              <li>Coordinate with development and infrastructure teams to deploy patches and maintain system stability</li>
-              <li>Document incident resolution procedures and contribute to internal knowledge base</li>
+              <li>Deliver Tier 2/3 support for enterprise financial applications underpinning federal treasury operations, maintaining SLA compliance in a high-stakes environment</li>
+              <li>Diagnose and resolve complex software, integration, and data pipeline issues in classified, air-gapped systems</li>
+              <li>Partner with engineering teams to scope, test, and deploy patches — reducing recurring incident volume by standardizing root-cause documentation</li>
+              <li>Own the internal knowledge base for application runbooks, cutting average resolution time for repeat incidents</li>
             </ul>
           </div>
+
           <div class="timeline-item fade-up d1">
-            <div class="timeline-dot"></div>
+            <div class="timeline-dot" aria-hidden="true"></div>
             <div class="timeline-header">
               <span class="timeline-role">Junior IT Engineer</span>
               <span class="timeline-date">Jul 2024 – Jan 2026</span>
             </div>
             <div class="timeline-company"><strong>State Government Agency · Missouri</strong></div>
             <ul class="timeline-bullets">
-              <li>Administered enterprise IT infrastructure including servers, networking equipment, and end-user systems</li>
-              <li>Managed user accounts and access controls across Active Directory and cloud platforms</li>
-              <li>Automated routine administrative tasks using scripting, reducing manual workload for the team</li>
-              <li>Provided desktop support and resolved hardware/software issues for agency staff</li>
+              <li>Maintained enterprise infrastructure — servers, networking gear, and endpoint systems — for a multi-site government agency</li>
+              <li>Managed identity and access across Active Directory and cloud platforms, handling onboarding, offboarding, and role-based permissioning</li>
+              <li>Wrote automation scripts that eliminated repetitive provisioning tasks, saving the team several hours per week</li>
+              <li>Served as primary desktop support contact for agency staff, resolving hardware and software issues with a strong first-call resolution rate</li>
             </ul>
           </div>
+
         </div>
       </div>
     </section>
 
     <hr class="divider" />
 
-    <!-- Education -->
-    <section id="education">
+    <!-- ── Education ──────────────────────────────────────── -->
+    <section id="education" aria-label="Education">
       <div class="section-wrap">
         <div class="section-label">Education</div>
         <h2 class="section-title fade-up">Where I Studied</h2>
         <div class="edu-card fade-up d1">
-          <div class="edu-icon">🎓</div>
+          <div class="edu-icon" aria-hidden="true">🎓</div>
           <div>
             <div class="edu-degree">B.S. Information Technology</div>
             <div class="edu-school">University of Missouri</div>
@@ -429,6 +495,7 @@
             <div class="edu-awards">
               <span class="edu-award">Dean's List</span>
               <span class="edu-award">AI Capstone — Featured by Engineering College</span>
+              <span class="edu-award">Mizzou IT Program</span>
             </div>
           </div>
         </div>
@@ -437,138 +504,205 @@
 
     <hr class="divider" />
 
-    <!-- Contact -->
-    <section id="contact">
+    <!-- ── Contact ────────────────────────────────────────── -->
+    <section id="contact" aria-label="Contact">
       <div class="section-wrap" id="contact-section">
         <div class="section-label">Contact</div>
         <h2 class="contact-title fade-up">Let's <span class="grad">Connect</span></h2>
-        <p class="contact-sub fade-up d1">Open to new opportunities, interesting projects, and good conversations.</p>
+        <p class="contact-sub fade-up d1">Open to full-time roles, contract work, and interesting conversations. I respond to every message.</p>
         <div class="contact-cta fade-up d2">
           <a href="mailto:zohnwheeler@gmail.com" class="btn btn-primary">Send an Email</a>
           <a href="resume.html" class="btn btn-ghost" target="_blank" rel="noopener">View Résumé</a>
         </div>
         <div class="contact-links fade-up d3">
-          <a href="https://github.com/zohnner" class="contact-link" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          <a href="https://github.com/zohnner" class="contact-link" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
             GitHub
           </a>
-          <a href="https://www.linkedin.com/in/zohn-wheeler/" class="contact-link" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          <a href="https://www.linkedin.com/in/zohn-wheeler/" class="contact-link" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
             LinkedIn
           </a>
-          <button class="contact-link" id="copy-email-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <button class="contact-link" id="copy-email-btn" aria-label="Copy email">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy Email
           </button>
         </div>
       </div>
     </section>
+
   </main>
 
   <footer>
-    <p>Built by <a href="https://github.com/zohnner">Zohn Wheeler</a> · Hand-coded HTML/CSS/JS · Deployed on <a href="https://pages.cloudflare.com/">Cloudflare Pages</a></p>
+    <div class="footer-inner">
+      <span>Built by <a href="https://github.com/zohnner">Zohn Wheeler</a> — hand-coded HTML / CSS / JS</span>
+      <span>Deployed on <a href="https://pages.cloudflare.com/" target="_blank" rel="noopener">Cloudflare Pages</a></span>
+    </div>
   </footer>
 
-  <div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toast-msg">Copied!</span></div>
+  <!-- Back to top -->
+  <button id="back-to-top" aria-label="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
 
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon" aria-hidden="true">✓</span>
+    <span id="toast-msg">Copied!</span>
+  </div>
+
+  <!-- Command Palette -->
   <div class="cmd-overlay" id="cmd-overlay" role="dialog" aria-modal="true" aria-label="Command palette">
     <div class="cmd-box">
       <div class="cmd-input-wrap">
-        <svg class="cmd-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" class="cmd-input" id="cmd-input" placeholder="Search…" autocomplete="off" />
-        <span class="cmd-hint">ESC to close</span>
+        <svg class="cmd-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" class="cmd-input" id="cmd-input" placeholder="Search commands…" autocomplete="off" spellcheck="false" aria-label="Search" />
+        <span class="cmd-hint">esc to close</span>
       </div>
-      <div class="cmd-results" id="cmd-results"></div>
+      <div class="cmd-results" id="cmd-results" role="listbox"></div>
     </div>
   </div>
 
   <script>
+    // JS class swap
     document.documentElement.classList.replace('no-js','js');
 
+    // Scroll progress
     const progress = document.getElementById('scroll-progress');
+    const backTop  = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {
-      progress.style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%';
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+      progress.style.width = pct + '%';
+      backTop.classList.toggle('visible', window.scrollY > 500);
     }, {passive:true});
+    backTop.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 
+    // Nav scroll state
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
 
+    // Active nav link via IntersectionObserver
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+    const sectionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === entry.target.id));
+        }
+      });
+    }, {rootMargin: '-40% 0px -55% 0px'});
+    sections.forEach(s => sectionObserver.observe(s));
+
+    // Mobile menu
     const menuBtn = document.getElementById('menu-btn');
-    const navLinks = document.getElementById('nav-links');
-    menuBtn.addEventListener('click', () => { const o = navLinks.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
-    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { navLinks.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }));
+    const navList = document.getElementById('nav-links');
+    menuBtn.addEventListener('click', () => {
+      const open = navList.classList.toggle('open');
+      menuBtn.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', open);
+    });
+    navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navList.classList.remove('open');
+      menuBtn.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded','false');
+    }));
 
+    // Cursor glow
     const cursorGlow = document.getElementById('cursor-glow');
-    window.addEventListener('mousemove', e => { cursorGlow.style.left = e.clientX+'px'; cursorGlow.style.top = e.clientY+'px'; }, {passive:true});
+    window.addEventListener('mousemove', e => {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top  = e.clientY + 'px';
+    }, {passive:true});
 
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-    }, {threshold: 0.12});
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    // Fade-up observer
+    const fadeObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObserver.unobserve(e.target); }});
+    }, {threshold: 0.1});
+    document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
 
+    // Typewriter
     const phrases = ['Application Support Specialist','Full-Stack Developer','IT Professional','Software Builder','Open to Opportunities'];
     const tw = document.getElementById('typewriter');
     let pi=0, ci=0, del=false;
     function type() {
       const p = phrases[pi];
       tw.textContent = del ? p.slice(0,--ci) : p.slice(0,++ci);
-      let d = del ? 40 : 80;
-      if (!del && ci===p.length) { d=2200; del=true; }
-      else if (del && ci===0) { del=false; pi=(pi+1)%phrases.length; d=400; }
+      let d = del ? 38 : 75;
+      if (!del && ci===p.length) { d=2400; del=true; }
+      else if (del && ci===0) { del=false; pi=(pi+1)%phrases.length; d=380; }
       setTimeout(type, d);
     }
-    setTimeout(type, 1000);
+    setTimeout(type, 800);
 
-    const toastEl = document.getElementById('toast');
+    // Toast
+    const toastEl  = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
-    function showToast(msg) { toastMsg.textContent=msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'),2200); }
+    function showToast(msg) {
+      toastMsg.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 2200);
+    }
 
+    // Copy email
     document.getElementById('copy-email-btn').addEventListener('click', () => {
-      navigator.clipboard.writeText('zohnwheeler@gmail.com').then(()=>showToast('Email copied!')).catch(()=>showToast('zohnwheeler@gmail.com'));
+      navigator.clipboard.writeText('zohnwheeler@gmail.com')
+        .then(() => showToast('Email copied!'))
+        .catch(() => showToast('zohnwheeler@gmail.com'));
     });
 
+    // Command palette
     const cmdOverlay = document.getElementById('cmd-overlay');
-    const cmdInput = document.getElementById('cmd-input');
+    const cmdInput   = document.getElementById('cmd-input');
     const cmdResults = document.getElementById('cmd-results');
     const CMDS = [
-      {g:'Navigate', icon:'🏠', label:'Home',       meta:'#hero',       fn:()=>document.getElementById('hero').scrollIntoView({behavior:'smooth'})},
-      {g:'Navigate', icon:'👤', label:'About',      meta:'#about',      fn:()=>document.getElementById('about').scrollIntoView({behavior:'smooth'})},
-      {g:'Navigate', icon:'🚀', label:'Projects',   meta:'#projects',   fn:()=>document.getElementById('projects').scrollIntoView({behavior:'smooth'})},
-      {g:'Navigate', icon:'💼', label:'Experience', meta:'#experience', fn:()=>document.getElementById('experience').scrollIntoView({behavior:'smooth'})},
-      {g:'Navigate', icon:'✉️', label:'Contact',    meta:'#contact',    fn:()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'})},
-      {g:'Links',    icon:'📄', label:'View Résumé',meta:'resume.html', fn:()=>window.open('resume.html','_blank')},
-      {g:'Links',    icon:'🐙', label:'GitHub',     meta:'github.com',  fn:()=>window.open('https://github.com/zohnner','_blank')},
-      {g:'Links',    icon:'💼', label:'LinkedIn',   meta:'linkedin',    fn:()=>window.open('https://www.linkedin.com/in/zohn-wheeler/','_blank')},
-      {g:'Copy',     icon:'📋', label:'Copy Email', meta:'zohnwheeler@gmail.com', fn:()=>navigator.clipboard.writeText('zohnwheeler@gmail.com').then(()=>showToast('Email copied!'))},
-      {g:'Copy',     icon:'🔗', label:'Copy URL',   meta:location.href, fn:()=>navigator.clipboard.writeText(location.href).then(()=>showToast('URL copied!'))},
+      {g:'Navigate', icon:'🏠', label:'Home',        meta:'#hero',       fn:()=>document.getElementById('hero').scrollIntoView({behavior:'smooth'})},
+      {g:'Navigate', icon:'👤', label:'About',       meta:'#about',      fn:()=>document.getElementById('about').scrollIntoView({behavior:'smooth'})},
+      {g:'Navigate', icon:'🚀', label:'Projects',    meta:'#projects',   fn:()=>document.getElementById('projects').scrollIntoView({behavior:'smooth'})},
+      {g:'Navigate', icon:'💼', label:'Experience',  meta:'#experience', fn:()=>document.getElementById('experience').scrollIntoView({behavior:'smooth'})},
+      {g:'Navigate', icon:'✉️', label:'Contact',     meta:'#contact',    fn:()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'})},
+      {g:'Links',    icon:'📄', label:'View Résumé', meta:'resume.html', fn:()=>window.open('resume.html','_blank')},
+      {g:'Links',    icon:'🐙', label:'GitHub',      meta:'github.com/zohnner', fn:()=>window.open('https://github.com/zohnner','_blank')},
+      {g:'Links',    icon:'🔗', label:'LinkedIn',    meta:'linkedin.com', fn:()=>window.open('https://www.linkedin.com/in/zohn-wheeler/','_blank')},
+      {g:'Copy',     icon:'📋', label:'Copy Email',  meta:'zohnwheeler@gmail.com', fn:()=>navigator.clipboard.writeText('zohnwheeler@gmail.com').then(()=>showToast('Email copied!'))},
+      {g:'Copy',     icon:'🌐', label:'Copy Page URL',meta:location.href, fn:()=>navigator.clipboard.writeText(location.href).then(()=>showToast('URL copied!'))},
     ];
     function renderCmd(q='') {
-      const f = CMDS.filter(c=>c.label.toLowerCase().includes(q.toLowerCase())||c.g.toLowerCase().includes(q.toLowerCase()));
-      if (!f.length) { cmdResults.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--muted2);font-size:.85rem">No results</div>'; return; }
+      const f = CMDS.filter(c => !q || c.label.toLowerCase().includes(q.toLowerCase()) || c.g.toLowerCase().includes(q.toLowerCase()));
+      if (!f.length) { cmdResults.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--muted2);font-size:.83rem">No results</div>'; return; }
       const groups = [...new Set(f.map(c=>c.g))];
-      cmdResults.innerHTML = groups.map(g=>`<div class="cmd-group-label">${g}</div>${f.filter(c=>c.g===g).map((c,i)=>`<div class="cmd-item" data-idx="${CMDS.indexOf(c)}"><span class="cmd-item-icon">${c.icon}</span><span class="cmd-item-label">${c.label}</span><span class="cmd-item-meta">${c.meta}</span></div>`).join('')}`).join('');
-      cmdResults.querySelectorAll('.cmd-item').forEach(el=>el.addEventListener('click',()=>{CMDS[+el.dataset.idx].fn();closeCmd();}));
+      cmdResults.innerHTML = groups.map(g =>
+        `<div class="cmd-group-label">${g}</div>` +
+        f.filter(c=>c.g===g).map(c =>
+          `<div class="cmd-item" role="option" data-idx="${CMDS.indexOf(c)}"><span class="cmd-item-icon">${c.icon}</span><span class="cmd-item-label">${c.label}</span><span class="cmd-item-meta">${c.meta}</span></div>`
+        ).join('')
+      ).join('');
+      cmdResults.querySelectorAll('.cmd-item').forEach(el =>
+        el.addEventListener('click', () => { CMDS[+el.dataset.idx].fn(); closeCmd(); })
+      );
     }
-    function openCmd() { cmdOverlay.classList.add('open'); cmdInput.value=''; renderCmd(); setTimeout(()=>cmdInput.focus(),50); document.body.style.overflow='hidden'; }
+    function openCmd()  { cmdOverlay.classList.add('open'); cmdInput.value=''; renderCmd(); setTimeout(()=>cmdInput.focus(),50); document.body.style.overflow='hidden'; }
     function closeCmd() { cmdOverlay.classList.remove('open'); document.body.style.overflow=''; }
-    document.getElementById('cmd-trigger').addEventListener('click',e=>{e.preventDefault();openCmd();});
-    cmdOverlay.addEventListener('click',e=>{if(e.target===cmdOverlay)closeCmd();});
-    cmdInput.addEventListener('input',()=>renderCmd(cmdInput.value));
-    cmdInput.addEventListener('keydown',e=>{
-      if(e.key==='Escape')closeCmd();
-      if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-        const items=[...cmdResults.querySelectorAll('.cmd-item')];
-        const cur=cmdResults.querySelector('.cmd-item.active');
-        let idx=items.indexOf(cur);
-        idx=e.key==='ArrowDown'?Math.min(idx+1,items.length-1):Math.max(idx-1,0);
+    document.getElementById('cmd-trigger').addEventListener('click', e => { e.preventDefault(); openCmd(); });
+    cmdOverlay.addEventListener('click', e => { if (e.target===cmdOverlay) closeCmd(); });
+    cmdInput.addEventListener('input', () => renderCmd(cmdInput.value));
+    cmdInput.addEventListener('keydown', e => {
+      if (e.key==='Escape') { closeCmd(); return; }
+      if (e.key==='ArrowDown'||e.key==='ArrowUp') {
+        const items = [...cmdResults.querySelectorAll('.cmd-item')];
+        const cur = cmdResults.querySelector('.cmd-item.active');
+        let idx = items.indexOf(cur);
+        idx = e.key==='ArrowDown' ? Math.min(idx+1, items.length-1) : Math.max(idx-1, 0);
         items.forEach(i=>i.classList.remove('active'));
         items[idx]?.classList.add('active');
         items[idx]?.scrollIntoView({block:'nearest'});
         e.preventDefault();
       }
-      if(e.key==='Enter'){const a=cmdResults.querySelector('.cmd-item.active');if(a){CMDS[+a.dataset.idx].fn();closeCmd();}}
+      if (e.key==='Enter') { const a=cmdResults.querySelector('.cmd-item.active'); if(a){CMDS[+a.dataset.idx].fn();closeCmd();} }
     });
-    document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();cmdOverlay.classList.contains('open')?closeCmd():openCmd();}});
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); cmdOverlay.classList.contains('open') ? closeCmd() : openCmd(); }
+      if (e.key==='Escape' && cmdOverlay.classList.contains('open')) closeCmd();
+    });
   </script>
 </body>
 </html>

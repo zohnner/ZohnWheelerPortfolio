@@ -141,7 +141,7 @@
     /* Projects */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
     .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity 0.3s; }
+    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .project-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,229,255,0.06); }
     .project-card:hover::before { opacity: 1; }
     .project-card.featured { border-color: rgba(0,229,255,0.18); }

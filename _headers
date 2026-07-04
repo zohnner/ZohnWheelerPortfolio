@@ -5,14 +5,32 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-XSS-Protection: 1; mode=block
 
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/resume
+  Cache-Control: public, max-age=0, must-revalidate
+
+/ai-workflow
+  Cache-Control: public, max-age=0, must-revalidate
+
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+/*.pdf
+  Cache-Control: public, max-age=86400
+
+/*.svg
+  Cache-Control: public, max-age=604800
 
 /*.jpg
   Cache-Control: public, max-age=31536000, immutable
 
+/*.jpeg
+  Cache-Control: public, max-age=2592000
+
 /*.png
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=2592000
 
 /*.webp
   Cache-Control: public, max-age=31536000, immutable

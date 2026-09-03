@@ -12,3 +12,9 @@ desktop.ini
 *.bak
 .sync_test
 *_new.html
+
+# Cloudflare / Wrangler
+.wrangler/
+node_modules/
+.dev.vars
+.dev.vars.*

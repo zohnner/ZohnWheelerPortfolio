@@ -238,8 +238,13 @@
           <label for="f-message">Tell me about your project</label>
           <textarea id="f-message" name="message" required placeholder="What are you trying to build? Any deadlines or must-haves?"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Send Inquiry</button>
-        <p class="form-note">This opens your email client with your details pre-filled — nothing is sent or stored without you hitting send yourself.</p>
+        <!-- Honeypot — hidden from real visitors, bots tend to fill every field -->
+        <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="f-submit">Send Inquiry</button>
+        <p class="form-note" id="f-status">Your details are sent straight to me — no third-party forms, no mailing lists.</p>
       </form>
     </div>
   </main>
@@ -249,24 +254,49 @@
   </footer>
 
   <script>
-    document.getElementById('inquiry-form').addEventListener('submit', function (e) {
+    const form = document.getElementById('inquiry-form');
+    const submitBtn = document.getElementById('f-submit');
+    const status = document.getElementById('f-status');
+
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      const name = document.getElementById('f-name').value.trim();
-      const email = document.getElementById('f-email').value.trim();
-      const type = document.getElementById('f-type').value;
-      const budget = document.getElementById('f-budget').value;
-      const message = document.getElementById('f-message').value.trim();
+      const payload = {
+        name: document.getElementById('f-name').value.trim(),
+        email: document.getElementById('f-email').value.trim(),
+        type: document.getElementById('f-type').value,
+        budget: document.getElementById('f-budget').value,
+        message: document.getElementById('f-message').value.trim(),
+        website: document.getElementById('f-website').value,
+      };
 
-      const subject = `New Project Inquiry — ${type}`;
-      const body =
-        `Name: ${name}\n` +
-        `Email: ${email}\n` +
-        `Project Type: ${type}\n` +
-        `Rough Budget: ${budget}\n\n` +
-        `${message}`;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      status.style.color = 'var(--muted2)';
+      status.textContent = 'Sending your inquiry…';
 
-      window.location.href =
-        `mailto:zohnwheeler@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      try {
+        const res = await fetch('/api/inquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          form.reset();
+          submitBtn.textContent = 'Sent ✓';
+          status.style.color = 'var(--accent)';
+          status.textContent = "Got it — I'll get back to you within a day or two.";
+        } else {
+          throw new Error(data.error || 'Something went wrong.');
+        }
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Inquiry';
+        status.style.color = '#f87171';
+        status.textContent =
+          (err.message || 'Something went wrong.') +
+          ' You can also email zohnwheeler@gmail.com directly.';
+      }
     });
   </script>
 </body>

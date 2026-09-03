@@ -140,12 +140,16 @@
 
     /* Projects */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
-    .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .project-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.03), rgba(124,58,237,0.03)); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1; }
     .project-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,229,255,0.06); }
     .project-card:hover::before { opacity: 1; }
     .project-card.featured { border-color: rgba(0,229,255,0.18); }
-    .featured-badge { position: absolute; top: 1rem; right: 1rem; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent3); background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.18rem 0.5rem; border-radius: 4px; }
+    .project-card-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
+    .project-thumb-wrap { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .project-thumb { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.4s ease; }
+    .project-card:hover .project-thumb { transform: scale(1.045); }
+    .featured-badge { position: absolute; top: 1rem; right: 1rem; z-index: 2; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent3); background: rgba(10,10,10,0.55); backdrop-filter: blur(6px); border: 1px solid rgba(245,158,11,0.35); padding: 0.18rem 0.5rem; border-radius: 4px; }
     .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
     .project-icon { font-size: 1.5rem; }
     .project-links { display: flex; gap: 0.5rem; }
@@ -398,81 +402,98 @@
         <div class="projects-grid">
           <article class="project-card featured fade-up d1">
             <span class="featured-badge">New</span>
-            <div class="project-header">
-              <span class="project-icon">🕹️</span>
-              <div class="project-links">
-                <a href="https://zretrobuild.zohnwheeler.workers.dev/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
-                <a href="https://github.com/zohnner/ZRetroBuild" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
-              </div>
+            <div class="project-thumb-wrap">
+              <img class="project-thumb" src="thumb-zretrobuild.jpg" alt="ZRetroBuild retro arcade screen showing the Snake high-score table in a CRT cabinet" loading="lazy" decoding="async" width="900" height="506" />
             </div>
-            <h3 class="project-title">ZRetroBuild — Retro Arcade</h3>
-            <p class="project-desc">A fully playable 8-bit arcade — Snake, Breakout, and Space Invaders — wrapped in an authentic CRT cabinet experience. Features scanlines, neon glow, a coin-insert system, synthesized Web Audio, and a Konami Code easter egg (+30 credits). Zero dependencies.</p>
-            <div class="project-tags">
-              <span class="tag">HTML / CSS / JS</span><span class="tag">Web Audio API</span><span class="tag">CSS Animations</span><span class="tag">Zero Deps</span>
+            <div class="project-card-body">
+              <div class="project-header">
+                <span class="project-icon">🕹️</span>
+                <div class="project-links">
+                  <a href="https://zretrobuild.zohnwheeler.workers.dev/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
+                  <a href="https://github.com/zohnner/ZRetroBuild" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+                </div>
+              </div>
+              <h3 class="project-title">ZRetroBuild — Retro Arcade</h3>
+              <p class="project-desc">A fully playable 8-bit arcade — Snake, Breakout, and Space Invaders — wrapped in an authentic CRT cabinet experience. Features scanlines, neon glow, a coin-insert system, synthesized Web Audio, and a Konami Code easter egg (+30 credits). Zero dependencies.</p>
+              <div class="project-tags">
+                <span class="tag">HTML / CSS / JS</span><span class="tag">Web Audio API</span><span class="tag">CSS Animations</span><span class="tag">Zero Deps</span>
+              </div>
             </div>
           </article>
 
-
-
           <article class="project-card featured fade-up d2">
             <span class="featured-badge">Live</span>
-            <div class="project-header">
-              <span class="project-icon">🏆</span>
-              <div class="project-links">
-                <a href="https://sportstrata.cc/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
-                <a href="https://github.com/zohnner/zohn-sports-stats" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
-                <a href="ai-workflow.html" class="project-link">Case Study ↗</a>
-              </div>
+            <div class="project-thumb-wrap">
+              <img class="project-thumb" src="thumb-sportstrata.jpg" alt="SportStrata dashboard showing a live MLB scorecard and league navigation" loading="lazy" decoding="async" width="900" height="506" />
             </div>
-            <h3 class="project-title">SportStrata</h3>
-            <p class="project-desc">Full-stack MLB analytics platform built for broadcast pros and fantasy players — live play-by-play scorecards, Statcast leaderboards, printable game-prep sheets, a custom stat builder, and AI-generated broadcast narratives. Built solo across 200+ commits with a multi-agent AI persona team (design reviewer, code auditor, deep-review analyst) that automates review cycles and keeps shipping velocity high.</p>
-            <div class="project-tags">
-              <span class="tag">JavaScript</span><span class="tag">Live APIs</span><span class="tag">Cloudflare Workers + D1</span><span class="tag">AI Workflow</span>
+            <div class="project-card-body">
+              <div class="project-header">
+                <span class="project-icon">🏆</span>
+                <div class="project-links">
+                  <a href="https://sportstrata.cc/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
+                  <a href="https://github.com/zohnner/zohn-sports-stats" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+                  <a href="ai-workflow.html" class="project-link">Case Study ↗</a>
+                </div>
+              </div>
+              <h3 class="project-title">SportStrata</h3>
+              <p class="project-desc">Full-stack MLB analytics platform built for broadcast pros and fantasy players — live play-by-play scorecards, Statcast leaderboards, printable game-prep sheets, a custom stat builder, and AI-generated broadcast narratives. Built solo across 200+ commits with a multi-agent AI persona team (design reviewer, code auditor, deep-review analyst) that automates review cycles and keeps shipping velocity high.</p>
+              <div class="project-tags">
+                <span class="tag">JavaScript</span><span class="tag">Live APIs</span><span class="tag">Cloudflare Workers + D1</span><span class="tag">AI Workflow</span>
+              </div>
             </div>
           </article>
 
           <article class="project-card featured fade-up d3">
             <span class="featured-badge">Live</span>
-            <div class="project-header">
-              <span class="project-icon">📈</span>
-              <div class="project-links">
-                <a href="https://botchase.onrender.com/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
-                <a href="https://github.com/zohnner/BotChaseAI" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
-              </div>
+            <div class="project-thumb-wrap">
+              <img class="project-thumb" src="thumb-botchase.jpg" alt="BotChase landing page pitching AI sales automation for local service businesses" loading="lazy" decoding="async" width="900" height="506" />
             </div>
-            <h3 class="project-title">BotChase</h3>
-            <p class="project-desc">AI sales automation SaaS for local service businesses (roofing, HVAC, plumbing) — scores leads, drafts outreach copy, and turns campaigns into client-ready proposals. Real Stripe billing, a per-account dashboard, and an admin console with engagement analytics. Claude-powered generation is cost-tracked per customer and gated to paying accounts only.</p>
-            <div class="project-tags">
-              <span class="tag">Python / Flask</span><span class="tag">Stripe Billing</span><span class="tag">Claude API</span><span class="tag">SaaS</span>
+            <div class="project-card-body">
+              <div class="project-header">
+                <span class="project-icon">📈</span>
+                <div class="project-links">
+                  <a href="https://botchase.onrender.com/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
+                  <a href="https://github.com/zohnner/BotChaseAI" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+                </div>
+              </div>
+              <h3 class="project-title">BotChase</h3>
+              <p class="project-desc">AI sales automation SaaS for local service businesses (roofing, HVAC, plumbing) — scores leads, drafts outreach copy, and turns campaigns into client-ready proposals. Real Stripe billing, a per-account dashboard, and an admin console with engagement analytics. Claude-powered generation is cost-tracked per customer and gated to paying accounts only.</p>
+              <div class="project-tags">
+                <span class="tag">Python / Flask</span><span class="tag">Stripe Billing</span><span class="tag">Claude API</span><span class="tag">SaaS</span>
+              </div>
             </div>
           </article>
 
           <article class="project-card fade-up d4">
-            <div class="project-header">
-              <span class="project-icon">🤖</span>
-              <div class="project-links">
-                <a href="https://engineering.missouri.edu/2024/information-technology-students-develop-an-educational-ai-bot-for-capstone-project/" class="project-link" target="_blank" rel="noopener">Article ↗</a>
-                <a href="https://github.com/zohnner/OracleChatBot" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+            <div class="project-card-body">
+              <div class="project-header">
+                <span class="project-icon">🤖</span>
+                <div class="project-links">
+                  <a href="https://engineering.missouri.edu/2024/information-technology-students-develop-an-educational-ai-bot-for-capstone-project/" class="project-link" target="_blank" rel="noopener">Article ↗</a>
+                  <a href="https://github.com/zohnner/OracleChatBot" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+                </div>
               </div>
-            </div>
-            <h3 class="project-title">Discord Educational Bot</h3>
-            <p class="project-desc">A Discord bot built for senior capstone — uses AI to help students navigate course material through natural language Q&A. Recognized and featured by Mizzou's College of Engineering. Built by a team of four.</p>
-            <div class="project-tags">
-              <span class="tag">Python</span><span class="tag">NLP</span><span class="tag">React</span><span class="tag">Team Project</span>
+              <h3 class="project-title">Discord Educational Bot</h3>
+              <p class="project-desc">A Discord bot built for senior capstone — uses AI to help students navigate course material through natural language Q&A. Recognized and featured by Mizzou's College of Engineering. Built by a team of four.</p>
+              <div class="project-tags">
+                <span class="tag">Python</span><span class="tag">NLP</span><span class="tag">React</span><span class="tag">Team Project</span>
+              </div>
             </div>
           </article>
 
           <article class="project-card fade-up d4">
-            <div class="project-header">
-              <span class="project-icon">⚡</span>
-              <div class="project-links">
-                <a href="https://github.com/zohnner/ZohnWheelerPortfolio" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+            <div class="project-card-body">
+              <div class="project-header">
+                <span class="project-icon">⚡</span>
+                <div class="project-links">
+                  <a href="https://github.com/zohnner/ZohnWheelerPortfolio" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+                </div>
               </div>
-            </div>
-            <h3 class="project-title">This Portfolio</h3>
-            <p class="project-desc">Zero-dependency, single-file portfolio. Features scroll animations via IntersectionObserver, a fuzzy-search command palette (⌘K), typewriter cycling, and automated Cloudflare Pages deploys on every git push.</p>
-            <div class="project-tags">
-              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">Vanilla JS</span><span class="tag">Cloudflare</span>
+              <h3 class="project-title">This Portfolio</h3>
+              <p class="project-desc">Zero-dependency, single-file portfolio. Features scroll animations via IntersectionObserver, a fuzzy-search command palette (⌘K), typewriter cycling, and automated Cloudflare Pages deploys on every git push.</p>
+              <div class="project-tags">
+                <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">Vanilla JS</span><span class="tag">Cloudflare</span>
+              </div>
             </div>
           </article>
 
@@ -490,24 +511,32 @@
         <p class="fade-up d1" style="color:var(--muted); max-width:560px; margin-top:-0.25rem; margin-bottom:2.5rem; font-size:0.975rem; line-height:1.7;">I take on freelance web projects too — from a single landing page to a full-stack app with a database. Same standards I bring to my own products.</p>
         <div class="projects-grid">
           <article class="project-card fade-up d1">
-            <div class="project-header"><span class="project-icon">🖥️</span></div>
-            <h3 class="project-title">Landing Page</h3>
-            <p class="project-desc">A single, focused page built to convert — hero, value prop, and a clear call to action. Ideal for launches and personal brands.</p>
+            <div class="project-card-body">
+              <div class="project-header"><span class="project-icon">🖥️</span></div>
+              <h3 class="project-title">Landing Page</h3>
+              <p class="project-desc">A single, focused page built to convert — hero, value prop, and a clear call to action. Ideal for launches and personal brands.</p>
+            </div>
           </article>
           <article class="project-card fade-up d2">
-            <div class="project-header"><span class="project-icon">🌐</span></div>
-            <h3 class="project-title">Full Website</h3>
-            <p class="project-desc">Multi-page sites for a business or portfolio. Mobile-first, fast-loading, with SEO fundamentals built in.</p>
+            <div class="project-card-body">
+              <div class="project-header"><span class="project-icon">🌐</span></div>
+              <h3 class="project-title">Full Website</h3>
+              <p class="project-desc">Multi-page sites for a business or portfolio. Mobile-first, fast-loading, with SEO fundamentals built in.</p>
+            </div>
           </article>
           <article class="project-card fade-up d3">
-            <div class="project-header"><span class="project-icon">⚙️</span></div>
-            <h3 class="project-title">Web App</h3>
-            <p class="project-desc">Custom, database-backed applications — dashboards, booking tools, client portals. The kind of thing a template can't do.</p>
+            <div class="project-card-body">
+              <div class="project-header"><span class="project-icon">⚙️</span></div>
+              <h3 class="project-title">Web App</h3>
+              <p class="project-desc">Custom, database-backed applications — dashboards, booking tools, client portals. The kind of thing a template can't do.</p>
+            </div>
           </article>
           <article class="project-card fade-up d4">
-            <div class="project-header"><span class="project-icon">🔧</span></div>
-            <h3 class="project-title">Ongoing Support</h3>
-            <p class="project-desc">Already have a site? I handle updates, new features, bug fixes, and hosting so you don't have to think about it.</p>
+            <div class="project-card-body">
+              <div class="project-header"><span class="project-icon">🔧</span></div>
+              <h3 class="project-title">Ongoing Support</h3>
+              <p class="project-desc">Already have a site? I handle updates, new features, bug fixes, and hosting so you don't have to think about it.</p>
+            </div>
           </article>
         </div>
         <div class="fade-up d2" style="margin-top:2.5rem; display:flex; justify-content:center;">

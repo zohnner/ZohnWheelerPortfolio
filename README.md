@@ -6,9 +6,10 @@ Zero-dependency, hand-coded HTML/CSS/JS. Deployed automatically to Cloudflare Pa
 
 ## Pages
 
-- `index.html` — main portfolio (projects, experience, education, contact)
+- `index.html` — main portfolio (projects, services, experience, education, contact)
 - `resume.html` — web resume with downloadable PDF (`Zohn-Wheeler-Resume.pdf`)
 - `ai-workflow.html` — case study: the multi-agent AI persona workflow behind SportStrata
+- `hire.html` — freelance web development services page, with a mailto-based project inquiry form
 
 ## Stack
 

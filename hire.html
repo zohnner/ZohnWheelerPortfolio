@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hire Zohn Wheeler — Web Development Services</title>
+  <meta name="description" content="Freelance web development — landing pages, full websites, and custom web apps. A full-stack builder with a track record of shipping production sites solo." />
+  <meta property="og:title" content="Hire Zohn Wheeler — Web Development Services" />
+  <meta property="og:description" content="Landing pages, full websites, and custom web apps — built and shipped by one developer. Get a quote." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/hire.html" />
+  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/hire.html" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a; --surface: #161616; --surface2: #1e1e1e;
+      --border: #252525; --border2: #333; --accent: #00e5ff; --accent2: #7c3aed;
+      --accent3: #f59e0b; --text: #ececec; --muted: #888; --muted2: #555;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 14px; --radius-sm: 8px; --max: 860px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; }
+    ::selection { background: var(--accent); color: #000; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { opacity: 0.8; }
+    .bg-grid { position: fixed; inset: 0; z-index: -2; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px; opacity: 0.18; }
+    .glow { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: -1; }
+    .glow-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.05); top: -120px; right: -80px; }
+    .glow-2 { width: 450px; height: 450px; background: rgba(124,58,237,0.06); bottom: 10%; left: -100px; }
+
+    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; }
+    .nav-logo span { color: var(--muted); }
+    .back-link { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); transition: color 0.2s; }
+    .back-link:hover { color: var(--accent); opacity: 1; }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; margin-bottom: 1.25rem; }
+    h1 .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .lede { font-size: 1.1rem; color: var(--muted); max-width: 620px; margin-bottom: 2rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 3.5rem 0 1rem; }
+    p { color: #b5b5b5; margin-bottom: 1.1rem; font-size: 0.975rem; }
+    p strong { color: var(--text); font-weight: 600; }
+
+    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.25s; border: none; font-family: var(--font); }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #fff; opacity: 1; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,229,255,0.3); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; transform: translateY(-2px); }
+
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .service-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; transition: border-color 0.25s, transform 0.25s; }
+    .service-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-3px); }
+    .service-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
+    .service-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .service-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    .pipeline { display: flex; flex-direction: column; gap: 0; margin: 1.5rem 0; }
+    .pipe-step { display: flex; gap: 1.25rem; position: relative; padding-bottom: 1.75rem; }
+    .pipe-step:last-child { padding-bottom: 0; }
+    .pipe-step::before { content: ''; position: absolute; left: 15px; top: 34px; bottom: 4px; width: 1px; background: var(--border2); }
+    .pipe-step:last-child::before { display: none; }
+    .pipe-dot { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 0.72rem; color: var(--accent); }
+    .pipe-body h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .pipe-body p { font-size: 0.85rem; margin-bottom: 0; }
+
+    .why-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin: 1.5rem 0; }
+    .why-list li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.925rem; color: #b5b5b5; line-height: 1.6; }
+    .why-list li::before { content: '◆'; color: var(--accent3); font-size: 0.5rem; flex-shrink: 0; margin-top: 0.5rem; }
+    .why-list li strong { color: var(--text); }
+
+    .proof { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+    .proof-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); transition: all 0.25s; }
+    .proof-link:hover { border-color: var(--accent); color: var(--accent); opacity: 1; transform: translateY(-2px); }
+    .proof-link .arrow { color: var(--accent); }
+
+    /* Contact form */
+    .contact-box { margin-top: 1.5rem; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-field label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .form-field input, .form-field select, .form-field textarea {
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font); font-size: 0.9rem; padding: 0.7rem 0.85rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { resize: vertical; min-height: 100px; font-family: var(--font); }
+    .form-note { font-size: 0.78rem; color: var(--muted2); margin-top: 1rem; margin-bottom: 0; }
+
+    footer { text-align: center; padding: 2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); border-top: 1px solid var(--border); }
+    @media (max-width: 600px) { .wrap { padding: 2.5rem 1.25rem 4rem; } .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="glow glow-1" aria-hidden="true"></div>
+  <div class="glow glow-2" aria-hidden="true"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">zohn<span>.dev</span></a>
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+  </nav>
+
+  <main class="wrap">
+    <div class="eyebrow">Services · Web Development</div>
+    <h1>Let's Build Your <span class="grad">Website</span></h1>
+    <p class="lede">I design and build fast, modern websites and web applications — from a single landing page to a full-stack product with real data behind it. Same standards I bring to my own products, applied to yours.</p>
+    <div class="hero-cta">
+      <a href="#contact-form" class="btn btn-primary">Get a Quote</a>
+      <a href="index.html#projects" class="btn btn-ghost">See My Work</a>
+    </div>
+
+    <h2>What I Build</h2>
+    <div class="service-grid">
+      <div class="service-card">
+        <div class="service-icon">🖥️</div>
+        <div class="service-name">Landing Page</div>
+        <div class="service-desc">A single, focused page built to convert — hero, value prop, and a clear call to action. Ideal for launches, personal brands, and campaigns.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🌐</div>
+        <div class="service-name">Full Website</div>
+        <div class="service-desc">Multi-page sites for a business or portfolio — home, about, services, contact. Mobile-first, fast-loading, with SEO fundamentals built in.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">⚙️</div>
+        <div class="service-name">Web App</div>
+        <div class="service-desc">Custom, database-backed applications — dashboards, booking tools, client portals, internal systems. The kind of thing a template can't do.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔧</div>
+        <div class="service-name">Ongoing Support</div>
+        <div class="service-desc">Already have a site? I handle updates, new features, bug fixes, and hosting so you don't have to think about any of it.</div>
+      </div>
+    </div>
+
+    <h2>How It Works</h2>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-dot">01</div>
+        <div class="pipe-body">
+          <h3>Discovery call</h3>
+          <p>We talk through your goals, audience, and must-have features. No cost, no obligation.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-dot">02</div>
+        <div class="pipe-body">
+          <h3>Proposal & scope</h3>
+          <p>A clear plan — what's included, rough timeline, and how we'll communicate — before any code gets written.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-dot">03</div>
+        <div class="pipe-body">
+          <h3>Design</h3>
+          <p>Direction you sign off on before development starts, so there are no surprises when the build begins.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-dot">04</div>
+        <div class="pipe-body">
+          <h3>Build</h3>
+          <p>I build in the open — you get progress updates and a live staging link to watch it take shape.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-dot">05</div>
+        <div class="pipe-body">
+          <h3>Launch & support</h3>
+          <p>Deployed, tested across devices, and handed off with everything you need — or I keep maintaining it for you.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Why Work With Me</h2>
+    <ul class="why-list">
+      <li><strong>Full-stack, top to bottom.</strong> I design, build, and deploy — front end, back end, database, and infrastructure — without handing pieces off to someone else.</li>
+      <li><strong>I ship real products, not mockups.</strong> SportStrata and BotChase are live, in production, with real users and real payments running through them.</li>
+      <li><strong>Security-minded by profession.</strong> I hold an active federal security clearance and support treasury systems for a living — your data and your users are handled carefully.</li>
+      <li><strong>Fast, direct communication.</strong> No account managers, no hand-offs. You talk to the person actually writing the code.</li>
+      <li><strong>Performance-first builds.</strong> I default to lean, dependency-light code — pages that load fast and don't rot when a package goes stale.</li>
+    </ul>
+
+    <div class="proof">
+      <a href="https://sportstrata.cc/" class="proof-link" target="_blank" rel="noopener">SportStrata <span class="arrow">↗</span></a>
+      <a href="https://botchase.onrender.com/" class="proof-link" target="_blank" rel="noopener">BotChase <span class="arrow">↗</span></a>
+      <a href="https://zretrobuild.zohnwheeler.workers.dev/" class="proof-link" target="_blank" rel="noopener">ZRetroBuild <span class="arrow">↗</span></a>
+    </div>
+
+    <h2 id="contact-form">Get a Quote</h2>
+    <p>Tell me a bit about your project and I'll get back to you — usually within a day or two.</p>
+    <div class="contact-box">
+      <form id="inquiry-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="f-name">Name</label>
+            <input type="text" id="f-name" name="name" required autocomplete="name" />
+          </div>
+          <div class="form-field">
+            <label for="f-email">Email</label>
+            <input type="email" id="f-email" name="email" required autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="f-type">Project Type</label>
+            <select id="f-type" name="type">
+              <option>Landing Page</option>
+              <option>Full Website</option>
+              <option>Web App</option>
+              <option>Ongoing Support</option>
+              <option>Not Sure Yet</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="f-budget">Rough Budget</label>
+            <select id="f-budget" name="budget">
+              <option>Not sure yet</option>
+              <option>Under $1,000</option>
+              <option>$1,000 – $5,000</option>
+              <option>$5,000+</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="f-message">Tell me about your project</label>
+          <textarea id="f-message" name="message" required placeholder="What are you trying to build? Any deadlines or must-haves?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Inquiry</button>
+        <p class="form-note">This opens your email client with your details pre-filled — nothing is sent or stored without you hitting send yourself.</p>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    Built by <a href="index.html">Zohn Wheeler</a> — hand-coded, zero dependencies
+  </footer>
+
+  <script>
+    document.getElementById('inquiry-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const type = document.getElementById('f-type').value;
+      const budget = document.getElementById('f-budget').value;
+      const message = document.getElementById('f-message').value.trim();
+
+      const subject = `New Project Inquiry — ${type}`;
+      const body =
+        `Name: ${name}\n` +
+        `Email: ${email}\n` +
+        `Project Type: ${type}\n` +
+        `Rough Budget: ${budget}\n\n` +
+        `${message}`;
+
+      window.location.href =
+        `mailto:zohnwheeler@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
+</body>
+</html>

@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zohn Wheeler — Portfolio</title>
-  <meta name="description" content="Zohn Wheeler — IT professional and software builder based in Kansas City, MO." />
+  <meta name="description" content="Zohn Wheeler — IT professional, software builder, and freelance web developer based in Kansas City, MO." />
   <meta property="og:title" content="Zohn Wheeler — Portfolio" />
-  <meta property="og:description" content="IT professional and software builder based in Kansas City, MO. Treasury systems, full-stack dev, security clearance." />
+  <meta property="og:description" content="IT professional and software builder based in Kansas City, MO. Treasury systems, full-stack dev, security clearance — and available for freelance web development." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/" />
   <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
@@ -270,6 +270,7 @@
     <ul class="nav-links" id="nav-links">
       <li><a href="#about" data-section="about">About</a></li>
       <li><a href="#projects" data-section="projects">Projects</a></li>
+      <li><a href="#services" data-section="services">Services</a></li>
       <li><a href="#experience" data-section="experience">Experience</a></li>
       <li><a href="#contact" data-section="contact">Contact</a></li>
       <li class="nav-cmd-label"><a href="#" id="cmd-trigger" aria-label="Command palette"><kbd style="font-family:var(--mono);font-size:0.68rem;padding:0.15rem 0.45rem;background:var(--surface);border:1px solid var(--border2);border-radius:4px;color:var(--muted);">⌘K</kbd></a></li>
@@ -294,6 +295,7 @@
       </div>
       <div class="hero-cta fade-up d3">
         <a href="#contact" class="btn btn-primary">Get in Touch</a>
+        <a href="hire.html" class="btn btn-ghost">Hire Me →</a>
         <a href="resume.html" class="btn btn-ghost" target="_blank" rel="noopener">View Résumé</a>
       </div>
       <div class="hero-stats fade-up d4">
@@ -302,7 +304,7 @@
           <div class="stat-label">Years Professional IT</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">5<span>+</span></div>
+          <div class="stat-num">6<span>+</span></div>
           <div class="stat-label">Projects Shipped</div>
         </div>
         <div class="stat-item">
@@ -429,7 +431,23 @@
             </div>
           </article>
 
-          <article class="project-card fade-up d3">
+          <article class="project-card featured fade-up d3">
+            <span class="featured-badge">Live</span>
+            <div class="project-header">
+              <span class="project-icon">📈</span>
+              <div class="project-links">
+                <a href="https://botchase.onrender.com/" class="project-link" target="_blank" rel="noopener">Live ↗</a>
+                <a href="https://github.com/zohnner/BotChaseAI" class="project-link" target="_blank" rel="noopener">GitHub ↗</a>
+              </div>
+            </div>
+            <h3 class="project-title">BotChase</h3>
+            <p class="project-desc">AI sales automation SaaS for local service businesses (roofing, HVAC, plumbing) — scores leads, drafts outreach copy, and turns campaigns into client-ready proposals. Real Stripe billing, a per-account dashboard, and an admin console with engagement analytics. Claude-powered generation is cost-tracked per customer and gated to paying accounts only.</p>
+            <div class="project-tags">
+              <span class="tag">Python / Flask</span><span class="tag">Stripe Billing</span><span class="tag">Claude API</span><span class="tag">SaaS</span>
+            </div>
+          </article>
+
+          <article class="project-card fade-up d4">
             <div class="project-header">
               <span class="project-icon">🤖</span>
               <div class="project-links">
@@ -458,6 +476,42 @@
             </div>
           </article>
 
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── Services ──────────────────────────────────────── -->
+    <section id="services" aria-label="Services">
+      <div class="section-wrap">
+        <div class="section-label">Services</div>
+        <h2 class="section-title fade-up">Need a Website Built?</h2>
+        <p class="fade-up d1" style="color:var(--muted); max-width:560px; margin-top:-0.25rem; margin-bottom:2.5rem; font-size:0.975rem; line-height:1.7;">I take on freelance web projects too — from a single landing page to a full-stack app with a database. Same standards I bring to my own products.</p>
+        <div class="projects-grid">
+          <article class="project-card fade-up d1">
+            <div class="project-header"><span class="project-icon">🖥️</span></div>
+            <h3 class="project-title">Landing Page</h3>
+            <p class="project-desc">A single, focused page built to convert — hero, value prop, and a clear call to action. Ideal for launches and personal brands.</p>
+          </article>
+          <article class="project-card fade-up d2">
+            <div class="project-header"><span class="project-icon">🌐</span></div>
+            <h3 class="project-title">Full Website</h3>
+            <p class="project-desc">Multi-page sites for a business or portfolio. Mobile-first, fast-loading, with SEO fundamentals built in.</p>
+          </article>
+          <article class="project-card fade-up d3">
+            <div class="project-header"><span class="project-icon">⚙️</span></div>
+            <h3 class="project-title">Web App</h3>
+            <p class="project-desc">Custom, database-backed applications — dashboards, booking tools, client portals. The kind of thing a template can't do.</p>
+          </article>
+          <article class="project-card fade-up d4">
+            <div class="project-header"><span class="project-icon">🔧</span></div>
+            <h3 class="project-title">Ongoing Support</h3>
+            <p class="project-desc">Already have a site? I handle updates, new features, bug fixes, and hosting so you don't have to think about it.</p>
+          </article>
+        </div>
+        <div class="fade-up d2" style="margin-top:2.5rem; display:flex; justify-content:center;">
+          <a href="hire.html" class="btn btn-primary">View Services &amp; Get a Quote →</a>
         </div>
       </div>
     </section>
@@ -647,7 +701,7 @@
     document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
 
     // Typewriter
-    const phrases = ['Application Support Specialist','Full-Stack Developer','IT Professional','Software Builder','Open to Opportunities'];
+    const phrases = ['Application Support Specialist','Full-Stack Developer','IT Professional','Software Builder','Freelance Web Developer','Open to Opportunities'];
     const tw = document.getElementById('typewriter');
     let pi=0, ci=0, del=false;
     function type() {
@@ -684,8 +738,10 @@
       {g:'Navigate', icon:'🏠', label:'Home',        meta:'#hero',       fn:()=>document.getElementById('hero').scrollIntoView({behavior:'smooth'})},
       {g:'Navigate', icon:'👤', label:'About',       meta:'#about',      fn:()=>document.getElementById('about').scrollIntoView({behavior:'smooth'})},
       {g:'Navigate', icon:'🚀', label:'Projects',    meta:'#projects',   fn:()=>document.getElementById('projects').scrollIntoView({behavior:'smooth'})},
+      {g:'Navigate', icon:'🧰', label:'Services',    meta:'#services',   fn:()=>document.getElementById('services').scrollIntoView({behavior:'smooth'})},
       {g:'Navigate', icon:'💼', label:'Experience',  meta:'#experience', fn:()=>document.getElementById('experience').scrollIntoView({behavior:'smooth'})},
       {g:'Navigate', icon:'✉️', label:'Contact',     meta:'#contact',    fn:()=>document.getElementById('contact').scrollIntoView({behavior:'smooth'})},
+      {g:'Links',    icon:'🤝', label:'Hire Me',     meta:'hire.html',   fn:()=>window.location.href='hire.html'},
       {g:'Links',    icon:'📄', label:'View Résumé', meta:'resume.html', fn:()=>window.open('resume.html','_blank')},
       {g:'Links',    icon:'🐙', label:'GitHub',      meta:'github.com/zohnner', fn:()=>window.open('https://github.com/zohnner','_blank')},
       {g:'Links',    icon:'🔗', label:'LinkedIn',    meta:'linkedin.com', fn:()=>window.open('https://www.linkedin.com/in/zohn-wheeler/','_blank')},

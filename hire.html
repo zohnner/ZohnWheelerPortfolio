@@ -13,6 +13,16 @@
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/hire.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"How long does a project take?","acceptedAnswer":{"@type":"Answer","text":"A landing page usually runs 1-2 weeks. A full multi-page site is more like 3-6 weeks. A custom web app depends on scope, pinned down during the discovery call before anything's billed."}},
+    {"@type":"Question","name":"Do you build e-commerce or handle payments?","acceptedAnswer":{"@type":"Answer","text":"Yes, including real Stripe billing and subscription checkout in production. Payments are built custom into the site or app rather than on Shopify or WooCommerce."}},
+    {"@type":"Question","name":"I already have a designer or brand guidelines — can you work with that?","acceptedAnswer":{"@type":"Answer","text":"Yes, sites are built to existing brand, fonts, and design files. Design direction can also be created from scratch as part of the build."}},
+    {"@type":"Question","name":"Who owns the code and the site after launch?","acceptedAnswer":{"@type":"Answer","text":"The client owns the full source code, with no proprietary platform or lock-in. It can be self-hosted, handed to another developer, or supported on an ongoing basis."}},
+    {"@type":"Question","name":"How does payment work?","acceptedAnswer":{"@type":"Answer","text":"Typically a deposit to start and the balance on delivery, with larger builds split into milestones. Terms are spelled out in a proposal before any work begins."}},
+    {"@type":"Question","name":"I don't know exactly what I need yet — is that a problem?","acceptedAnswer":{"@type":"Answer","text":"No — most clients start with a rough idea and a goal rather than a full spec. Scope is worked out together during the discovery call."}}
+  ]}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
@@ -83,6 +93,14 @@
     .proof-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); transition: all 0.25s; }
     .proof-link:hover { border-color: var(--accent); color: var(--accent); opacity: 1; transform: translateY(-2px); }
     .proof-link .arrow { color: var(--accent); }
+
+    .faq-list { margin: 1.5rem 0; border-top: 1px solid var(--border); }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 1.1rem 0; }
+    .faq-item summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; color: var(--text); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; color: var(--accent); font-family: var(--mono); font-size: 1.15rem; line-height: 1; flex-shrink: 0; transition: transform 0.2s ease; }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item p { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.9rem; color: #b5b5b5; }
 
     /* Contact form */
     .contact-box { margin-top: 1.5rem; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
@@ -197,6 +215,34 @@
       <a href="https://sportstrata.cc/" class="proof-link" target="_blank" rel="noopener">SportStrata <span class="arrow">↗</span></a>
       <a href="https://botchase.onrender.com/" class="proof-link" target="_blank" rel="noopener">BotChase <span class="arrow">↗</span></a>
       <a href="https://zretrobuild.zohnwheeler.workers.dev/" class="proof-link" target="_blank" rel="noopener">ZRetroBuild <span class="arrow">↗</span></a>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>How long does a project take?</summary>
+        <p>A landing page usually runs 1-2 weeks. A full multi-page site is more like 3-6 weeks. A custom web app depends on scope — we'll pin down a real timeline together during the discovery call, before anything's billed.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do you build e-commerce or handle payments?</summary>
+        <p>Yes — I've shipped real Stripe billing and subscription checkout in production (BotChase). I don't build on Shopify or WooCommerce; if you need to take payments, I build that logic custom into the site or app.</p>
+      </details>
+      <details class="faq-item">
+        <summary>I already have a designer or brand guidelines — can you work with that?</summary>
+        <p>Absolutely. I'll build to your existing brand, fonts, and design files. If you don't have any of that yet, I can design the direction from scratch as part of the build.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Who owns the code and the site after launch?</summary>
+        <p>You do — full source code, no proprietary platform, no lock-in. You can host it yourself, hand it to another developer, or keep me on for ongoing support. Your call.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How does payment work?</summary>
+        <p>Typically a deposit to start and the balance on delivery; larger builds get split into milestones. Exact terms are spelled out in the proposal before any work begins — no surprise invoices.</p>
+      </details>
+      <details class="faq-item">
+        <summary>I don't know exactly what I need yet — is that a problem?</summary>
+        <p>Not at all — that's what the discovery call is for. Most clients start with a rough idea and a goal, not a spec. We'll figure out the right scope together.</p>
+      </details>
     </div>
 
     <h2 id="contact-form">Get a Quote</h2>

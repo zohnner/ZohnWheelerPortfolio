@@ -3,16 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hire Zohn Wheeler — Web Development Services</title>
-  <meta name="description" content="Freelance web development — landing pages, full websites, and custom web apps. A full-stack builder with a track record of shipping production sites solo." />
-  <meta property="og:title" content="Hire Zohn Wheeler — Web Development Services" />
-  <meta property="og:description" content="Landing pages, full websites, and custom web apps — built and shipped by one developer. Get a quote." />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('zw_theme');
+        var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {}
+    })();
+  </script>
+  <title>Hire Zohn Wheeler — Web Developer in Kansas City, MO</title>
+  <meta name="description" content="Freelance web developer in Kansas City, MO — landing pages, full websites, and custom web apps, built and shipped by one full-stack developer. Remote-friendly." />
+  <meta property="og:title" content="Hire Zohn Wheeler — Web Developer in Kansas City, MO" />
+  <meta property="og:description" content="Landing pages, full websites, and custom web apps — built and shipped by one developer based in Kansas City, MO. Get a quote." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/hire.html" />
   <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/hire.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"ProfessionalService","name":"Zohn Wheeler — Web Development","url":"https://zohnwheelerportfolio.pages.dev/hire.html","image":"https://zohnwheelerportfolio.pages.dev/og-image.png","priceRange":"$$","areaServed":[{"@type":"City","name":"Kansas City, MO"},"Remote"],"founder":{"@type":"Person","name":"Zohn Wheeler","sameAs":["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"]},"makesOffer":[
+    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Landing Page Development","description":"A single, focused page built to convert — hero, value prop, and a clear call to action."}},
+    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Full Website Development","description":"Multi-page sites for a business or portfolio, mobile-first with SEO fundamentals built in."}},
+    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Custom Web Application Development","description":"Database-backed applications — dashboards, booking tools, client portals."}},
+    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Website Maintenance & Support","description":"Updates, new features, bug fixes, and hosting for an existing site."}}
+  ]}
+  </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
     {"@type":"Question","name":"How long does a project take?","acceptedAnswer":{"@type":"Answer","text":"A landing page usually runs 1-2 weeks. A full multi-page site is more like 3-6 weeks. A custom web app depends on scope, pinned down during the discovery call before anything's billed."}},
@@ -36,6 +53,11 @@
       --mono: 'JetBrains Mono', 'Fira Code', monospace;
       --radius: 14px; --radius-sm: 8px; --max: 860px;
     }
+    :root[data-theme="light"] {
+      --bg: #ffffff; --surface: #f5f5f7; --surface2: #ececef;
+      --border: #e2e2e5; --border2: #cfcfd4; --accent: #0e7490; --accent2: #6d28d9;
+      --accent3: #b45309; --text: #16181d; --muted: #5b5f68; --muted2: #8a8f99;
+    }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; }
     ::selection { background: var(--accent); color: #000; }
@@ -46,11 +68,19 @@
     .glow-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.05); top: -120px; right: -80px; }
     .glow-2 { width: 450px; height: 450px; background: rgba(124,58,237,0.06); bottom: 10%; left: -100px; }
 
-    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    :root[data-theme="light"] nav { background: rgba(255,255,255,0.85); }
     .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; }
     .nav-logo span { color: var(--muted); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
     .back-link { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); transition: color 0.2s; }
     .back-link:hover { color: var(--accent); opacity: 1; }
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle svg { width: 14px; height: 14px; }
+    .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 
     .wrap { max-width: var(--max); margin: 0 auto; padding: 4rem 2rem 6rem; }
     .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
@@ -127,13 +157,19 @@
 
   <nav>
     <a href="index.html" class="nav-logo">zohn<span>.dev</span></a>
-    <a href="index.html" class="back-link">← Back to Portfolio</a>
+    <div class="nav-right">
+      <a href="index.html" class="back-link">← Back to Portfolio</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
   </nav>
 
   <main class="wrap">
-    <div class="eyebrow">Services · Web Development</div>
+    <div class="eyebrow">Services · Web Development · Kansas City, MO — Remote-Friendly</div>
     <h1>Let's Build Your <span class="grad">Website</span></h1>
-    <p class="lede">I design and build fast, modern websites and web applications — from a single landing page to a full-stack product with real data behind it. Same standards I bring to my own products, applied to yours.</p>
+    <p class="lede">I'm a web developer based in Kansas City, MO, designing and building fast, modern websites and web applications — from a single landing page to a full-stack product with real data behind it. Same standards I bring to my own products, applied to yours.</p>
     <div class="hero-cta">
       <a href="#contact-form" class="btn btn-primary">Get a Quote</a>
       <a href="index.html#projects" class="btn btn-ghost">See My Work</a>
@@ -300,6 +336,13 @@
   </footer>
 
   <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('zw_theme', next); } catch (_) {}
+    });
+
     const form = document.getElementById('inquiry-form');
     const submitBtn = document.getElementById('f-submit');
     const status = document.getElementById('f-status');

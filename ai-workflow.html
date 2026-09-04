@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('zw_theme');
+        var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {}
+    })();
+  </script>
   <title>Case Study: The AI Persona Team — Zohn Wheeler</title>
   <meta name="description" content="How one developer ships like a team of five: the multi-agent AI workflow behind SportStrata — named personas, decision logs, and automated review gates." />
   <meta property="og:title" content="How I Ship Like a Team of Five — Zohn Wheeler" />
@@ -26,6 +35,11 @@
       --mono: 'JetBrains Mono', 'Fira Code', monospace;
       --radius: 14px; --radius-sm: 8px; --max: 860px;
     }
+    :root[data-theme="light"] {
+      --bg: #ffffff; --surface: #f5f5f7; --surface2: #ececef;
+      --border: #e2e2e5; --border2: #cfcfd4; --accent: #0e7490; --accent2: #6d28d9;
+      --accent3: #b45309; --text: #16181d; --muted: #5b5f68; --muted2: #8a8f99;
+    }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; }
     ::selection { background: var(--accent); color: #000; }
@@ -36,11 +50,19 @@
     .glow-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.05); top: -120px; right: -80px; }
     .glow-2 { width: 450px; height: 450px; background: rgba(124,58,237,0.06); bottom: 10%; left: -100px; }
 
-    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    :root[data-theme="light"] nav { background: rgba(255,255,255,0.85); }
     .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; }
     .nav-logo span { color: var(--muted); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
     .back-link { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); transition: color 0.2s; }
     .back-link:hover { color: var(--accent); opacity: 1; }
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle svg { width: 14px; height: 14px; }
+    .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 
     .wrap { max-width: var(--max); margin: 0 auto; padding: 4rem 2rem 6rem; }
     .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
@@ -92,7 +114,13 @@
 
   <nav>
     <a href="index.html" class="nav-logo">zohn<span>.dev</span></a>
-    <a href="index.html#projects" class="back-link">← Back to Portfolio</a>
+    <div class="nav-right">
+      <a href="index.html#projects" class="back-link">← Back to Portfolio</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
   </nav>
 
   <main class="wrap">
@@ -216,5 +244,14 @@
   <footer>
     Built by <a href="index.html">Zohn Wheeler</a> — with a little help from Kael, Vera, Axiom, Finn, Relay &amp; Folio
   </footer>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('zw_theme', next); } catch (_) {}
+    });
+  </script>
 </body>
 </html>

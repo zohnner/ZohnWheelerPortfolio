@@ -9,6 +9,10 @@
         var stored = localStorage.getItem('zw_theme');
         var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         document.documentElement.setAttribute('data-theme', theme);
+        document.addEventListener('DOMContentLoaded', function () {
+          var m = document.getElementById('themeColorMeta');
+          if (m) m.setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0a0a');
+        });
       } catch (_) {}
     })();
   </script>
@@ -28,6 +32,9 @@
   <meta name="twitter:description" content="IT professional and software builder based in Kansas City, MO." />
   <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" id="themeColorMeta" content="#0a0a0a" />
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Person","name":"Zohn Wheeler","url":"https://zohnwheelerportfolio.pages.dev/","sameAs":["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"],"jobTitle":"Applications Administrator","worksFor":{"@type":"Organization","name":"Federal Agency"},"alumniOf":{"@type":"CollegeOrUniversity","name":"University of Missouri"},"knowsAbout":["JavaScript","TypeScript","Python","React","Node.js","AWS","Linux"]}
   </script>
@@ -720,6 +727,8 @@
       const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       root.setAttribute('data-theme', next);
       try { localStorage.setItem('zw_theme', next); } catch (_) {}
+      const meta = document.getElementById('themeColorMeta');
+      if (meta) meta.setAttribute('content', next === 'light' ? '#ffffff' : '#0a0a0a');
     });
 
     // Active nav link via IntersectionObserver

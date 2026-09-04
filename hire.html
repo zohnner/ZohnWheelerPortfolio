@@ -9,6 +9,10 @@
         var stored = localStorage.getItem('zw_theme');
         var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         document.documentElement.setAttribute('data-theme', theme);
+        document.addEventListener('DOMContentLoaded', function () {
+          var m = document.getElementById('themeColorMeta');
+          if (m) m.setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0a0a');
+        });
       } catch (_) {}
     })();
   </script>
@@ -18,10 +22,16 @@
   <meta property="og:description" content="Landing pages, full websites, and custom web apps — built and shipped by one developer based in Kansas City, MO. Get a quote." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/hire.html" />
-  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
+  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image-hire.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Hire Zohn Wheeler — Web Development Services in Kansas City, MO" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://zohnwheelerportfolio.pages.dev/og-image-hire.png" />
   <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/hire.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" id="themeColorMeta" content="#0a0a0a" />
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"ProfessionalService","name":"Zohn Wheeler — Web Development","url":"https://zohnwheelerportfolio.pages.dev/hire.html","image":"https://zohnwheelerportfolio.pages.dev/og-image.png","priceRange":"$$","areaServed":[{"@type":"City","name":"Kansas City, MO"},"Remote"],"founder":{"@type":"Person","name":"Zohn Wheeler","sameAs":["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"]},"makesOffer":[
     {"@type":"Offer","itemOffered":{"@type":"Service","name":"Landing Page Development","description":"A single, focused page built to convert — hero, value prop, and a clear call to action."}},
@@ -341,6 +351,8 @@
       const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       root.setAttribute('data-theme', next);
       try { localStorage.setItem('zw_theme', next); } catch (_) {}
+      const meta = document.getElementById('themeColorMeta');
+      if (meta) meta.setAttribute('content', next === 'light' ? '#ffffff' : '#0a0a0a');
     });
 
     const form = document.getElementById('inquiry-form');

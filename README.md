@@ -13,7 +13,9 @@ Zero-dependency, hand-coded HTML/CSS/JS. Deployed automatically to Cloudflare Pa
 
 ## Stack
 
-No frameworks, no build step. IntersectionObserver scroll animations, a fuzzy-search command palette (Cmd+K), and security headers via Cloudflare Pages `_headers`.
+No frameworks, no build step. IntersectionObserver scroll animations, a fuzzy-search command palette (Cmd+K), a light/dark theme toggle (`zw_theme` in localStorage, defaults to system preference), and security headers via Cloudflare Pages `_headers`.
+
+`manifest.json` + `apple-touch-icon.png`/`icon-192.png`/`icon-512.png` (generated from `favicon.svg` via `sharp`) support "Add to Home Screen." `og-image-hire.png` is a dedicated share card for `hire.html` — don't let it drift back to reusing the generic `og-image.png` if hire.html's pitch changes.
 
 ## Lead capture backend
 

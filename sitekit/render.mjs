@@ -36,3 +36,21 @@ export function renderPage(opts) {
   const page = PAGES[type](ctx, opts.page);
   return page ? layout(ctx, page) : null;
 }
+
+export function listPages(content) {
+  return [
+    { page: { type: 'home' }, path: '/' },
+    ...(content.services || []).map((s) => ({ page: { type: 'service', slug: s.slug }, path: `/services/${s.slug}` })),
+    ...(content.areas || []).map((a) => ({ page: { type: 'area', slug: a.slug }, path: `/areas/${a.slug}` })),
+    { page: { type: 'contact' }, path: '/contact' },
+  ];
+}
+
+export function renderSitemap({ content, origin }) {
+  const urls = listPages(content).map((p) => `<url><loc>${esc(origin + p.path)}</loc></url>`).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>\n`;
+}
+
+export function renderRobots({ origin }) {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
+}

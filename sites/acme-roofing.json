@@ -1,0 +1,46 @@
+{
+  "business": {
+    "name": "Acme Roofing",
+    "phone": "816-555-0100",
+    "email": "office@acmeroofing.example",
+    "address": "123 SE Main St, Lee's Summit, MO 64063",
+    "city": "Lee's Summit",
+    "founded": 2004,
+    "license": "MO #12345",
+    "hours": "Mon–Fri 7am–6pm, Sat 8am–2pm",
+    "emergency": true,
+    "rating": 4.8,
+    "reviewCount": 112
+  },
+  "industry": "roofing",
+  "theme": { "preset": "storm", "accent": "#f97316", "mode": "light" },
+  "trust": ["Licensed & Insured", "Workmanship Warranty"],
+  "services": [
+    { "slug": "roof-replacement", "name": "Roof Replacement" },
+    { "slug": "storm-damage", "name": "Storm Damage" },
+    {
+      "slug": "skylights",
+      "name": "Skylights",
+      "summary": "Skylight installation and leak repair.",
+      "body": "We install **new** skylights and fix leaky ones.\n\n- Venting skylights\n- Flashing and leak repair"
+    }
+  ],
+  "areas": [
+    {
+      "slug": "lees-summit",
+      "name": "Lee's Summit",
+      "intro": "Lee's Summit is home base. From the older homes around downtown to the newer subdivisions near Lakewood and Longview Lake, we've replaced and repaired roofs across every part of town. Spring hail is the big threat here, so we keep storm-season inspections quick and document everything with photos for your insurance company."
+    },
+    {
+      "slug": "blue-springs",
+      "name": "Blue Springs",
+      "intro": "Blue Springs neighborhoods mix 1970s ranch homes with brand-new construction, and each needs a different approach. Older roofs often hide worn decking and outdated ventilation, while newer builds sometimes have builder-grade shingles that struggle after a hard winter. We inspect carefully and recommend only what your roof needs."
+    }
+  ],
+  "reviews": [
+    { "name": "Dana R.", "rating": 5, "text": "They replaced our roof in a day and you'd never know they were here. Great communication the whole way through.", "source": "Google" },
+    { "name": "Marcus T.", "rating": 5, "text": "Came out the morning after the hailstorm, documented everything, and made the insurance process painless.", "source": "Google" }
+  ],
+  "gallery": [],
+  "banner": { "enabled": true, "text": "Hail damage? Free 24/7 storm inspections." }
+}

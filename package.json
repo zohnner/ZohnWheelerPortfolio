@@ -1,0 +1,8 @@
+{
+  "name": "zohnwheelerportfolio",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "site": "node scripts/site.mjs"
+  }
+}

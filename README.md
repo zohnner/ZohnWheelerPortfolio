@@ -6,6 +6,8 @@ Zero-dependency, hand-coded HTML/CSS/JS. Deployed automatically to Cloudflare Pa
 
 ## Pages
 
+All served files live in public/ (wrangler.jsonc: pages_build_output_dir = "public"). Everything outside public/ — schemas, scripts, functions source, sitekit/ — is never served.
+
 - `index.html` — main portfolio (projects, services, experience, education, contact)
 - `resume.html` — web resume with downloadable PDF (`Zohn-Wheeler-Resume.pdf`)
 - `ai-workflow.html` — case study: the multi-agent AI persona workflow behind SportStrata
@@ -33,7 +35,7 @@ No frameworks, no build step. IntersectionObserver scroll animations, a fuzzy-se
 
 **Checking leads**: `curl -H "X-Admin-Token: <token>" https://zohnwheelerportfolio.pages.dev/api/inquiries`
 
-**Local dev**: `wrangler pages dev .` (uses local D1 simulation — run `wrangler d1 execute portfolio-leads --local --file ./schema.sql` once first).
+**Local dev**: `wrangler pages dev public` (uses local D1 simulation — run `wrangler d1 execute portfolio-leads --local --file ./schema.sql` once first).
 
 ## Client dashboard (Phase 1)
 

@@ -21,3 +21,9 @@ node_modules/
 .env
 .env.*
 scripts/.new-project.sql
+scripts/.site-push.sql
+dist/
+
+# Client/prospect content is private (public repo). D1 content_json is the backup.
+sites/*
+!sites/acme-roofing.json

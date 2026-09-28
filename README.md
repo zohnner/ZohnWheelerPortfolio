@@ -52,3 +52,49 @@ node scripts/new-project.js --client "Acme Roofing" --email "owner@acme.com" --p
 ```
 
 This prints a `wrangler d1 execute --remote --file ...` command to create the client + project (writes the SQL to `scripts/.new-project.sql`, gitignored — contains real client PII, delete it after running) and the resulting dashboard link to send the client. It also prints a template command for posting a status update later. **Always use `--file`, never a multi-statement `--command` string** — confirmed live that `wrangler d1 execute --command` silently only runs the first statement of a semicolon-separated string and drops the rest, with no error.
+
+## Sitekit (client sites)
+
+Sitekit turns one content file into a full multi-page "Call Now" site for a local-service business (roofing, HVAC, foundation repair, or any generic home-services trade): a home page, service pages, service-area pages, a contact page with a lead form, sitemap/robots, and JSON-LD structured data — all rendered server-side from `sites/<slug>.json` plus an industry preset (`sitekit/presets/`). Each site can be previewed at `/demo/<slug>?t=<token>` before it's sold, and served live on the client's own domain once they say yes.
+
+### One-time setup
+
+```bash
+npx wrangler d1 execute portfolio-leads --remote --file ./schema-sitekit.sql
+```
+
+`ADMIN_TOKEN` is already set (shared with the lead-capture and dashboard backends above). If a separate studio/agency domain is ever added in front of the portfolio host, set `PORTFOLIO_HOSTS` to include it.
+
+### Daily workflow
+
+Run these in order, from the repo root:
+
+1. `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist).
+2. Edit `sites/<slug>.json` by hand — fill in real details, and **write real, specific city intros** for each service area (generic filler reads as a doorway page and `validate` will warn about it).
+3. `node scripts/site.mjs push <slug>` — validates the content, writes it to D1, and prints a `wrangler d1 execute --remote --file ...` command.
+4. Run the printed wrangler command.
+5. `SK_MAILING_ADDRESS="123 Studio Way, City, ST 00000" node scripts/site.mjs pitch <slug>` — prints ready-to-paste outreach copy with the demo link. Paste it into Muse.
+6. `node scripts/site.mjs views` — see who's opened their demo link, and when.
+7. `node scripts/site.mjs status <slug> meeting|won|lost` — track the deal as it moves.
+8. `node scripts/site.mjs status <slug> live --domain example.com` — go live. Also add `example.com` and `www.example.com` as custom domains on the Pages project (dashboard or `wrangler pages domain add`).
+
+### Presenter mode
+
+For showing a prospect a few looks on a tablet or laptop during a sales meeting: visit `/demo/presenter?key=<ADMIN_TOKEN>` once per device to authenticate (sets a long-lived cookie), then use the on-page theme/accent/mode controls and **Save this look** to persist a choice back to D1. Run `node scripts/site.mjs pull <slug>` afterward to sync that theme choice into the local `sites/<slug>.json` file.
+
+### Handing off a finished site
+
+`node scripts/site.mjs export <slug> --origin https://example.com` renders every page to static HTML plus its images under `dist/<slug>/`, so a client (or their next developer) can take the site anywhere — no server, no D1, no Sitekit runtime required.
+
+### Privacy
+
+`sites/*.json` is gitignored — this is a public repo, and real client content (names, phone numbers, addresses, review text) shouldn't be in it. Only the fictional `sites/acme-roofing.json` sample is committed. D1's `content_json` column holds the authoritative copy as a backup; `pull`/`push` keep the local file and the database in sync.
+
+### Limits
+
+- **Custom domains**: 100 per Pages project on the Free plan, 250 on Pro. A client's apex domain and its `www` each count as one.
+- **Cache**: live pages are edge-cached for 5 minutes, so a content push can take up to 5 minutes to show up on a live custom domain. Demo links always reflect the latest push immediately.
+
+### Outreach rules
+
+Send pitches from a separate outreach mailbox/domain, not the main portfolio inbox. Keep volume modest — roughly 5–15 a day — and confirm Muse's (or whatever mailing tool's) terms of service allow this kind of commercial outreach before scaling up.

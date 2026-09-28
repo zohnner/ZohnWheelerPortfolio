@@ -41,10 +41,23 @@ export function resolveTheme(base = {}, overrides = {}) {
   return accent ? { preset, mode, accent } : { preset, mode };
 }
 
+// WCAG relative luminance — the naive 0.299/0.587/0.114 weighted average this
+// replaced misjudged saturated colors like #f97316 as "light enough" for
+// white text (2.8:1, fails AA) when black text is the correct, passing
+// choice (7.5:1). 0.1791 is the luminance where black-on-X and white-on-X
+// contrast ratios are equal; above it, black wins.
+function relLuminance(r, g, b) {
+  const lin = (c) => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+
 function contrastText(hex) {
   const n = parseInt(hex.slice(1), 16);
   const r = n >> 16, g = (n >> 8) & 255, b = n & 255;
-  return 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#111111' : '#ffffff';
+  return relLuminance(r, g, b) > 0.1791 ? '#111111' : '#ffffff';
 }
 
 export function themeVars(theme) {

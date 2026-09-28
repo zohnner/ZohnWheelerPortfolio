@@ -210,3 +210,17 @@ Operational guidance (README): send outreach from a separate mailbox/domain, not
 - `escape.test.js` — HTML escaping, markdown allow-list, `javascript:` link rejection.
 - `render.test.js` — fixture `test/fixtures/acme-roofing.json`: every page renders; contains `tel:` link; JSON-LD parses; demo ribbon and `noindex` only in demo mode; missing optional sections omitted; HTML snapshot for regressions.
 - Manual smoke: `wrangler pages dev public` with the fixture seeded locally; Playwright screenshots at 390px and 1024px; Lighthouse ≥ 95 performance/SEO/accessibility on the fixture home page.
+
+## Amendments during planning (2026-09-28)
+
+Found while writing the implementation plan (`docs/superpowers/plans/2026-09-28-sitekit-template-a.md`); the plan implements the spec as amended here.
+
+1. **`sites/*.json` is gitignored, not committed.** The GitHub repo is public, so committed content files would publish the prospect list and contact details. Only the fictional sample `sites/acme-roofing.json` is committed; D1 `content_json` is the backup. Demo tokens are cached locally in `sites/.tokens.json` (also ignored); `site.js demo-link` recovers them from D1.
+2. **CLI is `scripts/site.mjs`** (ESM). Shared modules in `sitekit/` are `.mjs`. `package.json` holds scripts only (`npm test` = `node --test`), no dependencies.
+3. **`site_leads` gains an `ip` column** (+ index) for rate limiting, mirroring `inquiries`.
+4. **Demo ribbon links to `/hire.html#contact-form`** (the actual anchor), not `#contact`.
+5. **Live caching** uses the Workers Cache API with `s-maxage=300`; there is no stale-while-revalidate fallback, so a D1 outage after the cache expires shows the styled 503.
+6. **Presets never supply facts.** Trust badges, reviews, ratings, gallery, license, and founding year come only from the content file. Presets carry `trustSuggestions` (printed hints, never rendered), and financing/banner default to disabled.
+7. **Content file additions:** `business.city`, `business.rating`, `business.reviewCount` (from Muse's Google data), optional `copy` overrides, `hero.cta`, and a non-rendered `outreach` block (`email`, `contactFormUrl`, `currentSite`).
+8. **Responsive stock images:** each stock photo ships as `<name>.jpg` + `<name>-sm.jpg` (heroes 1600/800w, others 1200/600w) via `scripts/optimize-images.mjs` (sharp installed with `--no-save`).
+9. **Routing details:** `/api/*` and `/sk/*` pass through to static/functions on every host; preview deploys (`*.zohnwheelerportfolio.pages.dev`) count as portfolio hosts; client hosts never serve portfolio pages; live canonical URLs use the apex domain.

@@ -70,6 +70,13 @@ test('image refs must resolve to existing files', () => {
   assert.ok(errors.includes('gallery[0].after: use stock:, site:, or an https:// URL'));
 });
 
+test('path traversal in an image ref is rejected even when the file "exists"', () => {
+  const c = fixture();
+  c.hero = { image: 'stock:../../secret.jpg' };
+  const { errors } = validateContent(c, { slug: 'acme-roofing', fileExists: () => true });
+  assert.ok(errors.includes('hero.image: use stock:, site:, or an https:// URL'));
+});
+
 test('thin or near-duplicate area pages produce warnings, not errors', () => {
   const c = fixture();
   c.areas[0].intro = 'Short.';

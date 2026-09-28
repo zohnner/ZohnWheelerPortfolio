@@ -214,10 +214,21 @@ const commands = {
       fs.writeFileSync(file, html);
       for (const m of html.matchAll(/\/sk\/[A-Za-z0-9_\-./]+/g)) assets.add(m[0]);
     }
+    const publicDir = path.join(ROOT, 'public');
     for (const a of assets) {
-      const src = path.join(ROOT, 'public', a);
-      if (!fs.existsSync(src)) { console.warn(`warning: missing asset ${a}`); continue; }
+      const src = path.join(publicDir, a);
       const dst = path.join(out, a);
+      // Defense in depth: resolveImage already rejects traversal refs, but an
+      // asset path pulled from rendered HTML is re-checked here too, since a
+      // path that escapes public/ or dist/<slug>/ must never be read or
+      // written even if some future ref format lets one slip through.
+      const relSrc = path.relative(publicDir, src);
+      const relDst = path.relative(out, dst);
+      if (relSrc.startsWith('..') || path.isAbsolute(relSrc) || relDst.startsWith('..') || path.isAbsolute(relDst)) {
+        console.warn(`warning: refusing to copy asset outside public//dist: ${a}`);
+        continue;
+      }
+      if (!fs.existsSync(src)) { console.warn(`warning: missing asset ${a}`); continue; }
       fs.mkdirSync(path.dirname(dst), { recursive: true });
       fs.copyFileSync(src, dst);
     }

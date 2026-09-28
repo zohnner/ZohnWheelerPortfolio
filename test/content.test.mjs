@@ -71,6 +71,12 @@ test('resolveImage maps stock, site, and https refs and rejects everything else'
   assert.equal(resolveImage(undefined, 'acme'), null);
 });
 
+test('resolveImage rejects path traversal in stock: and site: refs', () => {
+  assert.equal(resolveImage('stock:../../etc/passwd', 'acme'), null);
+  assert.equal(resolveImage('site:..\\x.jpg', 'acme'), null);
+  assert.equal(resolveImage('stock:roofing/../../x.jpg', 'acme'), null);
+});
+
 test('imgAttrs adds srcset for stock images only', () => {
   assert.equal(
     imgAttrs('stock:roofing/hero.jpg', 'acme', '100vw'),

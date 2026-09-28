@@ -29,10 +29,24 @@ export function resolveContent(content) {
   return out;
 }
 
+// Rejects traversal in the ref's remainder so a stock:/site: reference can
+// never resolve outside its own public/sk/{stock,sites} directory: no '..'
+// segment, no backslash, and it may not start with '/' (which would make the
+// join below an absolute path, ignoring the prefix entirely).
+function isSafeRemainder(rest) {
+  return !rest.split(/[\\/]/).includes('..') && !rest.includes('\\') && !rest.startsWith('/');
+}
+
 export function resolveImage(ref, slug) {
   const r = String(ref ?? '');
-  if (r.startsWith('stock:')) return `/sk/stock/${r.slice(6)}`;
-  if (r.startsWith('site:')) return `/sk/sites/${slug}/${r.slice(5)}`;
+  if (r.startsWith('stock:')) {
+    const rest = r.slice(6);
+    return isSafeRemainder(rest) ? `/sk/stock/${rest}` : null;
+  }
+  if (r.startsWith('site:')) {
+    const rest = r.slice(5);
+    return isSafeRemainder(rest) ? `/sk/sites/${slug}/${rest}` : null;
+  }
   if (r.startsWith('https://')) return r;
   return null;
 }

@@ -14,6 +14,7 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
 import { pushSql, statusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
+import { renderPage, listPages, renderSitemap, renderRobots } from '../sitekit/render.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITES_DIR = path.join(ROOT, 'sites');
@@ -195,6 +196,36 @@ const commands = {
     console.log(result.text);
     console.log('\n---------------------------');
     if (result.channel !== 'none') writeSql(statusSql({ slug, status: 'pitched', domain: null, now: new Date().toISOString() }));
+  },
+
+  'export'() {
+    const slug = flags._[0];
+    const content = readContent(slug);
+    runValidate(slug, content);
+    const origin = typeof flags.origin === 'string' ? flags.origin.replace(/\/+$/, '') : '';
+    const out = path.join(ROOT, 'dist', slug);
+    fs.rmSync(out, { recursive: true, force: true });
+    const assets = new Set();
+    const pages = listPages(content);
+    for (const { page, path: urlPath } of pages) {
+      const html = renderPage({ content, slug, page, mode: 'export', origin });
+      const file = path.join(out, urlPath, 'index.html');
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, html);
+      for (const m of html.matchAll(/\/sk\/[A-Za-z0-9_\-./]+/g)) assets.add(m[0]);
+    }
+    for (const a of assets) {
+      const src = path.join(ROOT, 'public', a);
+      if (!fs.existsSync(src)) { console.warn(`warning: missing asset ${a}`); continue; }
+      const dst = path.join(out, a);
+      fs.mkdirSync(path.dirname(dst), { recursive: true });
+      fs.copyFileSync(src, dst);
+    }
+    if (origin) {
+      fs.writeFileSync(path.join(out, 'sitemap.xml'), renderSitemap({ content, origin }));
+      fs.writeFileSync(path.join(out, 'robots.txt'), renderRobots({ origin }));
+    }
+    console.log(`Exported ${pages.length} pages and ${assets.size} asset(s) to dist/${slug}/`);
   },
 };
 

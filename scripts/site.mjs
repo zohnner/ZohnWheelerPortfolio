@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
-import { pushSql, statusSql, STATUSES } from '../sitekit/admin.mjs';
+import { pushSql, statusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITES_DIR = path.join(ROOT, 'sites');
@@ -159,6 +159,42 @@ const commands = {
     );
     if (!rows.length) console.log('No demo views yet.');
     else console.table(rows);
+  },
+
+  'import'() {
+    const file = flags._[0];
+    if (!file || !fs.existsSync(file)) fail('Usage: node scripts/site.mjs import prospects.csv');
+    fs.mkdirSync(SITES_DIR, { recursive: true });
+    let created = 0;
+    for (const row of parseCsv(fs.readFileSync(file, 'utf8'))) {
+      if (!row.name) { console.warn('skipping a row with no name'); continue; }
+      const slug = slugify(row.name);
+      const p = path.join(SITES_DIR, `${slug}.json`);
+      if (fs.existsSync(p)) { console.log(`skip ${slug} (already exists)`); continue; }
+      const stub = stubFromProspect(row);
+      fs.writeFileSync(p, JSON.stringify(stub, null, 2) + '\n');
+      created++;
+      const { errors, warnings } = validateContent(stub, { slug, fileExists });
+      console.log(`created sites/${slug}.json${errors.length ? ` — needs: ${errors.join('; ')}` : ''}${warnings.length ? ` (${warnings.length} warning(s))` : ''}`);
+    }
+    console.log(`\n${created} new site(s). Fill in the details (write each city intro!), then: node scripts/site.mjs push <slug>`);
+  },
+
+  pitch() {
+    const slug = flags._[0];
+    const content = readContent(slug);
+    const token = readTokens()[slug];
+    if (!token) fail(`No demo link for ${slug} yet — run push (or demo-link) first.`);
+    let result;
+    try {
+      result = pitchText({ content, link: demoLink(slug, token), mailingAddress: process.env.SK_MAILING_ADDRESS });
+    } catch (err) {
+      fail(err.message);
+    }
+    console.log('\n----- paste into Muse -----\n');
+    console.log(result.text);
+    console.log('\n---------------------------');
+    if (result.channel !== 'none') writeSql(statusSql({ slug, status: 'pitched', domain: null, now: new Date().toISOString() }));
   },
 };
 

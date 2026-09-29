@@ -136,3 +136,37 @@ test('fetchSite reports an unreachable homepage as blocked', async () => {
 test('fixture sanity: the js-shell page is fetchable HTML', () => {
   assert.match(readFixture('test/fixtures/scaffold/js-shell', 'index.html'), /id="root"/);
 });
+
+test('a same-host link that smuggles // cannot reach another host', async () => {
+  const html = `<html><body>
+    <a href="https://www.summitpeakroofing.example//evil.test/services">Services</a>
+    <a href="/.//evil2.test/about">About Us</a>
+    <a href="https://www.summitpeakroofing.example//contact">Contact</a>
+  </body></html>`;
+  const routes = {
+    [`${ORIGIN}/`]: html,
+    // Legitimate same-host targets the // paths collapse down to.
+    [`${ORIGIN}/evil.test/services`]: '<p>services page</p>',
+    [`${ORIGIN}/evil2.test/about`]: '<p>about page</p>',
+    [`${ORIGIN}/contact`]: '<p>contact page</p>',
+  };
+  const calls = [];
+  const r = await fetchSite(`${ORIGIN}/`, { fetch: fakeFetch(routes, calls) });
+  const hosts = calls.map((u) => new URL(u).hostname);
+  assert.ok(!hosts.includes('evil.test'), `calls should never hit evil.test: ${calls.join(', ')}`);
+  assert.ok(!hosts.includes('evil2.test'), `calls should never hit evil2.test: ${calls.join(', ')}`);
+  assert.ok(hosts.every((h) => h === new URL(ORIGIN).hostname), `every call should stay on-host: ${calls.join(', ')}`);
+  // The // paths collapse to same-host pages and are fetched and stored normally.
+  assert.ok(calls.includes(`${ORIGIN}/evil.test/services`));
+  assert.ok(calls.includes(`${ORIGIN}/evil2.test/about`));
+  assert.ok(calls.includes(`${ORIGIN}/contact`));
+});
+
+test('a legitimate double-slash link fetches the same-host single-slash page', async () => {
+  const html = `<html><body><a href="${ORIGIN}//services">Services</a></body></html>`;
+  const routes = { [`${ORIGIN}/`]: html, [`${ORIGIN}/services`]: '<p>services page</p>' };
+  const calls = [];
+  const r = await fetchSite(`${ORIGIN}/`, { fetch: fakeFetch(routes, calls) });
+  assert.ok(calls.includes(`${ORIGIN}/services`), `expected a fetch of ${ORIGIN}/services: ${calls.join(', ')}`);
+  assert.ok(r.pages.some((p) => p.path === '/services'));
+});

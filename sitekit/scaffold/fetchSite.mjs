@@ -79,7 +79,12 @@ export function linkScore({ path, text }, serviceNames = []) {
   return serviceNames.some((n) => wordsMatch(n, text)) ? 5 : 0;
 }
 
-const pathKey = (p) => p.replace(/\/+$/, '') || '/';
+// Collapses runs of slashes (e.g. the pathname "//evil.example/x" that a
+// link like "https://home-host//evil.example/x" or "/.//evil.example/x"
+// yields) down to a single leading slash. Without this, a later
+// `new URL(p, home.url)` would treat a path starting with "//" as a
+// network-path reference and re-target a different host entirely.
+const pathKey = (p) => p.replace(/\/+/g, '/').replace(/\/+$/, '') || '/';
 
 export function rankLinks(links, base, serviceNames = []) {
   const best = new Map();
@@ -101,6 +106,8 @@ export function rankLinks(links, base, serviceNames = []) {
 const init = (extra = {}) => ({ headers: { 'user-agent': USER_AGENT, accept: 'text/html' }, signal: AbortSignal.timeout(TIMEOUT_MS), ...extra });
 
 async function fetchPage(url, origin, fetchFn) {
+  // Belt and suspenders: whatever constructed `url`, never fetch off-host.
+  if (!sameHost(url, origin)) return { error: 'off-host URL' };
   let current = url;
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
     let res;
@@ -158,7 +165,11 @@ export async function fetchSite(rawUrl, { fetch: fetchFn = globalThis.fetch, ser
     if (attempts >= EXTRA_PAGES) break;
     if (seen.has(p)) continue;
     seen.add(p);
-    const u = new URL(p, home.url);
+    // Build the URL by concatenating the fixed origin with the (now
+    // single-slash) path string and reparsing, rather than resolving `p`
+    // against home.url — a leading "//" in `p` would otherwise be read as
+    // a network-path reference and silently swap in a different host.
+    const u = new URL(home.url.origin + p);
     if (!allowed(u)) { log.push(`${p}: disallowed by robots.txt`); continue; }
     attempts++;
     const r = await fetchPage(u, home.url, fetchFn);

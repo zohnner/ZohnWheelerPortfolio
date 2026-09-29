@@ -3,18 +3,18 @@ import assert from 'node:assert/strict';
 import { norm, words, wordsMatch, digits, phoneDigits, numbersIn, includesNorm, quoteAround } from '../sitekit/scaffold/match.mjs';
 
 test('norm folds case, quotes, dashes, and whitespace', () => {
-  assert.equal(norm('  Lee\u2019s  Summit \u2014 \u201cBest\u201d Roof\n'), 'lee\'s summit - "best" roof');
+  assert.equal(norm('  Lee’s  Summit — “Best” Roof\n'), 'lee\'s summit - "best" roof');
 });
 
 test('words drops apostrophes and punctuation', () => {
-  assert.deepEqual(words("Lee\u2019s Summit, MO 64063"), ['lees', 'summit', 'mo', '64063']);
+  assert.deepEqual(words("Lee’s Summit, MO 64063"), ['lees', 'summit', 'mo', '64063']);
   assert.deepEqual(words('Licensed & Insured'), ['licensed', 'insured']);
 });
 
 test('wordsMatch is plural- and case-tolerant but needs every word', () => {
   assert.equal(wordsMatch('Gutters', 'Seamless gutter installation'), true);
   assert.equal(wordsMatch('Roof Replacement', 'We handle roof replacements fast'), true);
-  assert.equal(wordsMatch("Lee\u2019s Summit", 'city=Lee\u2019s Summit'), true);
+  assert.equal(wordsMatch("Lee's Summit", 'city=Lee’s Summit'), true);
   assert.equal(wordsMatch('Roof Repair', 'Storm Damage Repair'), false);
   assert.equal(wordsMatch('', 'anything'), false);
 });
@@ -26,7 +26,7 @@ test('digit and number helpers', () => {
 });
 
 test('includesNorm compares normalized text', () => {
-  assert.equal(includesNorm('Serving  Lee\u2019s Summit since 2004.', "serving lee\u2019s summit since 2004"), true);
+  assert.equal(includesNorm('Serving  Lee’s Summit since 2004.', "serving lee's summit since 2004"), true);
   assert.equal(includesNorm('abc', ''), false);
 });
 

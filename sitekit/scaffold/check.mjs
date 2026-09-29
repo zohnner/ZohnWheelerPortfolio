@@ -3,7 +3,7 @@
 // the Muse stub, or Zohn's note) and contains the value. Unbacked facts are
 // removed; fact-like wording in copy is flagged. Pure: no file I/O.
 
-import { norm, wordsMatch, phoneDigits, numbersIn, includesNorm } from './match.mjs';
+import { norm, wordsMatch, phoneDigits, numbersIn, includesToken } from './match.mjs';
 import { museText } from './facts.mjs';
 import { validateContent } from '../validate.mjs';
 
@@ -37,7 +37,8 @@ export function sourceText(source, brief) {
   if (source === 'muse') return museText(brief.stub);
   if (source === 'note') return brief.note || '';
   if (typeof source === 'string' && source.startsWith('site:')) {
-    const page = (brief.pages || []).find((p) => `site:${p.path}` === source);
+    const pages = Array.isArray(brief.pages) ? brief.pages : [];
+    const page = pages.find((p) => p && `site:${p.path}` === source);
     return page ? `${page.title}\n${page.text}` : null;
   }
   return null;
@@ -51,10 +52,13 @@ export function valueInQuote(fact, quote) {
       return d.length === 10 && phoneDigits(quote).includes(d);
     }
     case 'number': return numbersIn(quote).includes(Number(v));
-    case 'exact': return includesNorm(quote, v);
+    case 'exact': return includesToken(quote, v);
     case 'flag': return FLAG_WORDS[fact.path]?.test(quote) ?? false;
     case 'named': return wordsMatch(v?.name, quote);
-    case 'review': return includesNorm(quote, v?.text) && wordsMatch(v?.name, quote);
+    case 'review':
+      return includesToken(quote, v?.text)
+        && wordsMatch(v?.name, quote)
+        && (v?.rating === undefined || numbersIn(quote).includes(Number(v.rating)));
     case 'gallery': return Boolean(v?.caption) && wordsMatch(v.caption, quote);
     default: return wordsMatch(v, quote);
   }
@@ -69,7 +73,7 @@ export function factProblem(fact, entry, brief) {
   }
   const text = sourceText(source, brief);
   if (text === null) return `unknown source "${source}"`;
-  if (!includesNorm(text, quote)) return `quote not found in ${source}`;
+  if (!includesToken(text, quote)) return `quote not found in ${source}`;
   if (!valueInQuote(fact, quote)) return 'value does not appear in the quote';
   return null;
 }

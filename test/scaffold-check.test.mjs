@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { factEntries, checkScaffold, copyWarnings, scaffoldStatus, runCheck } from '../sitekit/scaffold/check.mjs';
+import { factEntries, checkScaffold, copyWarnings, scaffoldStatus, runCheck, sourceText } from '../sitekit/scaffold/check.mjs';
 import { gather, noAiContent } from '../sitekit/scaffold/brief.mjs';
 import { fakeFetch, siteRoutes, ORIGIN, NORMAL_DIR } from './fixtures/scaffold/helpers.mjs';
 
@@ -94,6 +94,58 @@ test('dropped array items re-index the remaining provenance', () => {
   // Re-running on the output is stable.
   const again = checkScaffold({ content: r.content, provenance: r.provenance, brief: brief() });
   assert.deepEqual(again.dropped, []);
+});
+
+test('fragment quotes and prefix matches are rejected, not kept', () => {
+  const b = brief({ pages: [{ path: '/', title: 'Home', text: 'Reviews: 8165550142 people. License MO-12345 on file. 1234 Main St. Email info@acme.com.' }] });
+  const cases = [
+    { path: 'business.rating', content: { business: { rating: 5 } }, prov: { 'business.rating': { value: 5, source: 'site:/', quote: '5' } } },
+    { path: 'business.reviewCount', content: { business: { reviewCount: 555 } }, prov: { 'business.reviewCount': { value: 555, source: 'site:/', quote: '555' } } },
+    { path: 'business.license', content: { business: { license: 'MO-123' } }, prov: { 'business.license': { value: 'MO-123', source: 'site:/', quote: 'License MO-12345' } } },
+    { path: 'business.address', content: { business: { address: '12 Main St' } }, prov: { 'business.address': { value: '12 Main St', source: 'site:/', quote: '1234 Main St' } } },
+    { path: 'business.email', content: { business: { email: 'fo@acme.com' } }, prov: { 'business.email': { value: 'fo@acme.com', source: 'site:/', quote: 'info@acme.com' } } },
+  ];
+  for (const { path, content: c, prov } of cases) {
+    const r = checkScaffold({ content: c, provenance: prov, brief: b });
+    assert.deepEqual(r.dropped.map((d) => d.path), [path], `expected ${path} to be dropped (dropped: ${JSON.stringify(r.dropped)})`);
+  }
+});
+
+test('a review rating must be confirmed by a number in its own quote', () => {
+  const b = brief({ pages: [{ path: '/', title: 'Reviews', text: 'Great crew. - Pat K.\nFive stars overall, would recommend! 5 stars. - Sam R.' }] });
+  const noRatingProof = checkScaffold({
+    content: { reviews: [{ name: 'Pat K.', text: 'Great crew.', rating: 5 }] },
+    provenance: { 'reviews[0]': { value: 'x', source: 'site:/', quote: 'Great crew. - Pat K.' } },
+    brief: b,
+  });
+  assert.equal(noRatingProof.dropped.length, 1);
+  assert.equal(noRatingProof.dropped[0].path, 'reviews[0]');
+
+  const withRatingProof = checkScaffold({
+    content: { reviews: [{ name: 'Sam R.', text: 'Five stars overall, would recommend!', rating: 5 }] },
+    provenance: { 'reviews[0]': { value: 'x', source: 'site:/', quote: 'Five stars overall, would recommend! 5 stars. - Sam R.' } },
+    brief: b,
+  });
+  assert.deepEqual(withRatingProof.dropped, []);
+});
+
+test('sourceText tolerates a non-array or null-holding brief.pages', () => {
+  assert.equal(sourceText('site:/', { pages: [null] }), null);
+  assert.equal(sourceText('site:/', { pages: 'x' }), null);
+  assert.equal(sourceText('site:/', {}), null);
+});
+
+test('checkScaffold does not throw when brief.pages is malformed; the fact is just dropped', () => {
+  const c = { business: { phone: '816-555-0142' } };
+  const p = { 'business.phone': { value: '816-555-0142', source: 'site:/', quote: 'Call 816.555.0142 today' } };
+
+  const b1 = brief({ pages: [null] });
+  assert.doesNotThrow(() => checkScaffold({ content: c, provenance: p, brief: b1 }));
+  assert.equal(checkScaffold({ content: c, provenance: p, brief: b1 }).dropped.length, 1);
+
+  const b2 = brief({ pages: 'x' });
+  assert.doesNotThrow(() => checkScaffold({ content: c, provenance: p, brief: b2 }));
+  assert.equal(checkScaffold({ content: c, provenance: p, brief: b2 }).dropped.length, 1);
 });
 
 test('flags need a quote that says so', () => {

@@ -41,3 +41,12 @@ export function deviceFromUA(ua) {
   if (/Mobi|iPhone|Android/i.test(s)) return 'mobile';
   return 'desktop';
 }
+
+// Bots/link-scanners/previewers shouldn't count as a real demo "view" — an
+// empty User-Agent is treated as a bot too, since real browsers always send one.
+const BOT_RE = /bot|crawler|spider|preview|facebookexternalhit|slackbot|whatsapp|telegrambot|discordbot|linkedinbot|twitterbot|skypeuripreview|safe ?links|mimecast|proofpoint|barracuda|headless|curl|wget|python-requests/i;
+
+export function isBot(ua) {
+  const s = String(ua ?? '').trim();
+  return !s || BOT_RE.test(s);
+}

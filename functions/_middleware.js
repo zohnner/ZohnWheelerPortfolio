@@ -5,7 +5,7 @@
 import { routeRequest, portfolioHostList } from '../sitekit/route.mjs';
 import { renderPage, renderSitemap, renderRobots } from '../sitekit/render.mjs';
 import { renderPresenterHome, renderUnavailable } from '../sitekit/admin-pages.mjs';
-import { isPresenter, presenterCookieValue, PRESENTER_COOKIE, deviceFromUA, safeEqual } from '../sitekit/presenter.mjs';
+import { isPresenter, presenterCookieValue, PRESENTER_COOKIE, deviceFromUA, safeEqual, isBot } from '../sitekit/presenter.mjs';
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -96,8 +96,9 @@ async function demo(context, route, url) {
   if (!html) return notFound();
 
   // Presenter views are Zohn's own; logging them would fake the "they looked
-  // at it" signal.
-  if (!presenter && request.method === 'GET') {
+  // at it" signal. Bots/link-scanners/previewers get the same treatment —
+  // they aren't a prospect looking at their demo.
+  if (!presenter && !isBot(request.headers.get('user-agent')) && request.method === 'GET') {
     const now = new Date().toISOString();
     context.waitUntil(
       env.DB.batch([

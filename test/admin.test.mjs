@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sqlString, pushSql, normalizeDomain, statusSql, STATUSES } from '../sitekit/admin.mjs';
+import { sqlString, pushSql, normalizeDomain, statusSql, pitchStatusSql, STATUSES } from '../sitekit/admin.mjs';
 
 test('sqlString quotes and escapes', () => {
   assert.equal(sqlString("Lee's"), "'Lee''s'");
@@ -34,6 +34,13 @@ test('normalizeDomain strips protocol, www, and paths', () => {
   assert.equal(normalizeDomain('acme-roofing.co.uk'), 'acme-roofing.co.uk');
   assert.equal(normalizeDomain('not a domain'), null);
   assert.equal(normalizeDomain('localhost'), null);
+});
+
+test('pitchStatusSql only advances prospect/demo/pitched/viewed sites, never won/meeting/live/lost', () => {
+  const sql = pitchStatusSql({ slug: 'acme', now: 'N' });
+  assert.equal((sql.match(/;/g) || []).length, 1, 'exactly one statement');
+  assert.equal(sql, "UPDATE sites SET status = 'pitched', updated_at = 'N' WHERE slug = 'acme' AND status IN ('prospect','demo','pitched','viewed');\n");
+  assert.match(sql, /AND status IN \('prospect','demo','pitched','viewed'\)/);
 });
 
 test('statusSql updates status and optionally domain', () => {

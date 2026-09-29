@@ -13,7 +13,7 @@ import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
-import { pushSql, statusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
+import { pushSql, statusSql, pitchStatusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
 import { renderPage, listPages, renderSitemap, renderRobots } from '../sitekit/render.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -116,6 +116,7 @@ const commands = {
     saveToken(slug, token);
     writeSql(pushSql({ id: crypto.randomUUID(), slug, token, content, now: new Date().toISOString() }));
     console.log(`Demo link (works once the SQL has run):\n\n  ${demoLink(slug, token)}\n`);
+    console.log(`Token saved to sites/.tokens.json (gitignored, local-only). If that file is lost, recover it with: node scripts/site.mjs demo-link ${slug}`);
     console.log(`If ${slug} was first pushed from another machine, run: node scripts/site.mjs demo-link ${slug}`);
   },
 
@@ -172,6 +173,7 @@ const commands = {
     for (const row of parseCsv(fs.readFileSync(file, 'utf8'))) {
       if (!row.name) { console.warn('skipping a row with no name'); continue; }
       const slug = slugify(row.name);
+      if (!slug) { console.warn(`skipping "${row.name}" — slugifies to an empty string`); continue; }
       const p = path.join(SITES_DIR, `${slug}.json`);
       if (fs.existsSync(p)) { console.log(`skip ${slug} (already exists)`); continue; }
       const stub = stubFromProspect(row);
@@ -186,7 +188,15 @@ const commands = {
   pitch() {
     const slug = flags._[0];
     const content = readContent(slug);
-    const token = readTokens()[slug];
+    let token = readTokens()[slug];
+    if (!flags['no-refresh']) {
+      // The local cache (sites/.tokens.json) can be stale or lost; D1 is the
+      // authoritative source for the token actually live behind the demo link.
+      const rows = d1Query(`SELECT demo_token FROM sites WHERE slug = '${slug}'`);
+      if (!rows.length) fail(`${slug} is not in the database yet — run push first.`);
+      token = rows[0].demo_token;
+      saveToken(slug, token);
+    }
     if (!token) fail(`No demo link for ${slug} yet — run push (or demo-link) first.`);
     let result;
     try {
@@ -197,7 +207,7 @@ const commands = {
     console.log('\n----- paste into Muse -----\n');
     console.log(result.text);
     console.log('\n---------------------------');
-    if (result.channel !== 'none') writeSql(statusSql({ slug, status: 'pitched', domain: null, now: new Date().toISOString() }));
+    if (result.channel !== 'none') writeSql(pitchStatusSql({ slug, now: new Date().toISOString() }));
   },
 
   'export'() {

@@ -80,6 +80,8 @@ test('pitchText falls back to the contact form, then to no-send', () => {
   assert.match(none.text, /don’t send anything through Muse/);
 });
 
-test('pitchText refuses without a mailing address', () => {
+test('pitchText refuses without a mailing address, including whitespace-only', () => {
   assert.throws(() => pitchText({ content: { business: {} }, link: 'L', mailingAddress: '' }), /SK_MAILING_ADDRESS/);
+  assert.throws(() => pitchText({ content: { business: {} }, link: 'L', mailingAddress: '   \n\t  ' }), /SK_MAILING_ADDRESS/);
+  assert.throws(() => pitchText({ content: { business: {} }, link: 'L', mailingAddress: undefined }), /SK_MAILING_ADDRESS/);
 });

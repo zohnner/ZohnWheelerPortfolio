@@ -136,6 +136,8 @@ async function live(context, route) {
     if (!html) return notFound();
     res = respond(html, { cache: LIVE_CACHE });
   }
-  if (request.method === 'GET') context.waitUntil(cache.put(request, res.clone()));
+  if (request.method === 'GET') {
+    context.waitUntil(cache.put(request, res.clone()).catch((err) => console.error('cache put failed', err)));
+  }
   return res;
 }

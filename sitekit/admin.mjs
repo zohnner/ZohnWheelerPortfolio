@@ -37,6 +37,13 @@ export function statusSql({ slug, status, domain, now }) {
   return `UPDATE sites SET status = ${sqlString(status)}${domainSet}, updated_at = ${sqlString(now)} WHERE slug = ${sqlString(slug)};\n`;
 }
 
+// Only advances a site into 'pitched' — never knocks a site that's already
+// past that stage (meeting/won/live) back down just because it was pitched
+// again, and never revives a 'lost' site this way either.
+export function pitchStatusSql({ slug, now }) {
+  return `UPDATE sites SET status = 'pitched', updated_at = ${sqlString(now)} WHERE slug = ${sqlString(slug)} AND status IN ('prospect','demo','pitched','viewed');\n`;
+}
+
 export function parseCsv(text) {
   const rows = [];
   let row = [];
@@ -114,7 +121,7 @@ export function stubFromProspect(row) {
 }
 
 export function pitchText({ content, link, mailingAddress, senderName = 'Zohn Wheeler', senderUrl = 'https://zohnwheelerportfolio.pages.dev/hire.html' }) {
-  if (!mailingAddress) {
+  if (!String(mailingAddress ?? '').trim()) {
     throw new Error('A physical mailing address is required for commercial email (CAN-SPAM). Set SK_MAILING_ADDRESS.');
   }
   const b = content.business || {};

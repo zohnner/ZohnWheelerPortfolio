@@ -20,6 +20,10 @@ No frameworks, no build step. IntersectionObserver scroll animations, a fuzzy-se
 
 `manifest.json` + `apple-touch-icon.png`/`icon-192.png`/`icon-512.png` (generated from `favicon.svg` via `sharp`) support "Add to Home Screen." `og-image-hire.png` is a dedicated share card for `hire.html` — don't let it drift back to reusing the generic `og-image.png` if hire.html's pitch changes.
 
+## Testing
+
+`npm test` (= `node --test`) runs the whole suite — routing, validation, rendering, the CLI helpers, and the Pages Functions (middleware, lead capture, demo-theme). Run it before pushing changes.
+
 ## Lead capture backend
 
 `hire.html`'s inquiry form posts to a Cloudflare Pages Function backed by D1 — not mailto, so submissions are durable even if the visitor has no mail client configured.
@@ -32,6 +36,7 @@ No frameworks, no build step. IntersectionObserver scroll animations, a fuzzy-se
 **Required Pages secrets** (`wrangler pages secret put <NAME> --project-name zohnwheelerportfolio`):
 - `ADMIN_TOKEN` — required for `/api/inquiries` to work. Already set.
 - `RESEND_API_KEY` — optional. Without it, leads still land in D1, just without an email ping. Reuse the same key already configured for BotChase.
+- `RESEND_FROM` — optional "from" address for the Resend email (defaults to `onboarding@resend.dev`). Shared by this backend and Sitekit's lead notifications below.
 
 **Checking leads**: `curl -H "X-Admin-Token: <token>" https://zohnwheelerportfolio.pages.dev/api/inquiries`
 
@@ -63,7 +68,7 @@ Sitekit turns one content file into a full multi-page "Call Now" site for a loca
 npx wrangler d1 execute portfolio-leads --remote --file ./schema-sitekit.sql
 ```
 
-`ADMIN_TOKEN` is already set (shared with the lead-capture and dashboard backends above). If a separate studio/agency domain is ever added in front of the portfolio host, set `PORTFOLIO_HOSTS` to include it.
+`ADMIN_TOKEN` is already set (shared with the lead-capture and dashboard backends above). If a separate studio/agency domain is ever added in front of the portfolio host, set `PORTFOLIO_HOSTS` to include it. `SK_BASE_URL` overrides the default `https://zohnwheelerportfolio.pages.dev` that demo links are built against (useful for local dev, e.g. `SK_BASE_URL=http://localhost:8788`).
 
 ### Daily workflow
 
@@ -71,7 +76,7 @@ Run these in order, from the repo root:
 
 1. `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist).
 2. Edit `sites/<slug>.json` by hand — fill in real details, and **write real, specific city intros** for each service area (generic filler reads as a doorway page and `validate` will warn about it).
-3. `node scripts/site.mjs push <slug>` — validates the content, writes it to D1, and prints a `wrangler d1 execute --remote --file ...` command.
+3. `node scripts/site.mjs push <slug>` — validates the content and writes a SQL file (`scripts/.site-push.sql`); it does **not** write to D1 itself. It prints the `wrangler d1 execute --remote --file ...` command that does.
 4. Run the printed wrangler command.
 5. `SK_MAILING_ADDRESS="123 Studio Way, City, ST 00000" node scripts/site.mjs pitch <slug>` — prints ready-to-paste outreach copy with the demo link. Paste it into Muse.
 6. `node scripts/site.mjs views` — see who's opened their demo link, and when.
@@ -85,6 +90,10 @@ For showing a prospect a few looks on a tablet or laptop during a sales meeting:
 ### Handing off a finished site
 
 `node scripts/site.mjs export <slug> --origin https://example.com` renders every page to static HTML plus its images under `dist/<slug>/`, so a client (or their next developer) can take the site anywhere — no server, no D1, no Sitekit runtime required.
+
+### Photos
+
+Content files reference images with one of three ref types: `stock:<path>` (the bundled stock library, `public/sk/stock/`), `site:<path>` (a client's own photos, `public/sk/sites/<slug>/`), or a full `https://` URL. **Prospects and demos must stay on `stock:` or `https://` refs** — `public/sk/sites/` is committed and deployed alongside the rest of this public repo, so a `site:` photo is public the moment it's pushed. Only add `site:` photos once a prospect has signed (status `won` or later). `validate` warns (not an error) on any `site:` ref as a reminder. Stock and client `.jpg` files are cached for a year (`public/_headers`), so to replace a photo, give it a new filename rather than overwriting the old one.
 
 ### Privacy
 

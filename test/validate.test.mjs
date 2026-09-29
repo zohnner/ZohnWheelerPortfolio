@@ -70,6 +70,17 @@ test('image refs must resolve to existing files', () => {
   assert.ok(errors.includes('gallery[0].after: use stock:, site:, or an https:// URL'));
 });
 
+test('site: image refs are committed to the public repo, so they only warn — never error', () => {
+  const c = fixture();
+  c.hero = { image: 'site:hero.jpg' };
+  c.gallery = [{ before: 'site:before.jpg', after: 'stock:roofing/after.jpg' }];
+  const { errors, warnings } = validateContent(c, { slug: 'acme-roofing', fileExists: () => true });
+  assert.deepEqual(errors, []);
+  assert.ok(warnings.includes('hero.image: site: images are committed to the public repo — only use them for signed clients'));
+  assert.ok(warnings.includes('gallery[0].before: site: images are committed to the public repo — only use them for signed clients'));
+  assert.ok(!warnings.some((w) => w.startsWith('gallery[0].after:')));
+});
+
 test('path traversal in an image ref is rejected even when the file "exists"', () => {
   const c = fixture();
   c.hero = { image: 'stock:../../secret.jpg' };

@@ -17,11 +17,14 @@ export function similarity(a, b) {
   return shared / (A.size + B.size - shared);
 }
 
-function checkImage(ref, label, { slug, fileExists }, errors) {
+function checkImage(ref, label, { slug, fileExists }, errors, warnings) {
   if (!ref) return;
   const src = resolveImage(ref, slug);
   if (!src) return errors.push(`${label}: use stock:, site:, or an https:// URL`);
   if (src.startsWith('/') && !fileExists(`public${src}`)) errors.push(`${label}: file not found (public${src})`);
+  if (String(ref).startsWith('site:')) {
+    warnings.push(`${label}: site: images are committed to the public repo — only use them for signed clients`);
+  }
 }
 
 function checkSlugs(list, name, errors) {
@@ -84,11 +87,11 @@ export function validateContent(c, opts) {
     }
   });
 
-  checkImage(c.hero?.image, 'hero.image', opts, errors);
-  services.forEach((s, i) => checkImage(s?.image, `services[${i}].image`, opts, errors));
+  checkImage(c.hero?.image, 'hero.image', opts, errors, warnings);
+  services.forEach((s, i) => checkImage(s?.image, `services[${i}].image`, opts, errors, warnings));
   (Array.isArray(c.gallery) ? c.gallery : []).forEach((g, i) => {
-    checkImage(g?.before, `gallery[${i}].before`, opts, errors);
-    checkImage(g?.after, `gallery[${i}].after`, opts, errors);
+    checkImage(g?.before, `gallery[${i}].before`, opts, errors, warnings);
+    checkImage(g?.after, `gallery[${i}].after`, opts, errors, warnings);
   });
 
   return { errors, warnings };

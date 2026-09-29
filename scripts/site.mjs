@@ -5,7 +5,7 @@
 // silently drops every statement after the first. Reads (demo-link/pull/views)
 // run a single SELECT through wrangler directly since they change nothing.
 //
-// Usage: node scripts/site.mjs <command> [args] [--local]
+// Usage: node scripts/site.mjs <command> [args] [--local]  (scaffold/scaffold-check: see README "Scaffolding")
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,23 +15,34 @@ import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
 import { pushSql, statusSql, pitchStatusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
 import { renderPage, listPages, renderSitemap, renderRobots } from '../sitekit/render.mjs';
+import { gather, renderBriefMd, noAiContent } from '../sitekit/scaffold/brief.mjs';
+import { runCheck } from '../sitekit/scaffold/check.mjs';
+import { renderReview, summaryLine } from '../sitekit/scaffold/review.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SITES_DIR = path.join(ROOT, 'sites');
+// SK_SITES_DIR lets tests run against a throwaway directory.
+const SITES_DIR = process.env.SK_SITES_DIR ? path.resolve(process.env.SK_SITES_DIR) : path.join(ROOT, 'sites');
+const BRIEFS_DIR = path.join(SITES_DIR, '.briefs');
+const REVIEW_DIR = path.join(SITES_DIR, '.review');
+const BAK_DIR = path.join(SITES_DIR, '.bak');
 const TOKENS_FILE = path.join(SITES_DIR, '.tokens.json');
 const SQL_FILE = path.join(ROOT, 'scripts', '.site-push.sql');
 const BASE_URL = process.env.SK_BASE_URL || 'https://zohnwheelerportfolio.pages.dev';
 const DB = 'portfolio-leads';
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+// These never take a value, so `scaffold --force acme` keeps "acme" as a slug.
+const BOOLEAN_FLAGS = new Set(['local', 'force', 'no-ai', 'no-refresh']);
+
 function parseFlags(args) {
   const out = { _: [] };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a.startsWith('--')) {
+      const name = a.slice(2);
       const next = args[i + 1];
-      if (next === undefined || next.startsWith('--')) out[a.slice(2)] = true;
-      else { out[a.slice(2)] = next; i++; }
+      if (BOOLEAN_FLAGS.has(name) || next === undefined || next.startsWith('--')) out[name] = true;
+      else { out[name] = next; i++; }
     } else out._.push(a);
   }
   return out;
@@ -59,6 +70,55 @@ function readContent(slug) {
 
 function writeContent(slug, content) {
   fs.writeFileSync(sitePath(slug), JSON.stringify(content, null, 2) + '\n');
+}
+
+function backupContent(slug) {
+  const p = sitePath(slug);
+  if (!fs.existsSync(p)) return;
+  fs.mkdirSync(BAK_DIR, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  fs.copyFileSync(p, path.join(BAK_DIR, `${slug}.${stamp}.json`));
+}
+
+// Content files are always backed up before a scaffold command overwrites them.
+function writeContentBackedUp(slug, content) {
+  backupContent(slug);
+  writeContent(slug, content);
+}
+
+const briefFile = (slug, ext) => path.join(BRIEFS_DIR, `${slug}${ext}`);
+const readIfExists = (p) => (fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null);
+const rel = (p) => path.relative(ROOT, p).replace(/\\/g, '/');
+
+function siteSlugs() {
+  if (!fs.existsSync(SITES_DIR)) return [];
+  return fs.readdirSync(SITES_DIR)
+    .filter((f) => f.endsWith('.json') && !f.startsWith('.'))
+    .map((f) => f.slice(0, -5))
+    .filter((s) => SLUG.test(s));
+}
+
+function checkSlugs(slugs) {
+  const results = slugs.map((slug) => {
+    const r = runCheck({
+      slug,
+      contentText: readIfExists(sitePath(slug)),
+      provenanceText: readIfExists(briefFile(slug, '.provenance.json')),
+      briefText: readIfExists(briefFile(slug, '.json')),
+      fileExists,
+    });
+    if (r.changed) {
+      writeContentBackedUp(slug, r.content);
+      fs.writeFileSync(briefFile(slug, '.provenance.json'), JSON.stringify(r.provenance, null, 2) + '\n');
+    }
+    console.log(summaryLine(r));
+    return r;
+  });
+  const date = new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD
+  fs.mkdirSync(REVIEW_DIR, { recursive: true });
+  const out = path.join(REVIEW_DIR, `${date}.html`);
+  fs.writeFileSync(out, renderReview({ date, results }));
+  console.log(`\nReview page: ${rel(out)}`);
 }
 
 function readTokens() {
@@ -250,9 +310,71 @@ const commands = {
     }
     console.log(`Exported ${pages.length} pages and ${assets.size} asset(s) to dist/${slug}/`);
   },
+
+  async scaffold() {
+    const explicit = flags._;
+    const url = flags.url;
+    const note = flags.note;
+    if ((url !== undefined || note !== undefined) && explicit.length !== 1) fail('--url and --note need exactly one slug');
+    if (url === true || note === true) fail('--url and --note need a value');
+    const slugs = explicit.length ? explicit : siteSlugs().filter((s) => flags.force || !fs.existsSync(briefFile(s, '.md')));
+    if (!slugs.length) {
+      console.log('Nothing to scaffold — every site already has a brief (use --force to re-gather).');
+      return;
+    }
+    fs.mkdirSync(BRIEFS_DIR, { recursive: true });
+    const toCheck = [];
+    for (const slug of slugs) {
+      let stub;
+      try {
+        stub = JSON.parse(fs.readFileSync(sitePath(slug), 'utf8'));
+      } catch (err) {
+        console.error(`${slug}: can't read sites/${slug}.json — ${err.message}`);
+        continue;
+      }
+      if (typeof url === 'string' || typeof note === 'string') {
+        stub.outreach = { ...(stub.outreach || {}) };
+        if (typeof url === 'string') stub.outreach.currentSite = url;
+        if (typeof note === 'string') stub.outreach.note = note;
+        writeContentBackedUp(slug, stub);
+      }
+      let brief;
+      try {
+        brief = await gather({ slug, stub, fetch: globalThis.fetch });
+      } catch (err) {
+        console.error(`${slug}: gather failed — ${err.message}`);
+        continue;
+      }
+      fs.writeFileSync(briefFile(slug, '.json'), JSON.stringify(brief, null, 2) + '\n');
+      fs.writeFileSync(briefFile(slug, '.md'), renderBriefMd(brief));
+      console.log(`${slug}: brief ${brief.status} (${brief.pages.length} page(s)) → ${rel(briefFile(slug, '.md'))}`);
+      if (flags['no-ai']) {
+        const { content, provenance } = noAiContent(brief);
+        writeContentBackedUp(slug, content);
+        fs.writeFileSync(briefFile(slug, '.provenance.json'), JSON.stringify(provenance, null, 2) + '\n');
+        toCheck.push(slug);
+      }
+    }
+    if (toCheck.length) {
+      console.log('');
+      checkSlugs(toCheck);
+    } else {
+      console.log('\nNext: run /scaffold-sites in Claude Code (or re-run with --no-ai for a facts-only draft).');
+    }
+  },
+
+  'scaffold-check'() {
+    const slugs = flags._.length
+      ? flags._
+      : fs.existsSync(BRIEFS_DIR)
+        ? fs.readdirSync(BRIEFS_DIR).filter((f) => /^[a-z0-9-]+\.json$/.test(f)).map((f) => f.slice(0, -5))
+        : [];
+    if (!slugs.length) fail('No briefs yet — run: node scripts/site.mjs scaffold');
+    checkSlugs(slugs);
+  },
 };
 
 if (!Object.hasOwn(commands, cmd ?? '')) {
   fail(`Usage: node scripts/site.mjs <${Object.keys(commands).join('|')}> [slug] [--local]`);
 }
-commands[cmd]();
+await commands[cmd]();

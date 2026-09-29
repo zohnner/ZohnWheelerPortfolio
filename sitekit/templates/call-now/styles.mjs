@@ -77,6 +77,7 @@ a.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.14)}
 .ba figcaption{position:absolute;left:.6rem;top:.6rem;background:rgba(0,0,0,.72);color:#fff;font-size:.75rem;font-weight:800;text-transform:uppercase;padding:.2em .6em;border-radius:6px}
 .gallery-item p{margin:.6rem 0 0;color:var(--muted);font-size:.95rem}
 .reviews{columns:3 280px;column-gap:1.25rem}
+.reviews-more{margin-top:1.5rem;text-align:center}
 .review{break-inside:avoid;margin:0 0 1.25rem;background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:1.4rem}
 .section:not(.alt) .review{background:var(--surface)}
 .stars{color:#f5a623;display:flex;gap:2px}

@@ -20,7 +20,9 @@ test('home renders the core conversion elements', () => {
   assert.match(html, /id="areas"/);
   assert.match(html, /id="faq"/);
   assert.match(html, /22\+ years in business/);
-  assert.match(html, /4\.8 stars on Google \(112 reviews\)/);
+  assert.match(html, /Rated 4\.8 on Google Maps \(112 reviews\)/);
+  assert.match(html, /Rated 4\.8 out of 5 on Google Maps \(112 reviews\)\./);
+  assert.doesNotMatch(html, /See our reviews on Google Maps/);
   assert.match(html, /Hail damage\? Free 24\/7 storm inspections\./);
   assert.match(html, /class="callbar"/);
 });
@@ -105,4 +107,38 @@ test('makeCtx.href builds demo and live URLs', () => {
   assert.equal(live.href('/contact'), '/contact');
   const presenterNoToken = makeCtx({ content: fixture(), slug: 'acme-roofing', mode: 'demo' });
   assert.equal(presenterNoToken.href('/contact'), '/demo/acme-roofing/contact');
+});
+
+test('googleMapsUrl links the rating line and adds a reviews button', () => {
+  const c = fixture();
+  c.business.googleMapsUrl = 'https://maps.app.goo.gl/abc123';
+  const html = renderPage({ content: c, slug: 'acme-roofing', page: { type: 'home' }, mode: 'live', year: 2026 });
+  assert.match(html, /<a href="https:\/\/maps\.app\.goo\.gl\/abc123" rel="noopener">Rated 4\.8 on Google Maps \(112 reviews\)<\/a>/);
+  assert.match(html, /<a class="btn btn-ghost" href="https:\/\/maps\.app\.goo\.gl\/abc123" rel="noopener">See our reviews on Google Maps<\/a>/);
+});
+
+test('with no site reviews, googleMapsUrl still gets a small reviews band', () => {
+  const c = fixture();
+  c.reviews = [];
+  c.business.googleMapsUrl = 'https://maps.app.goo.gl/abc123';
+  const html = renderPage({ content: c, slug: 'acme-roofing', page: { type: 'home' }, mode: 'live', year: 2026 });
+  assert.match(html, /id="reviews"/);
+  assert.match(html, /See our reviews on Google Maps/);
+  assert.doesNotMatch(html, /class="reviews"/);
+});
+
+test('non-https googleMapsUrl never becomes a link', () => {
+  const c = fixture();
+  c.business.googleMapsUrl = 'javascript:alert(1)';
+  const html = renderPage({ content: c, slug: 'acme-roofing', page: { type: 'home' }, mode: 'live', year: 2026 });
+  assert.doesNotMatch(html, /javascript:alert/);
+  assert.match(html, /href="#" rel="noopener">See our reviews on Google Maps/);
+});
+
+test('a review without a rating renders without stars', () => {
+  const c = fixture();
+  c.reviews = [{ name: 'Pat', text: 'Great work on our roof, would hire again.' }];
+  const html = renderPage({ content: c, slug: 'acme-roofing', page: { type: 'home' }, mode: 'live', year: 2026 });
+  assert.match(html, /Great work on our roof/);
+  assert.doesNotMatch(html, /class="stars"/);
 });

@@ -1,4 +1,4 @@
-import { esc, md } from '../../escape.mjs';
+import { esc, md, safeUrl } from '../../escape.mjs';
 import { icon } from '../../icons.mjs';
 import { imgAttrs } from '../../content.mjs';
 
@@ -32,12 +32,16 @@ export function trust(ctx) {
   const { business: b, trust: badges } = ctx.c;
   const items = [];
   const years = ctx.year - Number(b.founded);
-  if (b.founded && years >= 2) items.push(['clock', `${years}+ years in business`]);
-  if (b.rating && b.reviewCount) items.push(['star', `${Number(b.rating).toFixed(1)} stars on Google (${b.reviewCount} reviews)`]);
-  if (b.license) items.push(['shield', `Licensed · ${b.license}`]);
-  for (const t of badges) items.push(['check', t]);
+  if (b.founded && years >= 2) items.push(['clock', esc(`${years}+ years in business`)]);
+  if (b.rating && b.reviewCount) {
+    const text = esc(`Rated ${Number(b.rating).toFixed(1)} on Google Maps (${b.reviewCount} reviews)`);
+    items.push(['star', b.googleMapsUrl ? `<a href="${esc(safeUrl(b.googleMapsUrl))}" rel="noopener">${text}</a>` : text]);
+  }
+  if (b.license) items.push(['shield', esc(`Licensed · ${b.license}`)]);
+  for (const t of badges) items.push(['check', esc(t)]);
   if (!items.length) return '';
-  return `<section class="trust" aria-label="Credentials"><div class="wrap"><ul>${items.map(([i, t]) => `<li>${icon(i)}${esc(t)}</li>`).join('')}</ul></div></section>`;
+  // Every item is already escaped HTML (the rating may be a link).
+  return `<section class="trust" aria-label="Credentials"><div class="wrap"><ul>${items.map(([i, html]) => `<li>${icon(i)}${html}</li>`).join('')}</ul></div></section>`;
 }
 
 export function serviceCard(ctx, s) {
@@ -77,15 +81,22 @@ function stars(n) {
   return `<div class="stars" role="img" aria-label="${count} out of 5 stars">${icon('star').repeat(count)}</div>`;
 }
 
+function mapsButton(b) {
+  if (!b.googleMapsUrl) return '';
+  return `<p class="reviews-more"><a class="btn btn-ghost" href="${esc(safeUrl(b.googleMapsUrl))}" rel="noopener">See our reviews on Google Maps</a></p>`;
+}
+
 export function reviews(ctx, alt) {
   const { c } = ctx;
-  if (!c.reviews.length) return '';
   const b = c.business;
-  const intro = b.rating && b.reviewCount ? `Rated ${Number(b.rating).toFixed(1)} out of 5 across ${b.reviewCount} Google reviews.` : '';
+  const button = mapsButton(b);
+  if (!c.reviews.length && !button) return '';
+  const intro = b.rating && b.reviewCount ? `Rated ${Number(b.rating).toFixed(1)} out of 5 on Google Maps (${b.reviewCount} reviews).` : '';
   const items = c.reviews
-    .map((r) => `<figure class="review">${stars(r.rating)}<blockquote>${esc(r.text)}</blockquote><figcaption>${esc(r.name)}${r.source ? ` <span>· ${esc(r.source)}</span>` : ''}</figcaption></figure>`)
+    .map((r) => `<figure class="review">${r.rating ? stars(r.rating) : ''}<blockquote>${esc(r.text)}</blockquote><figcaption>${esc(r.name)}${r.source ? ` <span>· ${esc(r.source)}</span>` : ''}</figcaption></figure>`)
     .join('');
-  return band('reviews', alt, `${head('Reviews', 'What customers say', intro)}<div class="reviews">${items}</div>`);
+  const title = c.reviews.length ? 'What customers say' : 'Find us on Google Maps';
+  return band('reviews', alt, `${head('Reviews', title, intro)}${items ? `<div class="reviews">${items}</div>` : ''}${button}`);
 }
 
 export function areaChips(ctx) {

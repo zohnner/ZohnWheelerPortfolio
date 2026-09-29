@@ -106,10 +106,12 @@ export function stubFromProspect(row) {
     business.rating = rating;
     business.reviewCount = count;
   }
+  if (row.google_maps_url) business.googleMapsUrl = row.google_maps_url;
   const outreach = {};
   if (row.email) outreach.email = row.email;
   if (row.contact_form_url) outreach.contactFormUrl = row.contact_form_url;
   if (row.current_site) outreach.currentSite = row.current_site;
+  if (row.notes) outreach.note = row.notes;
   return {
     business,
     industry,

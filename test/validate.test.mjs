@@ -51,11 +51,27 @@ test('service and area slugs must be valid and unique', () => {
   assert.ok(errors.includes('duplicate areas slug "lees-summit"'));
 });
 
-test('reviews need a name, text, and 1-5 rating', () => {
+test('reviews need a name and text; rating is optional but must be 1-5', () => {
   const c = fixture();
   c.reviews.push({ name: '', rating: 7, text: '' });
+  c.reviews.push({ name: 'Pat', text: 'Great work on our roof, would hire again.' });
   const { errors } = validateContent(c, opts);
-  assert.ok(errors.includes('reviews[2] needs name, text, and a rating from 1 to 5'));
+  assert.ok(errors.includes('reviews[2] needs a name and text'));
+  assert.ok(errors.includes('reviews[2].rating must be a whole number from 1 to 5'));
+  assert.ok(!errors.some((e) => e.startsWith('reviews[3]')));
+});
+
+test('googleMapsUrl must be an https Google Maps link', () => {
+  for (const ok of ['https://maps.app.goo.gl/abc123', 'https://www.google.com/maps/place/Acme', 'https://google.com/maps?cid=1', 'https://maps.google.com/?cid=1', 'https://g.page/acme']) {
+    const c = fixture();
+    c.business.googleMapsUrl = ok;
+    assert.deepEqual(validateContent(c, opts).errors, [], ok);
+  }
+  for (const bad of ['http://maps.app.goo.gl/abc', 'https://evil.example/maps', 'https://www.google.com/search?q=acme', 'javascript:alert(1)', 'not a url']) {
+    const c = fixture();
+    c.business.googleMapsUrl = bad;
+    assert.ok(validateContent(c, opts).errors.some((e) => e.startsWith('business.googleMapsUrl')), bad);
+  }
 });
 
 test('image refs must resolve to existing files', () => {

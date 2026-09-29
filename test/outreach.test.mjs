@@ -80,6 +80,15 @@ test('pitchText falls back to the contact form, then to no-send', () => {
   assert.match(none.text, /don’t send anything through Muse/);
 });
 
+test('stubFromProspect maps google_maps_url and notes', () => {
+  const stub = stubFromProspect({ name: 'Acme', industry: 'roofing', google_maps_url: 'https://maps.app.goo.gl/abc123', notes: 'Owner is Dana; does gutters too' });
+  assert.equal(stub.business.googleMapsUrl, 'https://maps.app.goo.gl/abc123');
+  assert.equal(stub.outreach.note, 'Owner is Dana; does gutters too');
+  const bare = stubFromProspect({ name: 'Acme', industry: 'roofing' });
+  assert.equal(bare.business.googleMapsUrl, undefined);
+  assert.equal(bare.outreach.note, undefined);
+});
+
 test('pitchText refuses without a mailing address, including whitespace-only', () => {
   assert.throws(() => pitchText({ content: { business: {} }, link: 'L', mailingAddress: '' }), /SK_MAILING_ADDRESS/);
   assert.throws(() => pitchText({ content: { business: {} }, link: 'L', mailingAddress: '   \n\t  ' }), /SK_MAILING_ADDRESS/);

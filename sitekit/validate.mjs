@@ -37,6 +37,17 @@ function checkSlugs(list, name, errors) {
   });
 }
 
+const MAPS_HOSTS = ['maps.google.com', 'maps.app.goo.gl', 'g.page'];
+
+export function isGoogleMapsUrl(url) {
+  let u;
+  try { u = new URL(String(url)); } catch { return false; }
+  if (u.protocol !== 'https:') return false;
+  const host = u.hostname.toLowerCase();
+  if (MAPS_HOSTS.includes(host)) return true;
+  return (host === 'google.com' || host === 'www.google.com') && u.pathname.startsWith('/maps');
+}
+
 export function validateContent(c, opts) {
   const errors = [];
   const warnings = [];
@@ -47,6 +58,10 @@ export function validateContent(c, opts) {
   if (!b.phone) errors.push('business.phone is required');
   else if (String(b.phone).replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '').length !== 10) {
     errors.push('business.phone must have 10 digits');
+  }
+
+  if (b.googleMapsUrl !== undefined && !isGoogleMapsUrl(b.googleMapsUrl)) {
+    errors.push('business.googleMapsUrl must be an https Google Maps link (google.com/maps, maps.google.com, maps.app.goo.gl, or g.page)');
   }
 
   if (!c.industry) errors.push('industry is required');
@@ -82,8 +97,9 @@ export function validateContent(c, opts) {
   }
 
   (Array.isArray(c.reviews) ? c.reviews : []).forEach((r, i) => {
-    if (!r?.name || !r?.text || !Number.isInteger(r?.rating) || r.rating < 1 || r.rating > 5) {
-      errors.push(`reviews[${i}] needs name, text, and a rating from 1 to 5`);
+    if (!r?.name || !r?.text) errors.push(`reviews[${i}] needs a name and text`);
+    if (r?.rating !== undefined && (!Number.isInteger(r.rating) || r.rating < 1 || r.rating > 5)) {
+      errors.push(`reviews[${i}].rating must be a whole number from 1 to 5`);
     }
   });
 

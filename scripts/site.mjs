@@ -62,6 +62,15 @@ function sitePath(slug) {
   return path.join(SITES_DIR, `${slug}.json`);
 }
 
+// Explicit slugs (as opposed to slugs discovered from sites/*.json, which are
+// already filtered against SLUG) are user input and may include a typo. All
+// of them are validated up front so a bad slug partway through a batch never
+// lets earlier slugs get processed before the command dies.
+function failOnInvalidSlugs(slugs) {
+  const bad = slugs.filter((s) => !SLUG.test(s));
+  if (bad.length) fail(`Invalid slug(s): ${bad.join(', ')}`);
+}
+
 function readContent(slug) {
   const p = sitePath(slug);
   if (!fs.existsSync(p)) fail(`No content file at ${path.relative(ROOT, p)}`);
@@ -313,6 +322,7 @@ const commands = {
 
   async scaffold() {
     const explicit = flags._;
+    if (explicit.length) failOnInvalidSlugs(explicit);
     const url = flags.url;
     const note = flags.note;
     if ((url !== undefined || note !== undefined) && explicit.length !== 1) fail('--url and --note need exactly one slug');
@@ -364,6 +374,7 @@ const commands = {
   },
 
   'scaffold-check'() {
+    if (flags._.length) failOnInvalidSlugs(flags._);
     const slugs = flags._.length
       ? flags._
       : fs.existsSync(BRIEFS_DIR)

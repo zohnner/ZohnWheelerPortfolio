@@ -86,6 +86,39 @@ test('scaffold --url/--note need exactly one slug', () => {
   }
 });
 
+test('scaffold rejects an invalid explicit slug before doing any work', () => {
+  const dir = tmp();
+  try {
+    const content = { business: { name: 'A Co', phone: '816-555-0100' }, industry: 'roofing', outreach: {} };
+    writeJson(path.join(dir, 'a-co.json'), content);
+    const { code, out } = run(dir, ['scaffold', 'a-co', 'BAD!SLUG', '--no-ai']);
+    assert.equal(code, 1, out);
+    assert.match(out, /Invalid slug\(s\): BAD!SLUG/);
+    assert.ok(!fs.existsSync(path.join(dir, '.briefs')));
+    assert.ok(!fs.existsSync(path.join(dir, '.review')));
+    assert.ok(!fs.existsSync(path.join(dir, '.bak')));
+    assert.deepEqual(readJson(path.join(dir, 'a-co.json')), content);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('scaffold-check rejects an invalid explicit slug before doing any work', () => {
+  const dir = tmp();
+  try {
+    const content = { business: { name: 'A Co', phone: '816-555-0100' }, industry: 'roofing', outreach: {} };
+    writeJson(path.join(dir, 'a-co.json'), content);
+    const { code, out } = run(dir, ['scaffold-check', 'a-co', 'BAD!SLUG']);
+    assert.equal(code, 1, out);
+    assert.match(out, /Invalid slug\(s\): BAD!SLUG/);
+    assert.ok(!fs.existsSync(path.join(dir, '.review')));
+    assert.ok(!fs.existsSync(path.join(dir, '.bak')));
+    assert.deepEqual(readJson(path.join(dir, 'a-co.json')), content);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('scaffold-check marks a proven file ready and leaves it untouched', () => {
   const dir = tmp();
   try {

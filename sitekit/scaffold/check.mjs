@@ -3,7 +3,7 @@
 // the Muse stub, or Zohn's note) and contains the value. Unbacked facts are
 // removed; fact-like wording in copy is flagged. Pure: no file I/O.
 
-import { norm, wordsMatch, phoneDigits, numbersIn, includesToken } from './match.mjs';
+import { norm, words, wordsMatch, phoneDigits, numbersIn, includesToken } from './match.mjs';
 import { museText } from './facts.mjs';
 import { validateContent } from '../validate.mjs';
 
@@ -51,7 +51,12 @@ export function valueInQuote(fact, quote) {
       const d = phoneDigits(v);
       return d.length === 10 && phoneDigits(quote).includes(d);
     }
-    case 'number': return numbersIn(quote).includes(Number(v));
+    // A bare digit run (e.g. "555" plucked from a dot- or dash-delimited
+    // phone number) satisfies includesToken's punctuation-boundary rule on
+    // its own, so a number fact also requires its quote to contain at
+    // least one alphabetic word (e.g. "review_count=112", "since 2004") —
+    // real quotes for founded/rating/reviewCount always have one.
+    case 'number': return numbersIn(quote).includes(Number(v)) && words(quote).some((w) => /[a-z]/.test(w));
     case 'exact': return includesToken(quote, v);
     case 'flag': return FLAG_WORDS[fact.path]?.test(quote) ?? false;
     case 'named': return wordsMatch(v?.name, quote);

@@ -111,6 +111,29 @@ test('fragment quotes and prefix matches are rejected, not kept', () => {
   }
 });
 
+test('number facts still need a worded quote, even against the original dot-delimited source', () => {
+  // "555" and "5" sit between periods here, so they satisfy includesToken's
+  // punctuation-boundary rule on their own — the numeric kind must reject
+  // them on its own terms (no alphabetic word in the quote), not rely on
+  // the quote-in-source check to catch every case.
+  const b = brief({ pages: [{ path: '/', title: 'Home', text: 'Call 816.555.0142. License MO-12345. 1234 Main St. Email info@acme.com.' }] });
+  const rating = checkScaffold({
+    content: { business: { rating: 5 } },
+    provenance: { 'business.rating': { value: 5, source: 'site:/', quote: '5' } },
+    brief: b,
+  });
+  assert.equal(rating.dropped.length, 1);
+  assert.equal(rating.dropped[0].path, 'business.rating');
+
+  const reviewCount = checkScaffold({
+    content: { business: { reviewCount: 555 } },
+    provenance: { 'business.reviewCount': { value: 555, source: 'site:/', quote: '555' } },
+    brief: b,
+  });
+  assert.equal(reviewCount.dropped.length, 1);
+  assert.deepEqual(reviewCount.dropped[0], { path: 'business.reviewCount', value: 555, reason: 'value does not appear in the quote' });
+});
+
 test('a review rating must be confirmed by a number in its own quote', () => {
   const b = brief({ pages: [{ path: '/', title: 'Reviews', text: 'Great crew. - Pat K.\nFive stars overall, would recommend! 5 stars. - Sam R.' }] });
   const noRatingProof = checkScaffold({

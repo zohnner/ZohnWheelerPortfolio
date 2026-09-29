@@ -9,6 +9,20 @@ import { getPreset } from '../presets/index.mjs';
 
 const MIN_TEXT = 200;
 
+// A "stub" is a content file that scaffold --no-ai is still safe to
+// overwrite: no hero, no non-empty reviews or trust badges, and no area has
+// been given a real intro. This is exactly what stubFromProspect() (in
+// sitekit/admin.mjs) produces, and it's how the CLI tells an untouched
+// prospect apart from a filled-in client file it must never clobber.
+export function isStub(content) {
+  const c = content && typeof content === 'object' ? content : {};
+  if (c.hero && typeof c.hero === 'object' && Object.keys(c.hero).length > 0) return false;
+  if (Array.isArray(c.reviews) && c.reviews.length > 0) return false;
+  if (Array.isArray(c.trust) && c.trust.length > 0) return false;
+  if (Array.isArray(c.areas) && c.areas.some((a) => a && typeof a.intro === 'string' && a.intro.trim())) return false;
+  return true;
+}
+
 export function briefStatus({ siteUrl, blocked, pages }) {
   if (!siteUrl) return 'no-site';
   if (blocked) return `blocked (${blocked})`;

@@ -159,6 +159,59 @@ test('scaffold-check reports a malformed provenance file and keeps going', () =>
   }
 });
 
+test('default scaffold only gathers stubs, always skips acme-roofing, and prints a skip line for filled files', () => {
+  const dir = tmp();
+  try {
+    // A genuine untouched stub (no hero/reviews/trust, no area intros).
+    writeJson(path.join(dir, 'a-stub.json'), { business: { name: 'A Stub', phone: '816-555-0100' }, industry: 'roofing', outreach: {} });
+    // A finished client file — must never be re-gathered by a bare `scaffold`.
+    writeJson(path.join(dir, 'b-filled.json'), {
+      business: { name: 'B Filled', phone: '816-555-0100' },
+      industry: 'roofing',
+      hero: { headline: 'Welcome to B Filled' },
+      outreach: {},
+    });
+    // acme-roofing is always skipped even though this one is a stub.
+    writeJson(path.join(dir, 'acme-roofing.json'), { business: { name: 'Acme', phone: '816-555-0100' }, industry: 'roofing', outreach: {} });
+    const { code, out } = run(dir, ['scaffold']);
+    assert.equal(code, 0, out);
+    assert.match(out, /a-stub: brief no-site/);
+    assert.doesNotMatch(out, /b-filled: brief/);
+    assert.doesNotMatch(out, /acme-roofing: brief/);
+    assert.match(out, /skip b-filled \(not a stub — name it explicitly to re-gather\)/);
+    assert.ok(fs.existsSync(path.join(dir, '.briefs', 'a-stub.md')));
+    assert.ok(!fs.existsSync(path.join(dir, '.briefs', 'b-filled.md')));
+    assert.ok(!fs.existsSync(path.join(dir, '.briefs', 'acme-roofing.md')));
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('--no-ai refuses to overwrite a non-stub content file unless --force', () => {
+  const dir = tmp();
+  try {
+    const filled = {
+      business: { name: 'C Filled', phone: '816-555-0100' },
+      industry: 'roofing',
+      hero: { headline: 'Welcome to C Filled' },
+      outreach: {},
+    };
+    writeJson(path.join(dir, 'c-filled.json'), filled);
+    const refused = run(dir, ['scaffold', 'c-filled', '--no-ai']);
+    assert.equal(refused.code, 0, refused.out);
+    assert.match(refused.out, /c-filled: not a stub — --no-ai would overwrite a filled-in file; add --force to do it anyway/);
+    assert.deepEqual(readJson(path.join(dir, 'c-filled.json')), filled);
+    assert.ok(!fs.existsSync(path.join(dir, '.briefs', 'c-filled.md')));
+
+    const forced = run(dir, ['scaffold', 'c-filled', '--no-ai', '--force']);
+    assert.equal(forced.code, 0, forced.out);
+    assert.match(forced.out, /c-filled: brief no-site/);
+    assert.ok(fs.existsSync(path.join(dir, '.briefs', 'c-filled.md')));
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test('scaffold-check with no briefs says so', () => {
   const dir = tmp();
   try {

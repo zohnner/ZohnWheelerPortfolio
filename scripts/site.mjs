@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
 import { pushSql, statusSql, pitchStatusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
 import { renderPage, listPages, renderSitemap, renderRobots } from '../sitekit/render.mjs';
-import { gather, renderBriefMd, noAiContent } from '../sitekit/scaffold/brief.mjs';
+import { gather, renderBriefMd, noAiContent, isStub } from '../sitekit/scaffold/brief.mjs';
 import { runCheck } from '../sitekit/scaffold/check.mjs';
 import { renderReview, summaryLine } from '../sitekit/scaffold/review.mjs';
 
@@ -327,7 +327,35 @@ const commands = {
     const note = flags.note;
     if ((url !== undefined || note !== undefined) && explicit.length !== 1) fail('--url and --note need exactly one slug');
     if (url === true || note === true) fail('--url and --note need a value');
-    const slugs = explicit.length ? explicit : siteSlugs().filter((s) => flags.force || !fs.existsSync(briefFile(s, '.md')));
+    // The default target list (no explicit slugs) is filtered to stubs only
+    // — a content file stubFromProspect() could have produced, with no
+    // hero/reviews/trust/area-intro filled in — and never includes
+    // acme-roofing, the committed sample file. A non-stub is reported and
+    // skipped rather than silently ignored, so it's clear why it wasn't
+    // touched; naming it explicitly bypasses this filter (the --no-ai
+    // refusal below still applies).
+    let slugs;
+    if (explicit.length) {
+      slugs = explicit;
+    } else {
+      slugs = [];
+      for (const s of siteSlugs()) {
+        if (s === 'acme-roofing') continue;
+        if (!flags.force && fs.existsSync(briefFile(s, '.md'))) continue;
+        let existing;
+        try {
+          existing = JSON.parse(fs.readFileSync(sitePath(s), 'utf8'));
+        } catch {
+          slugs.push(s); // let the per-slug read below report the real error
+          continue;
+        }
+        if (!isStub(existing)) {
+          console.log(`skip ${s} (not a stub — name it explicitly to re-gather)`);
+          continue;
+        }
+        slugs.push(s);
+      }
+    }
     if (!slugs.length) {
       console.log('Nothing to scaffold — every site already has a brief (use --force to re-gather).');
       return;
@@ -340,6 +368,13 @@ const commands = {
         stub = JSON.parse(fs.readFileSync(sitePath(slug), 'utf8'));
       } catch (err) {
         console.error(`${slug}: can't read sites/${slug}.json — ${err.message}`);
+        continue;
+      }
+      // --no-ai overwrites the whole content file with a facts-only draft,
+      // so a filled-in file (not a stub) is refused unless --force — this
+      // applies whether the slug was named explicitly or picked by default.
+      if (flags['no-ai'] && !flags.force && !isStub(stub)) {
+        console.log(`${slug}: not a stub — --no-ai would overwrite a filled-in file; add --force to do it anyway`);
         continue;
       }
       if (typeof url === 'string' || typeof note === 'string') {

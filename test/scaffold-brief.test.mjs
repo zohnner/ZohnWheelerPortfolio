@@ -1,7 +1,9 @@
 // test/scaffold-brief.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { briefStatus, gather, renderBriefMd, noAiContent } from '../sitekit/scaffold/brief.mjs';
+import fs from 'node:fs';
+import { briefStatus, gather, renderBriefMd, noAiContent, isStub } from '../sitekit/scaffold/brief.mjs';
+import { stubFromProspect } from '../sitekit/admin.mjs';
 import { fakeFetch, siteRoutes, ORIGIN, NORMAL_DIR } from './fixtures/scaffold/helpers.mjs';
 
 const stub = () => ({
@@ -76,4 +78,24 @@ test('noAiContent fills facts with provenance and keeps the stub’s other field
   assert.equal(provenance['reviews[1]'].source, 'site:/reviews');
   assert.equal(provenance['services[0]'].value, content.services[0].name);
   assert.equal(content.outreach.note, 'Owner Dana says they also do skylights.');
+});
+
+test('isStub: a fresh stubFromProspect() is a stub; a filled-in content file is not', () => {
+  assert.equal(isStub(stubFromProspect({ name: 'A Co', industry: 'roofing', city: 'Raymore' })), true);
+  const acme = JSON.parse(fs.readFileSync('test/fixtures/acme-roofing.json', 'utf8'));
+  assert.equal(isStub(acme), false);
+});
+
+test('isStub checks hero, reviews, trust, and area intros independently', () => {
+  const base = { business: { name: 'A Co' } };
+  assert.equal(isStub(base), true);
+  assert.equal(isStub({ ...base, hero: { headline: 'x' } }), false);
+  assert.equal(isStub({ ...base, reviews: [{ name: 'A', text: 'x' }] }), false);
+  assert.equal(isStub({ ...base, reviews: [] }), true);
+  assert.equal(isStub({ ...base, trust: ['Licensed'] }), false);
+  assert.equal(isStub({ ...base, trust: [] }), true);
+  assert.equal(isStub({ ...base, areas: [{ name: 'Raymore', intro: '' }] }), true);
+  assert.equal(isStub({ ...base, areas: [{ name: 'Raymore', intro: 'A whole paragraph about Raymore.' }] }), false);
+  assert.equal(isStub(null), true);
+  assert.equal(isStub({}), true);
 });

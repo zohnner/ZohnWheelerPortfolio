@@ -44,6 +44,28 @@ export function sourceText(source, brief) {
   return null;
 }
 
+// Like includesToken, but case-preserving: maps.app.goo.gl / g.page short
+// codes are case-sensitive, so googleMapsUrl must never be matched through
+// norm()'s lowercasing the way email is.
+const isAlnum = (c) => c !== undefined && /[a-zA-Z0-9]/.test(c);
+
+export function includesTokenCase(haystack, needle) {
+  const n = String(needle ?? '').replace(/\s+/g, ' ').trim();
+  if (!n.length) return false;
+  const h = String(haystack ?? '').replace(/\s+/g, ' ');
+  const checkLeft = isAlnum(n[0]);
+  const checkRight = isAlnum(n[n.length - 1]);
+  let from = 0;
+  for (;;) {
+    const i = h.indexOf(n, from);
+    if (i === -1) return false;
+    const leftOk = !checkLeft || i === 0 || !isAlnum(h[i - 1]);
+    const rightOk = !checkRight || i + n.length === h.length || !isAlnum(h[i + n.length]);
+    if (leftOk && rightOk) return true;
+    from = i + 1;
+  }
+}
+
 export function valueInQuote(fact, quote) {
   const v = fact.value;
   switch (fact.kind) {
@@ -57,7 +79,7 @@ export function valueInQuote(fact, quote) {
     // least one alphabetic word (e.g. "review_count=112", "since 2004") —
     // real quotes for founded/rating/reviewCount always have one.
     case 'number': return numbersIn(quote).includes(Number(v)) && words(quote).some((w) => /[a-z]/.test(w));
-    case 'exact': return includesToken(quote, v);
+    case 'exact': return fact.path === 'business.googleMapsUrl' ? includesTokenCase(quote, v) : includesToken(quote, v);
     case 'flag': return FLAG_WORDS[fact.path]?.test(quote) ?? false;
     case 'named': return wordsMatch(v?.name, quote);
     case 'review':
@@ -76,6 +98,12 @@ export function factProblem(fact, entry, brief) {
   if (fact.kind === 'review' && !(source === 'note' || String(source).startsWith('site:'))) {
     return 'reviews must come from the business’s own site or the note';
   }
+  // Rendered as "Rated X on Google Maps" — a site or note quote could be
+  // genuine and still be the wrong number (stale, a different rating
+  // source, a typo), so only Muse's own rating/count may back these.
+  if ((fact.path === 'business.rating' || fact.path === 'business.reviewCount') && source !== 'muse') {
+    return 'rating and review count must come from Muse (they are shown as Google Maps data)';
+  }
   const text = sourceText(source, brief);
   if (text === null) return `unknown source "${source}"`;
   if (!includesToken(text, quote)) return `quote not found in ${source}`;
@@ -88,6 +116,7 @@ export function copyFields(c) {
   const add = (path, text) => { if (typeof text === 'string' && text.trim()) out.push({ path, text }); };
   add('hero.headline', c.hero?.headline);
   add('hero.sub', c.hero?.sub);
+  add('hero.cta', c.hero?.cta);
   (Array.isArray(c.services) ? c.services : []).forEach((s, i) => { add(`services[${i}].summary`, s?.summary); add(`services[${i}].body`, s?.body); });
   (Array.isArray(c.areas) ? c.areas : []).forEach((a, i) => add(`areas[${i}].intro`, a?.intro));
   (Array.isArray(c.whyUs) ? c.whyUs : []).forEach((w, i) => { add(`whyUs[${i}].title`, w?.title); add(`whyUs[${i}].text`, w?.text); });

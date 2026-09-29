@@ -115,7 +115,11 @@ test('number facts still need a worded quote, even against the original dot-deli
   // "555" and "5" sit between periods here, so they satisfy includesToken's
   // punctuation-boundary rule on their own — the numeric kind must reject
   // them on its own terms (no alphabetic word in the quote), not rely on
-  // the quote-in-source check to catch every case.
+  // the quote-in-source check to catch every case. rating/reviewCount are
+  // also gated to muse-only sources (see the dedicated test below), so this
+  // uses founded — a "number" fact that isn't muse-restricted — to isolate
+  // the worded-quote rule itself; a muse-sourced quote is always "key=value"
+  // and so always has a letter, which is why that path can't exercise this.
   const b = brief({ pages: [{ path: '/', title: 'Home', text: 'Call 816.555.0142. License MO-12345. 1234 Main St. Email info@acme.com.' }] });
   const rating = checkScaffold({
     content: { business: { rating: 5 } },
@@ -125,13 +129,13 @@ test('number facts still need a worded quote, even against the original dot-deli
   assert.equal(rating.dropped.length, 1);
   assert.equal(rating.dropped[0].path, 'business.rating');
 
-  const reviewCount = checkScaffold({
-    content: { business: { reviewCount: 555 } },
-    provenance: { 'business.reviewCount': { value: 555, source: 'site:/', quote: '555' } },
+  const founded = checkScaffold({
+    content: { business: { founded: 1234 } },
+    provenance: { 'business.founded': { value: 1234, source: 'site:/', quote: '1234' } },
     brief: b,
   });
-  assert.equal(reviewCount.dropped.length, 1);
-  assert.deepEqual(reviewCount.dropped[0], { path: 'business.reviewCount', value: 555, reason: 'value does not appear in the quote' });
+  assert.equal(founded.dropped.length, 1);
+  assert.deepEqual(founded.dropped[0], { path: 'business.founded', value: 1234, reason: 'value does not appear in the quote' });
 });
 
 test('a review rating must be confirmed by a number in its own quote', () => {
@@ -181,7 +185,7 @@ test('flags need a quote that says so', () => {
 
 test('copy scan warns on unbacked fact-like claims', () => {
   const c = content({
-    hero: { headline: 'Serving Lee’s Summit since 1998', sub: 'The #1 roofer in town, rated 5 stars' },
+    hero: { headline: 'Serving Lee’s Summit since 1998', sub: 'The #1 roofer in town, rated 5 stars', cta: 'Call 913-555-7777 now' },
     faq: [{ q: 'Are you licensed?', a: 'Yes, fully licensed and insured.' }],
     copy: { ctaText: 'Call 913-555-7777 for 10% off' },
   });
@@ -189,7 +193,48 @@ test('copy scan warns on unbacked fact-like claims', () => {
   for (const bit of ['"since"', '"1998"', '"#1"', '"5 stars"', '"licensed"', '"insured"', '"913-555-7777"', '"10%"']) {
     assert.ok(w.some((x) => x.includes(bit)), `expected a warning for ${bit}: ${w.join(' | ')}`);
   }
+  assert.ok(w.some((x) => x.startsWith('hero.cta:')), `expected a hero.cta warning: ${w.join(' | ')}`);
   assert.ok(w.every((x) => /^(hero|faq|copy)/.test(x)));
+});
+
+test('rating and review count are only trusted from Muse, even with a genuine site quote', () => {
+  const b = brief({ pages: [{ path: '/', title: 'Home', text: 'Rated 4.9 stars by our customers' }] });
+  const r = checkScaffold({
+    content: { business: { rating: 4.9 } },
+    provenance: { 'business.rating': { value: 4.9, source: 'site:/', quote: 'Rated 4.9 stars by our customers' } },
+    brief: b,
+  });
+  assert.equal(r.dropped.length, 1);
+  assert.equal(r.dropped[0].path, 'business.rating');
+  assert.match(r.dropped[0].reason, /must come from Muse.*Google Maps/);
+
+  const kept = checkScaffold({
+    content: { business: { rating: 4.8, reviewCount: 112 } },
+    provenance: {
+      'business.rating': { value: 4.8, source: 'muse', quote: 'google_rating=4.8' },
+      'business.reviewCount': { value: 112, source: 'muse', quote: 'review_count=112' },
+    },
+    brief: b,
+  });
+  assert.deepEqual(kept.dropped, []);
+});
+
+test('googleMapsUrl is matched case-sensitively (maps.app.goo.gl codes are case-sensitive)', () => {
+  const b = brief({ stub: { business: { googleMapsUrl: 'https://maps.app.goo.gl/AbC123' } } });
+  const wrongCase = checkScaffold({
+    content: { business: { googleMapsUrl: 'https://maps.app.goo.gl/AbC123' } },
+    provenance: { 'business.googleMapsUrl': { value: 'https://maps.app.goo.gl/AbC123', source: 'muse', quote: 'google_maps_url=https://maps.app.goo.gl/abc123' } },
+    brief: b,
+  });
+  assert.equal(wrongCase.dropped.length, 1);
+  assert.equal(wrongCase.dropped[0].path, 'business.googleMapsUrl');
+
+  const rightCase = checkScaffold({
+    content: { business: { googleMapsUrl: 'https://maps.app.goo.gl/AbC123' } },
+    provenance: { 'business.googleMapsUrl': { value: 'https://maps.app.goo.gl/AbC123', source: 'muse', quote: 'google_maps_url=https://maps.app.goo.gl/AbC123' } },
+    brief: b,
+  });
+  assert.deepEqual(rightCase.dropped, []);
 });
 
 test('copy claims backed by kept facts are not warned', () => {

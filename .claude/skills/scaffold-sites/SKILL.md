@@ -26,7 +26,8 @@ Nothing you do is published. **Never run `push`, `pitch`, `status`, `demo-link`,
 2. Read the preset `sitekit/presets/<industry>.mjs` (the industry is in the stub).
 3. Write `sites/<slug>.json`. Start from the current file, which is the stub. Keep `outreach`, `theme`, `industry`, and `business.name` as they are.
 4. Write `sites/.briefs/<slug>.provenance.json`.
-5. After all slugs, run `node scripts/site.mjs scaffold-check <slug> <slug> ...`.
+5. Never edit the brief files (`sites/.briefs/<slug>.md` / `.json`); the checker treats them as ground truth.
+6. After all slugs, run `node scripts/site.mjs scaffold-check <slug> <slug> ...`.
 
 ## Facts need proof
 
@@ -52,6 +53,7 @@ Every fact you include needs a provenance entry, keyed by its path in the file y
 - A quote for a number (founded year, rating, review count) must include at least one word, not just the number — e.g. `since 1998`, not `1998`.
 - A review may have a `rating` only if that number appears in the review's own quote (e.g. `5 stars`).
 - `business.emergency: true` needs a quote that says emergency or 24/7. `financing.enabled: true` needs a quote that mentions financing or payment plans.
+- `business.rating` and `business.reviewCount` come only from the stub (`source: muse`) — they are shown as Google Maps data. Never take a rating or review count from the business's site or the note.
 - **If you can't quote it, leave it out.** An empty field is fine; a made-up one is not.
 
 Specific rules:

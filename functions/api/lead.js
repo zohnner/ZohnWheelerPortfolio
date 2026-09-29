@@ -33,7 +33,7 @@ export async function onRequestPost(context) {
   let site;
   let mode;
   if (lead.token) {
-    site = await env.DB.prepare(`SELECT id, content_json, contact_email, demo_token FROM sites WHERE slug = ?`).bind(lead.slug).first();
+    site = await env.DB.prepare(`SELECT id, content_json, contact_email, demo_token FROM sites WHERE slug = ? AND status != 'lost'`).bind(lead.slug).first();
     if (!site || !safeEqual(lead.token, site.demo_token)) return json({ ok: false, error: 'Not found' }, 404);
     mode = 'demo';
   } else {

@@ -27,3 +27,8 @@ dist/
 # Client/prospect content is private (public repo). D1 content_json is the backup.
 sites/*
 !sites/acme-roofing.json
+
+# Scaffolder output (already covered by sites/*; listed for clarity)
+sites/.briefs/
+sites/.review/
+sites/.bak/

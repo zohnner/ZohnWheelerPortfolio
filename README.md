@@ -74,14 +74,27 @@ npx wrangler d1 execute portfolio-leads --remote --file ./schema-sitekit.sql
 
 Run these in order, from the repo root:
 
-1. `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist).
-2. Edit `sites/<slug>.json` by hand — fill in real details, and **write real, specific city intros** for each service area (generic filler reads as a doorway page and `validate` will warn about it).
+1. `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist). Muse CSV columns: `name, industry, city, phone, email, contact_form_url, current_site, google_rating, review_count, google_maps_url, notes` (only `name` is required; `notes` becomes Zohn's note for the scaffolder).
+2. Fill in the stubs with the scaffolder (see **Scaffolding** below), open the review page it writes, and fix anything flagged. Always read and hand-check each city intro.
 3. `node scripts/site.mjs push <slug>` — validates the content and writes a SQL file (`scripts/.site-push.sql`); it does **not** write to D1 itself. It prints the `wrangler d1 execute --remote --file ...` command that does.
 4. Run the printed wrangler command.
 5. `SK_MAILING_ADDRESS="123 Studio Way, City, ST 00000" node scripts/site.mjs pitch <slug>` — prints ready-to-paste outreach copy with the demo link. Paste it into Muse.
 6. `node scripts/site.mjs views` — see who's opened their demo link, and when.
 7. `node scripts/site.mjs status <slug> meeting|won|lost` — track the deal as it moves.
 8. `node scripts/site.mjs status <slug> live --domain example.com` — go live. Also add `example.com` and `www.example.com` as custom domains on the Pages project (dashboard or `wrangler pages domain add`).
+
+### Scaffolding
+
+Turns stubs into filled-in, fact-checked content files. It never uses a paid API.
+
+1. `node scripts/site.mjs scaffold` — for every stub without a brief: fetches the business's own site (https only, same host, robots.txt respected, at most 7 pages, `SitekitBot/1.0` user agent), extracts text and pattern facts (phone, email, address, founded year, license, services, testimonials), and writes `sites/.briefs/<slug>.md` + `.json`. Options: `scaffold <slug> --url https://their-site.example` or `--note "Services: roof repair, gutters"` (saved into the stub), `--force` to re-gather, `--no-ai` to also write a facts-only content file and check it.
+2. In Claude Code, run `/scaffold-sites` — Claude (on your existing subscription) writes each `sites/<slug>.json` and a provenance file quoting where every fact came from.
+3. `node scripts/site.mjs scaffold-check` — drops every fact whose quote isn't really in the brief, flags fact-like wording in copy, validates, backs up the old file to `sites/.bak/`, and writes one review page: `sites/.review/<date>.html` (✅ ready / ⚠️ needs-look / ❌ blocked).
+4. Review, then `node scripts/site.mjs push <slug>` as usual.
+
+Google: only the Maps link and Muse's rating/count are used, always shown as "Rated X on Google Maps (N reviews)" with a link. Google review text is never fetched or shown. Muse's rating and count go stale, so refresh them before a site goes live.
+
+A business with no website and no note has no provable services and ends ❌ blocked. Give it a note (`scaffold <slug> --note "..."`) and re-run `/scaffold-sites`.
 
 ### Presenter mode
 

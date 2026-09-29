@@ -19,6 +19,12 @@ test('pushSql is a single-statement upsert that preserves token and status', () 
   assert.equal((sql.match(/;/g) || []).length, 1, 'exactly one statement');
 });
 
+test('pushSql makes the content file\'s business.email authoritative on every push, not just the first', () => {
+  const sql = pushSql({ id: 'id1', slug: 'acme', token: 'tok', content: { business: { name: 'Acme', email: 'new@acme.co' } }, now: 'N' });
+  assert.match(sql, /contact_email = excluded\.contact_email/);
+  assert.doesNotMatch(sql, /COALESCE\(sites\.contact_email/);
+});
+
 test('pushSql handles a missing business email', () => {
   assert.match(pushSql({ id: 'i', slug: 's', token: 't', content: { business: {} }, now: 'n' }), /'\{"business":\{\}\}', NULL, /);
 });

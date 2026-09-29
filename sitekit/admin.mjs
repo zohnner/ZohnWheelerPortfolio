@@ -15,7 +15,7 @@ export function pushSql({ id, slug, token, content, now }) {
 VALUES (${sqlString(id)}, ${sqlString(slug)}, 'call-now', 'demo', ${sqlString(token)}, ${sqlString(JSON.stringify(content))}, ${sqlString(email)}, ${sqlString(now)}, ${sqlString(now)})
 ON CONFLICT(slug) DO UPDATE SET
   content_json = excluded.content_json,
-  contact_email = COALESCE(sites.contact_email, excluded.contact_email),
+  contact_email = excluded.contact_email,
   updated_at = excluded.updated_at,
   status = CASE WHEN sites.status = 'prospect' THEN 'demo' ELSE sites.status END;
 `;

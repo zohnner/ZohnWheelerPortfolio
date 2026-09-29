@@ -140,6 +140,8 @@ const commands = {
       fail(err.message);
     }
     if (status === 'live') {
+      const email = readContent(slug).business?.email;
+      console.log(`Lead recipient once live: ${email || 'none — leads will email the owner'}`);
       console.log('Also add the domain (and www.) as custom domains on the zohnwheelerportfolio Pages project.');
     }
   },

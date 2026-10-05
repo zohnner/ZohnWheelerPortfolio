@@ -4,11 +4,12 @@ export default {
   industry: 'roofing',
   trade: 'Roofing',
   schemaType: 'RoofingContractor',
+  serviceIcon: 'home',
   theme: { preset: 'storm', mode: 'light' },
   hero: {
     headline: 'Roofing done right the first time.',
     sub: 'Roof replacement, repairs, and storm damage restoration for homes across the Kansas City metro.',
-    image: 'stock:roofing/hero.jpg',
+    image: 'stock:roofing/hero-2.jpg',
     cta: 'Get a Free Estimate',
   },
   banner: { enabled: false, text: 'Hail or wind damage? Call now to schedule a storm inspection.' },

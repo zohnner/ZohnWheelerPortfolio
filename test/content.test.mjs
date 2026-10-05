@@ -25,6 +25,7 @@ test('every preset is complete and internally valid', () => {
       assert.match(s.image, /^stock:[a-z]+\/[a-z0-9-]+\.jpg$/);
     }
     for (const w of p.whyUs) assert.ok(Object.hasOwn(ICONS, w.icon), `${name} whyUs icon`);
+    assert.ok(Object.hasOwn(ICONS, p.serviceIcon) && p.serviceIcon !== 'check', `${name} serviceIcon ${p.serviceIcon}`);
     for (const sec of p.sectionOrder) assert.ok(SECTION_NAMES.includes(sec), `${name} section ${sec}`);
     for (const k of ['reviews', 'gallery', 'trust', 'areas']) assert.equal(p[k], undefined, `${name} must not define ${k}`);
   }
@@ -38,11 +39,12 @@ test('resolveContent merges preset defaults under content overrides', () => {
     services: [{ slug: 'roof-repair', name: 'Repairs' }, { slug: 'skylights', name: 'Skylights' }],
   });
   assert.equal(c.hero.headline, 'Custom headline');
-  assert.equal(c.hero.image, 'stock:roofing/hero.jpg');
+  assert.equal(c.hero.image, 'stock:roofing/hero-2.jpg');
   assert.equal(c.services[0].name, 'Repairs');
   assert.equal(c.services[0].icon, 'tools');
   assert.ok(c.services[0].body.length > 50);
-  assert.equal(c.services[1].icon, 'check');
+  // A custom service with no icon gets the trade's icon, not a checkmark (which reads as "done").
+  assert.equal(c.services[1].icon, PRESETS.roofing.serviceIcon);
   assert.equal(c.services[1].image, undefined);
   assert.equal(c.faq.length, PRESETS.roofing.faq.length);
   assert.equal(c.trade, 'Roofing');
@@ -82,6 +84,8 @@ test('imgAttrs adds srcset for stock images only', () => {
     imgAttrs('stock:roofing/hero.jpg', 'acme', '100vw'),
     'src="/sk/stock/roofing/hero.jpg" srcset="/sk/stock/roofing/hero-sm.jpg 800w, /sk/stock/roofing/hero.jpg 1600w" sizes="100vw"'
   );
+  // A replacement hero gets a new numbered name (stock files are cached for a year) and keeps hero widths.
+  assert.match(imgAttrs('stock:roofing/hero-2.jpg', 'acme', '100vw'), /hero-2-sm\.jpg 800w, \/sk\/stock\/roofing\/hero-2\.jpg 1600w/);
   assert.match(imgAttrs('stock:roofing/gutters.jpg', 'acme', '50vw'), /gutters-sm\.jpg 600w, \/sk\/stock\/roofing\/gutters\.jpg 1200w/);
   assert.equal(imgAttrs('https://cdn.example.com/a.jpg?x=1&y=2', 'acme', '50vw'), 'src="https://cdn.example.com/a.jpg?x=1&amp;y=2"');
   assert.equal(imgAttrs('nope', 'acme', '50vw'), null);

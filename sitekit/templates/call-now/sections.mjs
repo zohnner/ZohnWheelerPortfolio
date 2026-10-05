@@ -46,7 +46,12 @@ export function trust(ctx) {
 
 export function serviceCard(ctx, s) {
   const img = imgAttrs(s.image, ctx.slug, '(max-width: 860px) 100vw, 360px');
-  return `<a class="card" href="${ctx.href(`/services/${s.slug}`)}">${img ? `<div class="card-media"><img ${img} alt="" loading="lazy" decoding="async"></div>` : ''}<div class="card-body"><h3>${icon(s.icon)}${esc(s.name)}</h3>${s.summary ? `<p>${esc(s.summary)}</p>` : ''}<span class="more">Learn more</span></div></a>`;
+  // No photo → an icon panel of the same size, so a row of cards mixing preset
+  // services (photos) and custom ones still lines up.
+  const media = img
+    ? `<div class="card-media"><img ${img} alt="" loading="lazy" decoding="async"></div>`
+    : `<div class="card-media card-media-icon">${icon(s.icon)}</div>`;
+  return `<a class="card" href="${ctx.href(`/services/${s.slug}`)}">${media}<div class="card-body"><h3>${icon(s.icon)}${esc(s.name)}</h3>${s.summary ? `<p>${esc(s.summary)}</p>` : ''}<span class="more">Learn more</span></div></a>`;
 }
 
 export function services(ctx, alt) {

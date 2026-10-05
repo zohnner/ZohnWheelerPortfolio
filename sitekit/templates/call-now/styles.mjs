@@ -62,6 +62,8 @@ a:focus-visible,.btn:focus-visible,summary:focus-visible,input:focus-visible,tex
 a.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.14)}
 .card-media{aspect-ratio:16/10;background:var(--border)}
 .card-media img{width:100%;height:100%;object-fit:cover}
+.card-media-icon{display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 70%,var(--accent)));color:var(--onPrimary)}
+.card-media-icon .icon{width:3.5rem;height:3.5rem;opacity:.9}
 .card-body{padding:1.25rem 1.25rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
 .card h3{margin:0;font-size:1.2rem;display:flex;align-items:center;gap:.5em}
 .card h3 .icon{color:var(--accent)}

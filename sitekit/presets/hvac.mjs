@@ -4,6 +4,7 @@ export default {
   industry: 'hvac',
   trade: 'Heating & Cooling',
   schemaType: 'HVACBusiness',
+  serviceIcon: 'fan',
   theme: { preset: 'clean', mode: 'light' },
   hero: {
     headline: 'Stay comfortable all year long.',

@@ -142,3 +142,14 @@ test('a review without a rating renders without stars', () => {
   assert.match(html, /Great work on our roof/);
   assert.doesNotMatch(html, /class="stars"/);
 });
+
+test('a service without a photo gets an icon panel in place of the image', () => {
+  const html = home();
+  // Skylights (custom, no image) still gets a media slot, so card rows line up.
+  const card = html.match(/<a class="card"[^>]*services\/skylights[\s\S]*?<\/a>/)[0];
+  assert.match(card, /class="card-media card-media-icon"/);
+  assert.doesNotMatch(card, /<img/);
+  // A preset service keeps its stock photo.
+  const preset = html.match(/<a class="card"[^>]*services\/roof-replacement[\s\S]*?<\/a>/)[0];
+  assert.match(preset, /<div class="card-media"><img /);
+});

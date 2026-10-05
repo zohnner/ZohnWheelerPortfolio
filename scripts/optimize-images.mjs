@@ -22,7 +22,7 @@ fs.mkdirSync(outDir, { recursive: true });
 for (const file of fs.readdirSync(srcDir)) {
   if (!/\.(jpe?g|png|webp)$/i.test(file)) continue;
   const name = path.parse(file).name;
-  const [w, h] = name === 'hero' ? [1600, 900] : [1200, 750];
+  const [w, h] = /^hero(-\d+)?$/.test(name) ? [1600, 900] : [1200, 750];
   const src = path.join(srcDir, file);
   for (const [suffix, scale] of [['', 1], ['-sm', 0.5]]) {
     const dest = path.join(outDir, `${name}${suffix}.jpg`);

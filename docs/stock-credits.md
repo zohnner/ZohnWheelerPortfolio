@@ -13,7 +13,8 @@ through `scripts/optimize-images.mjs` (`npm i --no-save sharp`) to produce the
 
 | File | Source URL | Photographer | License |
 |---|---|---|---|
-| roofing/hero.jpg | https://www.pexels.com/photo/white-and-red-house-surrounded-by-trees-at-night-1612351/ | eberhard grossgasteiger | Pexels License |
+| roofing/hero-2.jpg | https://www.pexels.com/photo/roof-repair-and-construction-in-fort-worth-33404981/ | Ryan Stephens | Pexels License |
+| roofing/hero.jpg (retired 2026-10-04; kept so cached links still resolve) | https://www.pexels.com/photo/white-and-red-house-surrounded-by-trees-at-night-1612351/ | eberhard grossgasteiger | Pexels License |
 | roofing/roof-replacement.jpg | https://www.pexels.com/photo/historic-home-roof-replacement-in-weatherford-33501308/ | Ryan Stephens | Pexels License |
 | roofing/roof-repair.jpg | https://www.pexels.com/photo/professional-roofer-installing-shingles-on-new-roof-33404248/ | Ryan Stephens | Pexels License |
 | roofing/storm-damage.jpg | https://www.pexels.com/photo/grayscale-photo-of-a-broken-roof-tiles-14615663/ | Andreas Ebner | Pexels License |

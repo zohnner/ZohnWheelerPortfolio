@@ -60,7 +60,7 @@ Specific rules:
 
 - **Reviews** come only from the business's own site (`site:*`) or Zohn's note, verbatim, with the reviewer name exactly as shown. Never take them from Google or any review site. Omit `rating` unless the source shows stars. Omit `source`, or set it to `"Website"`.
 - **Trust badges** are only what the site claims, such as "Licensed & Insured" quoted from the About page.
-- **Services:** when a service matches a preset service, use the preset's `slug` and `name`. The preset then supplies the summary and body, so don't copy them. Add a service that isn't in the preset only when you have a quote, with a lowercase-hyphen slug and your own `summary`/`body`.
+- **Services:** when a service matches a preset service, use the preset's `slug` and `name`. The preset then supplies the summary and body, so don't copy them. Add a service that isn't in the preset only when you have a quote, with a lowercase-hyphen slug, your own `summary`/`body`, and an `icon` that fits it (e.g. `droplet` for gutters or waterproofing, `snowflake` for cooling, `flame` for heating, `shield` for inspections, `tools` for repairs, `layers` for foundations). Custom services have no photo, so their card shows the icon large — vary them, and never use `check`.
 - **Areas:** add one entry per city the business names, each with a quote naming the city. The stub's city is provable from `muse` (`city=...`).
 - `business.phone` is required. If neither the site nor the stub has one, skip that business and report it as blocked.
 
@@ -70,7 +70,9 @@ Copy fields: `hero.headline`, `hero.sub`, service `summary`/`body`, area `intro`
 
 - Don't put years, "since/established/founded", "licensed/insured/bonded/certified/accredited/award/#1/best in", star counts, phone numbers, or percentages in copy unless that exact fact is in your provenance.
 - Area intros must be specific to the city: at least 300 characters when honest material allows, and never the same text for two cities. Use what the brief says (neighborhoods served, kinds of homes, the work they list) and general, true things about the trade. Don't invent projects, numbers, or customers.
-- Keep the tone plain, warm, and specific, with no superlatives. Leave a field unset to use the preset's copy.
+- Keep the tone plain, warm, and specific, with no superlatives. Leave a field unset to use the preset's copy — **except `whyUs` and `faq`, which you must always write** (`scaffold-check` warns when either is missing):
+  - `whyUs`: 3–4 items `{ icon, title, text }` (icons: `check`, `home`, `phone`, `pin`, `clock`, `shield`, `tools`, `star`, `dollar`). Build each one on something the business itself says, like a trust badge, a service, a guarantee, how they work, or who they are ("father and son team", "repairs only, never replacement"). Never use generic promises the brief doesn't support.
+  - `faq`: 3–4 items `{ q, a }` about the services you included. Never ask about a service the business doesn't offer: a repair-only roofer gets no "How much is a new roof?". Answers stay general and honest ("It depends on…, we'll inspect and give you a written price") unless a provenance fact backs a specific claim.
 
 ## After scaffold-check
 

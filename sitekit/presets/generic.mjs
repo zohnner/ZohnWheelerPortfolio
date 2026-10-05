@@ -6,6 +6,7 @@ export default {
   industry: 'generic',
   trade: 'Home Services',
   schemaType: 'HomeAndConstructionBusiness',
+  serviceIcon: 'tools',
   theme: { preset: 'bold', mode: 'light' },
   hero: {
     headline: 'Quality work, done right.',

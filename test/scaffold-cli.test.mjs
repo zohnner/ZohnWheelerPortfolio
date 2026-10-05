@@ -122,7 +122,11 @@ test('scaffold-check rejects an invalid explicit slug before doing any work', ()
 test('scaffold-check marks a proven file ready and leaves it untouched', () => {
   const dir = tmp();
   try {
-    const content = { business: { name: 'Ready Co', phone: '816-555-0100' }, industry: 'roofing', services: [{ slug: 'roof-repair', name: 'Roof Repair' }] };
+    const content = {
+      business: { name: 'Ready Co', phone: '816-555-0100' }, industry: 'roofing', services: [{ slug: 'roof-repair', name: 'Roof Repair' }],
+      whyUs: [{ icon: 'check', title: 'Straight answers', text: 'We explain what we find first.' }],
+      faq: [{ q: 'Do you repair roofs?', a: 'Yes.' }],
+    };
     writeJson(path.join(dir, 'ready-co.json'), content);
     writeJson(path.join(dir, '.briefs', 'ready-co.json'), {
       slug: 'ready-co', status: 'ok', stub: { business: { name: 'Ready Co', phone: '816-555-0100' } }, note: '',

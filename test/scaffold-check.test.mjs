@@ -20,6 +20,8 @@ const content = (over = {}) => ({
   business: { name: 'Acme Roofing', phone: '(816) 555-0142', founded: 2004, rating: 4.8, reviewCount: 112 },
   industry: 'roofing',
   services: [{ slug: 'gutters', name: 'Gutters' }],
+  whyUs: [{ icon: 'check', title: 'Straight answers', text: 'We explain what we find before any work starts.' }],
+  faq: [{ q: 'Do you install gutters?', a: 'Yes, seamless gutters sized for your roof.' }],
   ...over,
 });
 const goodProv = () => ({
@@ -289,4 +291,12 @@ test('end to end: --no-ai on the normal fixture is valid with nothing dropped', 
   assert.deepEqual(r.dropped, []);
   assert.deepEqual(r.validation.errors, []);
   assert.ok(['ready', 'needs-look'].includes(r.status), r.status);
+});
+
+test('missing whyUs or faq is warned, since the preset’s generic copy would show unchecked', () => {
+  const r = checkScaffold({ content: content({ whyUs: undefined, faq: [] }), provenance: goodProv(), brief: brief() });
+  assert.ok(r.warnings.some((w) => /^whyUs: not written/.test(w)), r.warnings.join('; '));
+  assert.ok(r.warnings.some((w) => /^faq: not written/.test(w)), r.warnings.join('; '));
+  const ok = checkScaffold({ content: content(), provenance: goodProv(), brief: brief() });
+  assert.ok(!ok.warnings.some((w) => /not written/.test(w)));
 });

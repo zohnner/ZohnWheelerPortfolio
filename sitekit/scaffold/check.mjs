@@ -192,7 +192,17 @@ export function checkScaffold({ content, provenance, brief }) {
   };
   const facts = kept.map(({ path, value, source, quote }) => ({ path: shift(path), value, source, quote }));
   const newProv = Object.fromEntries(kept.map((k) => [shift(k.path), k.entry]));
-  return { content: out, provenance: newProv, dropped, warnings: copyWarnings(out, facts), facts };
+  return { content: out, provenance: newProv, dropped, warnings: [...copyWarnings(out, facts), ...unwrittenCopy(out)], facts };
+}
+
+// whyUs and faq fall back to the industry preset when the file leaves them
+// out. Preset text is never fact-checked and can contradict the business (a
+// repair-only roofer answering "How much does a new roof cost?"), so a
+// scaffolded file must write its own.
+export function unwrittenCopy(c) {
+  return ['whyUs', 'faq']
+    .filter((key) => !(Array.isArray(c[key]) && c[key].length))
+    .map((key) => `${key}: not written — the industry preset's generic text would show; write it from this business's own facts`);
 }
 
 export function scaffoldStatus({ validation, dropped, warnings, briefStatus }) {

@@ -4,6 +4,7 @@ export default {
   industry: 'foundation',
   trade: 'Foundation Repair',
   schemaType: 'HomeAndConstructionBusiness',
+  serviceIcon: 'layers',
   theme: { preset: 'earth', mode: 'light' },
   hero: {
     headline: 'Protect your home from the ground up.',

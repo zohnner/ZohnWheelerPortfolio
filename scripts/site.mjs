@@ -10,10 +10,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { validateContent } from '../sitekit/validate.mjs';
-import { pushSql, statusSql, pitchStatusSql, STATUSES, parseCsv, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
+import { pushSql, statusSql, pitchStatusSql, STATUSES, parseCsvChecked, slugify, stubFromProspect, pitchText } from '../sitekit/admin.mjs';
 import { renderPage, listPages, renderSitemap, renderRobots } from '../sitekit/render.mjs';
 import { gather, renderBriefMd, noAiContent, isStub } from '../sitekit/scaffold/brief.mjs';
 import { runCheck } from '../sitekit/scaffold/check.mjs';
@@ -26,6 +26,8 @@ const BRIEFS_DIR = path.join(SITES_DIR, '.briefs');
 const REVIEW_DIR = path.join(SITES_DIR, '.review');
 const BAK_DIR = path.join(SITES_DIR, '.bak');
 const TOKENS_FILE = path.join(SITES_DIR, '.tokens.json');
+// Local clone of the private repo Muse commits prospect batches to.
+const PROSPECTS_DIR = process.env.SK_PROSPECTS_DIR ? path.resolve(process.env.SK_PROSPECTS_DIR) : path.resolve(ROOT, '..', 'sitekit-prospects');
 const SQL_FILE = path.join(ROOT, 'scripts', '.site-push.sql');
 const BASE_URL = process.env.SK_BASE_URL || 'https://zohnwheelerportfolio.pages.dev';
 const DB = 'portfolio-leads';
@@ -55,6 +57,30 @@ const target = flags.local ? '--local' : '--remote';
 function fail(msg) {
   console.error(msg);
   process.exit(1);
+}
+
+const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+// Creates a sites/<slug>.json stub per good CSV row. Rows with the wrong field
+// count, no name, or an existing slug are skipped and reported.
+function importCsv(text) {
+  fs.mkdirSync(SITES_DIR, { recursive: true });
+  const { rows, bad } = parseCsvChecked(text);
+  for (const b of bad) console.warn(`skipping row ${b.row} "${b.name}" has ${b.fields} fields, expected ${b.expected} — fix the commas and re-import it`);
+  const created = [];
+  for (const row of rows) {
+    if (!row.name) { console.warn('skipping a row with no name'); continue; }
+    const slug = slugify(row.name);
+    if (!slug) { console.warn(`skipping "${row.name}" — slugifies to an empty string`); continue; }
+    const p = path.join(SITES_DIR, `${slug}.json`);
+    if (fs.existsSync(p)) { console.log(`skip ${slug} (already exists)`); continue; }
+    const stub = stubFromProspect(row);
+    fs.writeFileSync(p, JSON.stringify(stub, null, 2) + '\n');
+    created.push(slug);
+    const { errors, warnings } = validateContent(stub, { slug, fileExists });
+    console.log(`created sites/${slug}.json${errors.length ? ` — needs: ${errors.join('; ')}` : ''}${warnings.length ? ` (${plural(warnings.length, 'warning')})` : ''}`);
+  }
+  return { created, bad };
 }
 
 function sitePath(slug) {
@@ -237,21 +263,37 @@ const commands = {
   'import'() {
     const file = flags._[0];
     if (!file || !fs.existsSync(file)) fail('Usage: node scripts/site.mjs import prospects.csv');
-    fs.mkdirSync(SITES_DIR, { recursive: true });
-    let created = 0;
-    for (const row of parseCsv(fs.readFileSync(file, 'utf8'))) {
-      if (!row.name) { console.warn('skipping a row with no name'); continue; }
-      const slug = slugify(row.name);
-      if (!slug) { console.warn(`skipping "${row.name}" — slugifies to an empty string`); continue; }
-      const p = path.join(SITES_DIR, `${slug}.json`);
-      if (fs.existsSync(p)) { console.log(`skip ${slug} (already exists)`); continue; }
-      const stub = stubFromProspect(row);
-      fs.writeFileSync(p, JSON.stringify(stub, null, 2) + '\n');
-      created++;
-      const { errors, warnings } = validateContent(stub, { slug, fileExists });
-      console.log(`created sites/${slug}.json${errors.length ? ` — needs: ${errors.join('; ')}` : ''}${warnings.length ? ` (${warnings.length} warning(s))` : ''}`);
+    const { created } = importCsv(fs.readFileSync(file, 'utf8'));
+    console.log(`\n${created.length} new site(s). Next: node scripts/site.mjs scaffold, then /scaffold-sites in Claude Code.`);
+  },
+
+  // Muse commits batches to inbox/ in the private prospects repo. Pull, import
+  // each new batch, move it to done/, and push — run by the Monday task.
+  inbox() {
+    const dir = PROSPECTS_DIR;
+    if (!fs.existsSync(path.join(dir, '.git'))) fail(`${dir} is not a git clone of the prospects repo (set SK_PROSPECTS_DIR or clone it there).`);
+    const git = (...args) => execFileSync('git', args, { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    try { git('pull', '--ff-only', '--quiet'); } catch (e) { fail(`git pull failed in ${dir}: ${String(e.stderr || e.message).trim()}`); }
+    const inboxDir = path.join(dir, 'inbox');
+    const files = fs.existsSync(inboxDir) ? fs.readdirSync(inboxDir).filter((f) => f.endsWith('.csv')).sort() : [];
+    if (!files.length) { console.log('No new batches.'); return; }
+    fs.mkdirSync(path.join(dir, 'done'), { recursive: true });
+    const lines = [];
+    let sites = 0;
+    let badRows = 0;
+    for (const f of files) {
+      console.log(`\n== ${f}`);
+      const { created, bad } = importCsv(fs.readFileSync(path.join(inboxDir, f), 'utf8'));
+      sites += created.length;
+      badRows += bad.length;
+      const line = `${f}: ${plural(created.length, 'new site')}, ${plural(bad.length, 'bad row')}`;
+      console.log(line);
+      lines.push(line, ...bad.map((b) => `  - row ${b.row} "${b.name}" has ${b.fields} fields, expected ${b.expected} (not imported)`));
+      git('mv', `inbox/${f}`, `done/${f}`);
     }
-    console.log(`\n${created} new site(s). Fill in the details (write each city intro!), then: node scripts/site.mjs push <slug>`);
+    git('commit', '--quiet', '-m', `Import ${files.join(', ')}: ${plural(sites, 'new site')}, ${plural(badRows, 'bad row')}\n\n${lines.join('\n')}`);
+    try { git('push', '--quiet'); } catch (e) { console.warn(`\nWarning: imported, but git push failed — run "git -C ${dir} push" later. ${String(e.stderr || e.message).trim()}`); }
+    console.log(`\n${plural(sites, 'new site')} from ${plural(files.length, 'batch', 'batches')}. Next: node scripts/site.mjs scaffold, then /scaffold-sites in Claude Code.`);
   },
 
   pitch() {

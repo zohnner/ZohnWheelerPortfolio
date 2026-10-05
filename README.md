@@ -74,7 +74,7 @@ npx wrangler d1 execute portfolio-leads --remote --file ./schema-sitekit.sql
 
 Run these in order, from the repo root:
 
-1. `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist). Muse CSV columns: `name, industry, city, phone, email, contact_form_url, current_site, google_rating, review_count, google_maps_url, notes` (only `name` is required; `notes` becomes Zohn's note for the scaffolder).
+1. `node scripts/site.mjs inbox` — pulls Muse's batches from the private prospects repo (`../sitekit-prospects`, or `SK_PROSPECTS_DIR`), imports each `inbox/*.csv`, moves it to `done/`, and pushes; runs automatically Mondays 6:30 AM via `scripts/monday-inbox.ps1`. Or import a file directly: `node scripts/site.mjs import prospects.csv` — creates a `sites/<slug>.json` stub per row (skips names that already exist, and any row whose field count doesn't match the header). Muse CSV columns: `name, industry, city, phone, email, contact_form_url, current_site, google_rating, review_count, google_maps_url, notes` (only `name` is required; `notes` becomes Zohn's note for the scaffolder). See [docs/muse-handoff.md](docs/muse-handoff.md) for the prompt to give Muse and the rules for each column.
 2. Fill in the stubs with the scaffolder (see **Scaffolding** below), open the review page it writes, and fix anything flagged. Always read and hand-check each city intro.
 3. `node scripts/site.mjs push <slug>` — validates the content and writes a SQL file (`scripts/.site-push.sql`); it does **not** write to D1 itself. It prints the `wrangler d1 execute --remote --file ...` command that does.
 4. Run the printed wrangler command.

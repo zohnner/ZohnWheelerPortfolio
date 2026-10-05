@@ -44,7 +44,32 @@ export function pitchStatusSql({ slug, now }) {
   return `UPDATE sites SET status = 'pitched', updated_at = ${sqlString(now)} WHERE slug = ${sqlString(slug)} AND status IN ('prospect','demo','pitched','viewed');\n`;
 }
 
+// Like parseCsv, but a row whose field count differs from the header's is
+// reported instead of returned: one stray comma silently shifts every later
+// value into the wrong column. `row` counts the header as row 1, skipping
+// blank lines.
+export function parseCsvChecked(text) {
+  const [header, ...data] = csvRecords(text);
+  if (!header) return { rows: [], bad: [] };
+  const keys = header.map((h) => h.trim().toLowerCase());
+  const rows = [];
+  const bad = [];
+  data.forEach((r, i) => {
+    if (r.length === keys.length) rows.push(Object.fromEntries(keys.map((k, j) => [k, r[j].trim()])));
+    else bad.push({ row: i + 2, name: (r[0] ?? '').trim(), fields: r.length, expected: keys.length });
+  });
+  return { rows, bad };
+}
+
 export function parseCsv(text) {
+  const [header, ...data] = csvRecords(text);
+  if (!header) return [];
+  const keys = header.map((h) => h.trim().toLowerCase());
+  return data.map((r) => Object.fromEntries(keys.map((k, i) => [k, (r[i] ?? '').trim()])));
+}
+
+// Splits CSV text into raw records (arrays of untrimmed fields), dropping blank lines.
+function csvRecords(text) {
   const rows = [];
   let row = [];
   let field = '';
@@ -64,10 +89,7 @@ export function parseCsv(text) {
     } else field += ch;
   }
   if (field !== '' || row.length) { row.push(field); rows.push(row); }
-  const [header, ...data] = rows.filter((r) => r.some((f) => f.trim() !== ''));
-  if (!header) return [];
-  const keys = header.map((h) => h.trim().toLowerCase());
-  return data.map((r) => Object.fromEntries(keys.map((k, i) => [k, (r[i] ?? '').trim()])));
+  return rows.filter((r) => r.some((f) => f.trim() !== ''));
 }
 
 export function slugify(s) {

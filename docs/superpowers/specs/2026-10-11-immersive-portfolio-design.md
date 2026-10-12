@@ -1,7 +1,7 @@
 # Immersive Portfolio — Design
 
 **Date:** 2026-10-11
-**Status:** Approved in brainstorming, awaiting written-spec review
+**Status:** Implemented on branch immersive-portfolio
 **Branch:** `immersive-portfolio`
 
 ## Goal

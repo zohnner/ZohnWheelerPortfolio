@@ -70,15 +70,18 @@ async function openCore() {
   term.print("identity core online. type 'help' for commands.");
   await Promise.race([corePromise, sleep(2500)]);
 
+  const chosen = () => Boolean(state.track || state.focused);
   if (returning) {
     await narrator.say('welcome');
+    if (chosen()) return;
     const saved = store.get('zw_track');
-    if (TRACKS[saved] && !state.track) { chooseTrack(saved); return; }
+    if (Object.hasOwn(TRACKS, saved)) { chooseTrack(saved); return; }
   } else {
     await narrator.say('intro');
+    if (chosen()) return;
     await narrator.say('bio');
+    if (chosen()) return;
   }
-  if (state.track) return;
   await narrator.say('ask');
   if (!state.track) showTrackChoice();
 }
@@ -92,7 +95,7 @@ function showTrackChoice() {
 // ---------- Act 4: tracks, rings and panel ----------
 
 function chooseTrack(track, { quiet = false } = {}) {
-  if (!TRACKS[track]) return false;
+  if (!Object.hasOwn(TRACKS, track)) return false;
   state.track = track;
   store.set('zw_track', track);
   const choice = $('#track-choice');

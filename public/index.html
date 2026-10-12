@@ -38,6 +38,8 @@
 </script>
 </head>
 <body>
+<div id="crt-power" class="crt-power" aria-hidden="true"></div>
+<div class="crt-band" aria-hidden="true"></div>
 <div class="top-links"><a href="/classic/">plain version</a></div>
 <button id="skip" class="skip" type="button">skip intro [esc]</button>
 
@@ -46,15 +48,16 @@
     <div class="term-out" data-term-out role="log"></div>
     <form class="term-form" data-term-form autocomplete="off">
       <label for="term-input" class="sr-only">Type a command</label>
-      <span aria-hidden="true">&gt;</span>
+      <span aria-hidden="true" data-term-prompt>&gt;</span>
       <input id="term-input" data-term-input type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
     </form>
     <div class="chips" aria-label="Quick commands">
       <button type="button" data-cmd="help">help</button>
-      <button type="button" data-cmd="ls projects">ls projects</button>
+      <button type="button" data-cmd="ls">ls</button>
+      <button type="button" data-cmd="cd projects">cd projects</button>
+      <button type="button" data-cmd="top">top</button>
       <button type="button" data-cmd="track hire">track hire</button>
       <button type="button" data-cmd="track build">track build</button>
-      <button type="button" data-cmd="cat resume">cat resume</button>
       <button type="button" data-cmd="contact">contact</button>
     </div>
   </section>
@@ -67,18 +70,20 @@
     </div>
     <div id="core-stage" class="core-stage"></div>
     <nav id="rings" class="rings" aria-label="Projects"></nav>
-    <p id="caption" class="caption" aria-hidden="true"></p>
     <p id="live" class="sr-only" aria-live="polite"></p>
     <div id="track-choice" class="track-choice" hidden>
       <button type="button" data-track="hire">I'm hiring</button>
       <button type="button" data-track="build">I need something built</button>
     </div>
     <aside id="panel" class="panel" hidden aria-labelledby="panel-title">
-      <button type="button" class="close" aria-label="Close project">&times;</button>
-      <img alt="" hidden>
-      <h2 id="panel-title"></h2>
-      <ul data-stack aria-label="Stack"></ul>
+      <div class="tui-title">
+        <span aria-hidden="true">[&nbsp;</span><h2 id="panel-title"></h2><span aria-hidden="true">&nbsp;]</span>
+        <span class="tui-fill" aria-hidden="true"></span>
+        <button type="button" class="close" aria-label="Close project">[x]</button>
+      </div>
+      <pre class="ascii" data-ascii aria-hidden="true"></pre>
       <p data-story></p>
+      <ul data-stack aria-label="Stack"></ul>
       <div class="links" data-links></div>
     </aside>
   </section>

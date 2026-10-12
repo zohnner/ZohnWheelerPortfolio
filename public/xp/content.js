@@ -182,7 +182,7 @@ export const KB = [
     reply: 'Applications Administrator on federal treasury systems since March 2026, giving Tier 2/3 support for enterprise financial applications. Before that, Junior Engineer at a Missouri state agency from July 2024 to January 2026: infrastructure, identity and automation.' },
   { id: 'clearance', keywords: ['clearance', 'sci', 'secret', 'security', 'federal', 'government', 'treasury', 'classified'],
     reply: 'Zohn holds an active TS/SCI clearance and supports classified, air-gapped federal treasury systems as a contractor.' },
-  { id: 'location', keywords: ['where', 'location', 'based', 'city', 'missouri', 'live', 'remote', 'relocate'],
+  { id: 'location', keywords: ['where', 'location', 'based', 'city', 'missouri', 'remote', 'relocate'],
     reply: 'Zohn is based in Kansas City, Missouri, and open to opportunities.' },
   { id: 'hire', keywords: ['hire', 'hiring', 'available', 'availability', 'open', 'opportunity', 'recruit', 'recruiter', 'position', 'role', 'interview'],
     reply: "Zohn is open to full-time roles, contract work and interesting conversations. The fastest route is email: zohnwheeler@gmail.com. Or type 'contact'." },

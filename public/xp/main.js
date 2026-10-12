@@ -1,10 +1,18 @@
-// Runs the story: boot (acts 1-2), core (act 3), track view (act 4).
-// The only module that knows the act order.
+// Runs the story: power-on and BIOS (acts 0-1), OS boot (act 2), the core
+// (act 3) and track view (act 4). The only module that knows the act order.
 
-import { PROJECTS, TRACKS, OWNER, VOICE_ENABLED } from './content.js';
+import { PROJECTS, TRACKS, VOICE_ENABLED, BANNER } from './content.js';
 import { createTerminal } from './terminal.js';
 import { getBootLines, formatLine } from './boot.js';
-import { createNarrator } from './narrator.js';
+import { readDevice, formatPost, memoryLine, memorySteps } from './bios.js';
+import { createOperator } from './operator.js';
+import { createVoice } from './voice.js';
+import { initPalette, glitch, powerOff } from './crt.js';
+import { imageToAscii } from './ascii.js';
+import { createScreensaver } from './screensaver.js';
+import { createReactions } from './reactions.js';
+import { registerShell } from './shell.js';
+import { fetchJson } from './live.js';
 
 const $ = (sel) => document.querySelector(sel);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -14,12 +22,14 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* storage blocked */ } },
   remove(k) { try { localStorage.removeItem(k); } catch { /* storage blocked */ } },
 };
-if (params.has('fresh')) { store.remove('zw_visited'); store.remove('zw_track'); }
+if (params.has('fresh')) { for (const k of ['zw_visited', 'zw_track', 'zw_last_project']) store.remove(k); }
 
 const projectById = new Map(PROJECTS.map((p) => [p.id, p]));
 const phone = matchMedia('(max-width: 640px)').matches;
-const state = { opened: false, skipped: false, track: null, focused: null };
+const state = { opened: false, skipped: false, track: null, focused: null, alert: false };
+const restingState = () => (state.alert ? 'alert' : state.focused ? 'focus' : 'idle');
 
+initPalette(store);
 const term = createTerminal($('#terminal'));
 
 // Start loading the orb immediately; the boot sequence hides the wait.
@@ -30,17 +40,45 @@ const corePromise = (leaving ? Promise.reject(new Error('leaving')) : import('./
   .then((c) => { core = c; return c; })
   .catch(() => null);
 
-const narrator = createNarrator({
-  captionEl: $('#caption'),
-  liveEl: $('#live'),
-  onSpeakStart: () => core?.setState('speaking'),
-  onSpeakEnd: () => core?.setState(state.focused ? 'focus' : 'idle'),
+const voice = createVoice();
+const operator = createOperator({ term, liveEl: $('#live'), getCore: () => core, restingState, voice: VOICE_ENABLED ? voice : null });
+const reactions = createReactions({
+  operator, store, projectById, getState: () => state, screensaver: createScreensaver($('#core')),
+  setAlert: (on) => { state.alert = on; core?.setState(restingState()); },
 });
 
-// ---------- Acts 1-2: boot ----------
+// ---------- Acts 0-2: power on, BIOS, OS boot ----------
+
+async function bios() {
+  const device = readDevice();
+  for (const line of formatPost(device)) {
+    if (state.skipped) return;
+    if (device.memoryMB && line === memoryLine(device.memoryMB)) {
+      const el = term.print('Memory test: 0 MB');
+      for (const n of memorySteps(device.memoryMB)) {
+        if (state.skipped) return;
+        el.textContent = `Memory test: ${n} MB`;
+        await sleep(70);
+      }
+      el.textContent = line;
+    } else {
+      term.print(line);
+    }
+    await sleep(200);
+  }
+}
+
+function printBanner() {
+  for (const line of BANNER) term.print(line, 'banner').setAttribute('aria-hidden', 'true');
+}
 
 async function boot() {
   const lines = getBootLines({ url: params.has('offline') ? '/api/__offline' : '/api/status' });
+  await sleep(550);
+  await bios();
+  if (state.skipped) return;
+  await sleep(300);
+  term.clear();
   await term.typeLine('who is zohn_wheeler', { prompt: '> ', typo: { at: 7, wrong: 'zhon' } });
   for (const line of await lines) {
     if (state.skipped) return;
@@ -48,7 +86,9 @@ async function boot() {
     if (state.skipped) return;
     term.print(formatLine(line), `tag-${line.tag.toLowerCase()}`);
   }
-  await sleep(500);
+  if (state.skipped) return;
+  printBanner();
+  await sleep(700);
 }
 
 function skip() {
@@ -68,22 +108,24 @@ async function openCore() {
   document.body.classList.add('is-core');
   const active = document.activeElement;
   if (!phone && (active === document.body || active === $('#skip'))) term.focus();
-  term.print("identity core online. type 'help' for commands.");
+  term.print("identity core online. type 'help' for commands, or just ask a question.");
+  reactions.start();
+  fetchJson('/api/status').then((s) => { if (s) reactions.checkHealth(s); });
   await Promise.race([corePromise, sleep(2500)]);
 
   const chosen = () => Boolean(state.track || state.focused);
   if (returning) {
-    await narrator.say('welcome');
+    await operator.say(reactions.welcomeLine());
     if (chosen()) return;
     const saved = store.get('zw_track');
     if (Object.hasOwn(TRACKS, saved)) { chooseTrack(saved); return; }
   } else {
-    await narrator.say('intro');
+    await operator.say('intro');
     if (chosen()) return;
-    await narrator.say('bio');
+    await operator.say('bio');
     if (chosen()) return;
   }
-  await narrator.say('ask');
+  await operator.say('ask');
   if (!state.track) showTrackChoice();
 }
 
@@ -94,7 +136,7 @@ function showTrackChoice() {
   if (!typing) choice.querySelector('button').focus({ preventScroll: true });
 }
 
-// ---------- Act 4: tracks, rings and panel ----------
+// ---------- Act 4: tracks, rings and the project window ----------
 
 function chooseTrack(track, { quiet = false } = {}) {
   if (!Object.hasOwn(TRACKS, track)) return false;
@@ -110,7 +152,7 @@ function chooseTrack(track, { quiet = false } = {}) {
   renderRings();
   if (hadFocus) $('#rings .ring-node')?.focus({ preventScroll: true });
   else if (ringFocus) (document.querySelector(`.ring-node[data-id="${ringFocus}"]`) ?? $('#rings .ring-node'))?.focus({ preventScroll: true });
-  if (!quiet) narrator.say(`track.${track}`);
+  if (!quiet) operator.say(`track.${track}`);
   return true;
 }
 
@@ -147,15 +189,13 @@ function focusProject(id, { moveFocus = true } = {}) {
   core?.focus(id);
   markCurrent();
   renderPanel(p, moveFocus);
-  narrator.say(`project.${id}`);
+  reactions.projectOpened(id);
+  operator.say(`project.${id}`);
   return true;
 }
 
 function renderPanel(p, moveFocus) {
   const panel = $('#panel');
-  const img = panel.querySelector('img');
-  if (p.thumb) { img.src = p.thumb; img.alt = `${p.name} screenshot`; img.hidden = false; }
-  else { img.removeAttribute('src'); img.alt = ''; img.hidden = true; }
   $('#panel-title').textContent = p.name;
   panel.querySelector('[data-story]').textContent = p.story;
   panel.querySelector('[data-stack]').replaceChildren(...p.stack.map((s) => {
@@ -170,8 +210,15 @@ function renderPanel(p, moveFocus) {
     if (/^https?:/.test(l.href)) { a.target = '_blank'; a.rel = 'noopener'; }
     return a;
   }));
+  const art = panel.querySelector('[data-ascii]');
+  art.textContent = p.thumb ? 'rendering...' : '[ no image on file ]';
+  if (p.thumb) {
+    imageToAscii(p.thumb, phone ? 40 : 64).then((lines) => {
+      if (state.focused === p.id) art.textContent = lines ? lines.join('\n') : '[ no image on file ]';
+    });
+  }
   panel.hidden = false;
-  $('#core').classList.add('panel-open');
+  glitch(panel);
   if (moveFocus) panel.querySelector('.close').focus({ preventScroll: true });
 }
 
@@ -180,70 +227,35 @@ function closePanel() {
   $('#panel').hidden = true;
   state.focused = null;
   core?.focus(null);
-  core?.setState('idle');
+  core?.setState(restingState());
   markCurrent();
-  $('#core').classList.remove('panel-open');
-  const ring = document.querySelector(`.ring-node[data-id="${returnTo}"]`)
-    ?? (phone ? $('#rings button') : null);
+  const ring = document.querySelector(`.ring-node[data-id="${returnTo}"]`) ?? (phone ? $('#rings button') : null);
   if (ring) ring.focus({ preventScroll: true });
   else if (!phone) term.focus();
 }
 
 function setSound(on) {
-  narrator.setSound(on);
+  voice.setOn(on);
   const b = $('#sound');
   b.setAttribute('aria-pressed', String(on));
   b.textContent = `sound: ${on ? 'on' : 'off'}`;
 }
 
-// ---------- Commands ----------
-
-term.register('help', () => term.list().map((c) => c.help), 'help: list commands');
-term.register('ls', (args) => (args[0] === 'projects'
-  ? TRACKS[state.track ?? 'hire'].order.map((id) => `${id.padEnd(12)} ${projectById.get(id).name}`)
-  : 'usage: ls projects'), 'ls projects: list projects');
-term.register('open', (args) => {
-  const id = (args[0] ?? '').toLowerCase();
-  if (!id) return 'usage: open <project>';
-  return focusProject(id, { moveFocus: false }) ? `opening ${projectById.get(id).name}...` : `open: ${id}: no such project. try 'ls projects'.`;
-}, 'open <project>: focus a project');
-term.register('track', (args) => {
-  const t = (args[0] ?? '').toLowerCase();
-  return chooseTrack(t) ? `track set: ${t}` : 'usage: track hire|build';
-}, 'track hire|build: switch audience');
-term.register('cat', (args) => ((args[0] ?? '').toLowerCase() === 'resume'
-  ? { prefix: 'résumé: ', text: '/resume.html', href: '/resume.html' }
-  : `cat: ${args[0] ?? ''}: no such file`), 'cat resume: view résumé');
-term.register('contact', () => [
-  TRACKS[state.track ?? 'hire'].contact,
-  { prefix: 'linkedin: ', text: OWNER.linkedin, href: OWNER.linkedin },
-], 'contact: get in touch');
-if (VOICE_ENABLED) {
-  term.register('sound', (args) => {
-    const v = (args[0] ?? '').toLowerCase();
-    if (v !== 'on' && v !== 'off') return 'usage: sound on|off';
-    setSound(v === 'on');
-    return `sound ${v}`;
-  }, 'sound on|off: toggle voice');
-} else {
-  term.register('sound', () => 'voice module offline. captions only for now.');
-}
-term.register('classic', () => { location.href = '/classic/'; return 'loading plain version...'; }, 'classic: plain version of this site');
-term.register('clear', () => { term.clear(); }, 'clear: clear the terminal');
-term.register('whoami', () => 'guest. curious, apparently. good sign.');
-term.register('sudo', (args) => (args.join(' ').toLowerCase() === 'hire zohn'
-  ? ['[sudo] access granted.', { prefix: 'next step: ', text: OWNER.email, href: `mailto:${OWNER.email}` }]
-  : 'nice try.'));
+registerShell({ term, operator, state, store, projectById, focusProject, chooseTrack, setSound: VOICE_ENABLED ? setSound : null });
 
 // ---------- Wiring ----------
 
 $('#skip').addEventListener('click', skip);
-if (VOICE_ENABLED) $('#sound').addEventListener('click', () => setSound(!narrator.sound));
+if (VOICE_ENABLED) $('#sound').addEventListener('click', () => setSound(!voice.on));
 else $('#sound').hidden = true;
 $('#track-toggle').addEventListener('click', () => chooseTrack(state.track === 'hire' ? 'build' : 'hire'));
 document.querySelectorAll('[data-track]').forEach((b) => b.addEventListener('click', () => chooseTrack(b.dataset.track)));
 document.querySelectorAll('[data-cmd]').forEach((b) => b.addEventListener('click', () => term.run(b.dataset.cmd)));
 $('#panel .close').addEventListener('click', closePanel);
+$('.top-links a').addEventListener('click', (e) => {
+  e.preventDefault();
+  powerOff().then(() => { location.href = '/classic/'; });
+});
 
 addEventListener('keydown', (e) => {
   if (!state.opened) {

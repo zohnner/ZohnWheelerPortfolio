@@ -47,7 +47,8 @@ term.register('clear', () => { term.clear(); }, 'clear: clear the terminal');
 
 $('#skip').addEventListener('click', skip);
 addEventListener('keydown', (e) => {
-  if (state.opened || e.key === 'Tab' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (state.opened || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key !== 'Escape' && e.key !== 'Enter' && e.key !== ' ' && e.key.length !== 1) return;
   skip();
 });
 document.querySelectorAll('[data-cmd]').forEach((b) => b.addEventListener('click', () => term.run(b.dataset.cmd)));

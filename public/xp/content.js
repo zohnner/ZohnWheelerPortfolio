@@ -92,6 +92,10 @@ export const TRACKS = {
   },
 };
 
+// Voice narration is off until the clips are tuned. Captions always play.
+// Flip to true to bring back the sound toggle and the `sound` command.
+export const VOICE_ENABLED = false;
+
 // Every entry here gets a pre-rendered voice clip (scripts/render-voice.mjs).
 // Keep each line at 140 characters or fewer.
 export const NARRATION = {

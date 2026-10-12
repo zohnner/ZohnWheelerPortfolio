@@ -1,7 +1,7 @@
 // Runs the story: boot (acts 1-2), core (act 3), track view (act 4).
 // The only module that knows the act order.
 
-import { PROJECTS, TRACKS, OWNER } from './content.js';
+import { PROJECTS, TRACKS, OWNER, VOICE_ENABLED } from './content.js';
 import { createTerminal } from './terminal.js';
 import { getBootLines, formatLine } from './boot.js';
 import { createNarrator } from './narrator.js';
@@ -218,12 +218,16 @@ term.register('contact', () => [
   TRACKS[state.track ?? 'hire'].contact,
   { prefix: 'linkedin: ', text: OWNER.linkedin, href: OWNER.linkedin },
 ], 'contact: get in touch');
-term.register('sound', (args) => {
-  const v = (args[0] ?? '').toLowerCase();
-  if (v !== 'on' && v !== 'off') return 'usage: sound on|off';
-  setSound(v === 'on');
-  return `sound ${v}`;
-}, 'sound on|off: toggle voice');
+if (VOICE_ENABLED) {
+  term.register('sound', (args) => {
+    const v = (args[0] ?? '').toLowerCase();
+    if (v !== 'on' && v !== 'off') return 'usage: sound on|off';
+    setSound(v === 'on');
+    return `sound ${v}`;
+  }, 'sound on|off: toggle voice');
+} else {
+  term.register('sound', () => 'voice module offline. captions only for now.');
+}
 term.register('classic', () => { location.href = '/classic/'; return 'loading plain version...'; }, 'classic: plain version of this site');
 term.register('clear', () => { term.clear(); }, 'clear: clear the terminal');
 term.register('whoami', () => 'guest. curious, apparently. good sign.');
@@ -234,7 +238,8 @@ term.register('sudo', (args) => (args.join(' ').toLowerCase() === 'hire zohn'
 // ---------- Wiring ----------
 
 $('#skip').addEventListener('click', skip);
-$('#sound').addEventListener('click', () => setSound(!narrator.sound));
+if (VOICE_ENABLED) $('#sound').addEventListener('click', () => setSound(!narrator.sound));
+else $('#sound').hidden = true;
 $('#track-toggle').addEventListener('click', () => chooseTrack(state.track === 'hire' ? 'build' : 'hire'));
 document.querySelectorAll('[data-track]').forEach((b) => b.addEventListener('click', () => chooseTrack(b.dataset.track)));
 document.querySelectorAll('[data-cmd]').forEach((b) => b.addEventListener('click', () => term.run(b.dataset.cmd)));

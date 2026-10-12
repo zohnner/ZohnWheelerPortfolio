@@ -51,9 +51,16 @@ export function createTerminal(root) {
     el.setAttribute('aria-hidden', 'true');
     for (let i = 0; i < text.length && !fast && !skip(); i++) {
       if (typo && i === typo.at) {
-        for (const ch of typo.wrong) { typed.data += ch; await sleep(speed); }
-        await sleep(260);
-        for (let k = 0; k < typo.wrong.length; k++) { typed.data = typed.data.slice(0, -1); await sleep(speed * 0.7); }
+        for (const ch of typo.wrong) {
+          if (fast || skip()) break;
+          typed.data += ch; await sleep(speed);
+        }
+        if (!fast && !skip()) await sleep(260);
+        for (let k = 0; k < typo.wrong.length; k++) {
+          if (fast || skip()) break;
+          typed.data = typed.data.slice(0, -1); await sleep(speed * 0.7);
+        }
+        if (fast || skip()) break;
       }
       typed.data += text[i];
       scroll();

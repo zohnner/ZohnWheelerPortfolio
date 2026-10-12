@@ -80,7 +80,7 @@ async function boot() {
   await sleep(300);
   if (state.skipped) return;
   term.clear();
-  await term.typeLine('who is zohn_wheeler', { prompt: '> ', typo: { at: 7, wrong: 'zhon' } });
+  await term.typeLine('who is zohn_wheeler', { prompt: '> ', typo: { at: 7, wrong: 'zhon' }, skip: () => state.skipped });
   for (const line of await lines) {
     if (state.skipped) return;
     await sleep(160);

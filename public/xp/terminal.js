@@ -1,5 +1,6 @@
-// DOM terminal: typed lines, printed output, an input with history and tab
-// completion. Command logic lives in commands.js.
+// DOM terminal: typed lines, printed output, an input with history, a
+// prompt that can change, and tab completion for commands and arguments.
+// Command logic lives in commands.js.
 
 import { createRegistry, createHistory } from './commands.js';
 
@@ -9,9 +10,12 @@ export function createTerminal(root) {
   const out = root.querySelector('[data-term-out]');
   const form = root.querySelector('[data-term-form]');
   const input = root.querySelector('[data-term-input]');
+  const promptEl = root.querySelector('[data-term-prompt]');
   const registry = createRegistry();
   const history = createHistory();
   let fast = false;
+  let promptText = '>';
+  let completer = null;
 
   const scroll = () => { out.scrollTop = out.scrollHeight; };
 
@@ -38,14 +42,14 @@ export function createTerminal(root) {
     return el;
   }
 
-  async function typeLine(text, { cls, prompt = '', speed = 55, typo } = {}) {
+  async function typeLine(text, { cls, prompt = '', speed = 55, typo, skip = () => false } = {}) {
     const el = addLine(cls);
     const typed = document.createTextNode(prompt);
     const caret = document.createElement('span');
     caret.className = 'cursor';
     el.append(typed, caret);
     el.setAttribute('aria-hidden', 'true');
-    for (let i = 0; i < text.length && !fast; i++) {
+    for (let i = 0; i < text.length && !fast && !skip(); i++) {
       if (typo && i === typo.at) {
         for (const ch of typo.wrong) { typed.data += ch; await sleep(speed); }
         await sleep(260);
@@ -63,7 +67,7 @@ export function createTerminal(root) {
   }
 
   async function run(raw) {
-    print(`> ${raw}`, 'term-echo');
+    print(`${promptText} ${raw}`, 'term-echo');
     history.push(raw);
     const { output } = await registry.run(raw);
     for (const item of output) print(item);
@@ -80,11 +84,16 @@ export function createTerminal(root) {
     if (e.key === 'ArrowUp') { e.preventDefault(); input.value = history.prev(); return; }
     if (e.key === 'ArrowDown') { e.preventDefault(); input.value = history.next(); return; }
     if (e.key !== 'Tab') return;
-    const value = input.value.trim();
-    if (!value || value.includes(' ')) return;
-    const matches = registry.complete(value);
-    if (matches.length === 1) { e.preventDefault(); input.value = `${matches[0]} `; }
-    else if (matches.length > 1) { e.preventDefault(); print(matches.join('  ')); }
+    const value = input.value.trimStart();
+    if (!value) return;
+    const matches = /\s/.test(value) ? (completer?.(value) ?? []) : registry.complete(value);
+    if (matches.length === 1) {
+      e.preventDefault();
+      input.value = matches[0].endsWith('/') ? matches[0] : `${matches[0]} `;
+    } else if (matches.length > 1) {
+      e.preventDefault();
+      print(matches.map((m) => m.split(' ').pop()).join('  '));
+    }
   });
 
   return {
@@ -93,7 +102,11 @@ export function createTerminal(root) {
     run,
     register: registry.register,
     list: registry.list,
+    names: registry.names,
+    setFallback: registry.setFallback,
     setFast(value) { fast = !!value; },
+    setPrompt(text) { promptText = text; if (promptEl) promptEl.textContent = text; },
+    setCompleter(fn) { completer = fn; },
     clear() { out.replaceChildren(); },
     focus() { input.focus({ preventScroll: true }); },
   };

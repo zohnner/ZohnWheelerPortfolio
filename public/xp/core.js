@@ -6,7 +6,9 @@ import { PROJECTS } from './content.js';
 
 const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js';
 const BASE_COLOR = '#4fd1ff';
-const AMP = { idle: 0.04, speaking: 0.16, focus: 0.08 };
+const AMP = { idle: 0.04, thinking: 0.07, speaking: 0.16, focus: 0.08, alert: 0.12 };
+const SPIN = { thinking: 4, alert: 2 };
+const ALERT_COLOR = '#ff5d5d';
 const colorOf = (id) => PROJECTS.find((p) => p.id === id)?.color ?? BASE_COLOR;
 
 const VERT = `
@@ -48,7 +50,10 @@ function mountCss(container) {
   container.append(orb);
   return {
     mode: 'css',
-    setState(state) { orb.classList.toggle('is-speaking', state === 'speaking'); },
+    setState(state) {
+      orb.classList.toggle('is-speaking', state === 'speaking' || state === 'thinking');
+      orb.classList.toggle('is-alert', state === 'alert');
+    },
     focus(id) { orb.style.setProperty('--orb', colorOf(id)); },
   };
 }
@@ -108,6 +113,10 @@ function mountGl(THREE, container, particles) {
 
   let targetAmp = AMP.idle;
   const targetColor = new THREE.Color(BASE_COLOR);
+  const baseColor = new THREE.Color(BASE_COLOR);
+  const alertColor = new THREE.Color(ALERT_COLOR);
+  let spin = 1;
+  let mood = 'idle';
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.05);
@@ -115,15 +124,23 @@ function mountGl(THREE, container, particles) {
     uniforms.uAmp.value += (targetAmp - uniforms.uAmp.value) * Math.min(1, dt * 4);
     uniforms.uColor.value.lerp(targetColor, Math.min(1, dt * 3));
     ringMaterial.color.lerp(targetColor, Math.min(1, dt * 3));
-    orb.rotation.y += dt * 0.12;
+    orb.rotation.y += dt * 0.12 * spin;
     rings.forEach((ring, i) => { ring.rotation.z += dt * (0.05 + i * 0.03) * (i % 2 ? -1 : 1); });
     renderer.render(scene, camera);
   });
 
   return {
     mode: 'webgl',
-    setState(state) { targetAmp = AMP[state] ?? AMP.idle; },
-    focus(id) { targetColor.set(colorOf(id)); },
+    setState(state) {
+      mood = state;
+      targetAmp = AMP[state] ?? AMP.idle;
+      spin = SPIN[state] ?? 1;
+      targetColor.copy(state === 'alert' ? alertColor : baseColor);
+    },
+    focus(id) {
+      baseColor.set(colorOf(id));
+      if (mood !== 'alert') targetColor.copy(baseColor);
+    },
   };
 }
 

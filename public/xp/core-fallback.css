@@ -3,3 +3,5 @@
 .css-orb { width: min(42vmin, 320px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff 0%, var(--orb, #4fd1ff) 18%, rgba(79,209,255,.15) 55%, transparent 70%); box-shadow: 0 0 60px var(--orb, #4fd1ff), inset 0 0 40px rgba(255,255,255,.2); animation: orb-pulse 3.2s ease-in-out infinite; transition: background .6s, box-shadow .6s; }
 .css-orb.is-speaking { animation-duration: .9s; }
 @keyframes orb-pulse { 50% { transform: scale(1.06); filter: brightness(1.25); } }
+
+.css-orb.is-alert { filter: saturate(1.4) hue-rotate(150deg); }

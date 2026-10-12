@@ -3,37 +3,20 @@
 // to that visitor only; they are never stored or logged.
 
 import { PROJECTS, GITHUB_USER } from '../../public/xp/content.js';
+import { gh, cached, json } from '../../server/github.mjs';
 
 const TIMEOUT_MS = 1200;
 const COMMIT_TTL = 600;
 const HEALTH_TTL = 300;
-const CACHE_ORIGIN = 'https://status-cache.internal';
-const GITHUB_HEADERS = { 'User-Agent': 'zohnwheeler-portfolio', Accept: 'application/vnd.github+json' };
 
-async function cached(key, ttl, produce) {
-  const cache = globalThis.caches?.default;
-  const req = new Request(`${CACHE_ORIGIN}/${key}`);
-  if (cache) {
-    const hit = await cache.match(req);
-    if (hit) return hit.json();
-  }
-  const value = await produce();
-  if (cache) {
-    await cache.put(req, new Response(JSON.stringify(value), {
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `max-age=${ttl}` },
-    }));
-  }
-  return value;
-}
-
-export async function latestCommit(user, fetchImpl = fetch) {
+export async function latestCommit(user, fetchImpl = fetch, env) {
   try {
-    const init = { headers: GITHUB_HEADERS, signal: AbortSignal.timeout(TIMEOUT_MS) };
-    const reposRes = await fetchImpl(`https://api.github.com/users/${user}/repos?sort=pushed&per_page=1`, init);
+    const signal = AbortSignal.timeout(TIMEOUT_MS);
+    const reposRes = await gh(`/users/${user}/repos?sort=pushed&per_page=1`, { env, fetchImpl, signal });
     if (!reposRes.ok) return null;
     const [repo] = await reposRes.json();
     if (!repo?.full_name) return null;
-    const commitsRes = await fetchImpl(`https://api.github.com/repos/${repo.full_name}/commits?per_page=1`, init);
+    const commitsRes = await gh(`/repos/${repo.full_name}/commits?per_page=1`, { env, fetchImpl, signal });
     if (!commitsRes.ok) return null;
     const [c] = await commitsRes.json();
     if (!c?.commit) return null;
@@ -68,7 +51,7 @@ export async function onRequestGet(context) {
 
   try {
     [commit, projects] = await Promise.all([
-      cached('commit', COMMIT_TTL, () => latestCommit(GITHUB_USER)).catch(() => null),
+      cached('commit', COMMIT_TTL, () => latestCommit(GITHUB_USER, fetch, context.env)).catch(() => null),
       Promise.all(targets.map((p) =>
         cached(`health/${p.id}`, HEALTH_TTL, () => checkProject(p)).catch(() => ({ id: p.id, status: 'down', ms: null })),
       )),
@@ -84,8 +67,5 @@ export async function onRequestGet(context) {
     projects,
     generatedAt: new Date().toISOString(),
   };
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  });
+  return json(body);
 }

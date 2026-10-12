@@ -124,7 +124,7 @@ export const NARRATION = {
 
 // about.txt in the virtual filesystem.
 export const ABOUT = [
-  'Zohn Wheeler: full-stack developer, Kansas City, MO.',
+  "Zohn Wheeler: I build systems that don't break. Kansas City, MO.",
   '',
   'Supports mission-critical treasury systems for a federal agency',
   '(active TS/SCI clearance) and ships full-stack products end to end:',
@@ -185,7 +185,7 @@ export const KB = [
   { id: 'location', keywords: ['where', 'location', 'based', 'city', 'missouri', 'remote', 'relocate'],
     reply: 'Zohn is based in Kansas City, Missouri, and open to opportunities.' },
   { id: 'hire', keywords: ['hire', 'hiring', 'available', 'availability', 'opportunity', 'recruit', 'recruiter', 'position', 'role', 'interview'],
-    reply: "Zohn is open to full-time roles, contract work and interesting conversations. The fastest route is email: zohnwheeler@gmail.com. Or type 'contact'." },
+    reply: "Zohn is open to platform and reliability roles in Kansas City, Seattle, Denver, Los Angeles or remote. The one-page brief is at /platform.html; the fastest route is email: zohnwheeler@gmail.com." },
   { id: 'education', keywords: ['education', 'school', 'degree', 'college', 'university', 'mizzou', 'graduate', 'study'],
     reply: "B.S. in Information Technology from the University of Missouri, 2024, with Dean's List honors. The senior capstone AI bot was featured by Mizzou Engineering." },
   { id: 'sitekit', keywords: ['sitekit', 'website', 'site', 'build', 'quote', 'business', 'price', 'cost', 'local', 'client', 'roofing', 'hvac'],

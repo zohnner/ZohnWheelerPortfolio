@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 test('static site lives in public/ and private files stay out of it', () => {
-  for (const f of ['index.html', 'hire.html', 'dashboard.html', '_headers', '404.html']) {
+  for (const f of ['index.html', 'hire.html', 'platform.html', 'dashboard.html', '_headers', '404.html']) {
     assert.ok(fs.existsSync(`public/${f}`), `public/${f} should exist`);
   }
   for (const f of ['schema.sql', 'schema-dashboard.sql', 'scripts', 'functions', 'sitekit', 'sites']) {

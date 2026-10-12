@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('zw_theme');
+        var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+        document.addEventListener('DOMContentLoaded', function () {
+          var m = document.getElementById('themeColorMeta');
+          if (m) m.setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0a0a');
+        });
+      } catch (_) {}
+    })();
+  </script>
+  <title>Zohn Wheeler — Platform &amp; Reliability Engineer</title>
+  <meta name="description" content="Cleared engineer (active TS/SCI) who keeps federal treasury systems running and ships production products solo. Open to platform and reliability roles in Seattle, Denver, Los Angeles or remote." />
+  <meta property="og:title" content="Zohn Wheeler — I build systems that don't break" />
+  <meta property="og:description" content="Cleared engineer who keeps federal treasury systems running and ships production products solo. Reliability stories, clearance and availability on one page." />
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/platform.html" />
+  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/platform.html" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" id="themeColorMeta" content="#0a0a0a" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Person","name":"Zohn Wheeler","jobTitle":"Applications Administrator","url":"https://zohnwheelerportfolio.pages.dev/platform.html","email":"mailto:zohnwheeler@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Kansas City","addressRegion":"MO","addressCountry":"US"},"alumniOf":{"@type":"CollegeOrUniversity","name":"University of Missouri"},"sameAs":["https://github.com/zohnner","https://www.linkedin.com/in/zohn-wheeler/"]}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a; --surface: #161616; --surface2: #1e1e1e;
+      --border: #252525; --border2: #333; --accent: #00e5ff; --accent2: #7c3aed;
+      --accent3: #f59e0b; --text: #ececec; --muted: #888; --muted2: #555; --body: #b5b5b5;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 14px; --radius-sm: 8px; --max: 860px;
+    }
+    :root[data-theme="light"] {
+      --bg: #ffffff; --surface: #f5f5f7; --surface2: #ececef;
+      --border: #e2e2e5; --border2: #cfcfd4; --accent: #0e7490; --accent2: #6d28d9;
+      --accent3: #b45309; --text: #16181d; --muted: #5b5f68; --muted2: #8a8f99; --body: #3d4048;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.75; }
+    ::selection { background: var(--accent); color: #000; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { opacity: 0.8; }
+    code { font-family: var(--mono); font-size: 0.85em; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 0.05rem 0.35rem; }
+    .bg-grid { position: fixed; inset: 0; z-index: -2; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 64px 64px; opacity: 0.18; }
+    .glow { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: -1; }
+    .glow-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.05); top: -120px; right: -80px; }
+    .glow-2 { width: 450px; height: 450px; background: rgba(124,58,237,0.06); bottom: 10%; left: -100px; }
+
+    nav { position: sticky; top: 0; z-index: 100; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; justify-content: space-between; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    :root[data-theme="light"] nav { background: rgba(255,255,255,0.85); }
+    .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 600; }
+    .nav-logo span { color: var(--muted); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .back-link { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); transition: color 0.2s; }
+    .back-link:hover { color: var(--accent); opacity: 1; }
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle svg { width: 14px; height: 14px; }
+    .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; margin-bottom: 1.25rem; }
+    h1 .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .lede { font-size: 1.1rem; color: var(--muted); max-width: 640px; margin-bottom: 2rem; }
+    h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 3.5rem 0 1rem; }
+    p { color: var(--body); margin-bottom: 1.1rem; font-size: 0.975rem; }
+    p strong { color: var(--text); font-weight: 600; }
+
+    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.25s; border: none; font-family: var(--font); }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #fff; opacity: 1; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,229,255,0.3); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; transform: translateY(-2px); }
+
+    .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1px; margin: 2.5rem 0 0; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .fact { background: var(--surface); padding: 1.1rem 1.25rem; }
+    .fact-label { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+    .fact-value { font-size: 0.95rem; font-weight: 600; line-height: 1.45; }
+    .fact-value small { display: block; font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+
+    .story { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem 1.6rem 0.6rem; margin: 1.25rem 0; }
+    .story-meta { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent3); margin-bottom: 0.4rem; }
+    .story h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.9rem; }
+    .story dl { display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.15rem 1rem; }
+    .story dt { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 0.3rem; }
+    .story dd { font-size: 0.925rem; color: var(--body); margin-bottom: 0.9rem; }
+
+    .why-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin: 1.5rem 0; }
+    .why-list li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.925rem; color: var(--body); line-height: 1.6; }
+    .why-list li::before { content: '◆'; color: var(--accent3); font-size: 0.5rem; flex-shrink: 0; margin-top: 0.5rem; }
+    .why-list li strong { color: var(--text); }
+
+    .proof { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+    .proof-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text); transition: all 0.25s; }
+    .proof-link:hover { border-color: var(--accent); color: var(--accent); opacity: 1; transform: translateY(-2px); }
+    .proof-link .arrow { color: var(--accent); }
+
+    .contact-box { margin-top: 1.5rem; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .contact-box p:last-child { margin-bottom: 0; }
+
+    footer { text-align: center; padding: 2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted2); border-top: 1px solid var(--border); }
+    @media (max-width: 600px) {
+      .wrap { padding: 2.5rem 1rem 4rem; }
+      nav { padding: 1rem; }
+      .story { padding: 1.25rem 1.1rem 0.4rem; }
+      .story dl { grid-template-columns: 1fr; }
+      .story dt { padding-top: 0; }
+      .story dd { margin-bottom: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="glow glow-1" aria-hidden="true"></div>
+  <div class="glow glow-2" aria-hidden="true"></div>
+
+  <nav>
+    <a href="/" class="nav-logo">zohn<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="/classic/" class="back-link">← Back to Portfolio</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="eyebrow">Platform · Reliability · Operations</div>
+    <h1>I build systems that <span class="grad">don't break.</span></h1>
+    <p class="lede">I'm a cleared engineer who keeps federal treasury systems running by day, and ships production products solo with an AI review team by night. Both jobs come down to the same thing: find the failure before the user does, and make sure it can't come back quietly.</p>
+    <div class="hero-cta">
+      <a href="mailto:zohnwheeler@gmail.com?subject=Role%20for%20Zohn%20Wheeler" class="btn btn-primary">Email Me</a>
+      <a href="/resume.html" class="btn btn-ghost">View Résumé</a>
+    </div>
+
+    <div class="facts" role="list">
+      <div class="fact" role="listitem">
+        <div class="fact-label">Clearance</div>
+        <div class="fact-value">Active TS/SCI</div>
+      </div>
+      <div class="fact" role="listitem">
+        <div class="fact-label">Now</div>
+        <div class="fact-value">Applications Administrator<small>Federal treasury systems · since Mar 2026</small></div>
+      </div>
+      <div class="fact" role="listitem">
+        <div class="fact-label">Before</div>
+        <div class="fact-value">Junior Engineer<small>Missouri state agency · 2024–2026</small></div>
+      </div>
+      <div class="fact" role="listitem">
+        <div class="fact-label">Location</div>
+        <div class="fact-value">Kansas City, MO<small>Open to Seattle, Denver, Los Angeles or remote</small></div>
+      </div>
+    </div>
+
+    <h2>Reliability Stories</h2>
+    <p>Three real incidents from systems I run, written the way I'd write them up at work.</p>
+
+    <article class="story">
+      <div class="story-meta">SportStrata · data integrity</div>
+      <h3>The bug that never threw an error</h3>
+      <dl>
+        <dt>Problem</dt>
+        <dd>The college football scoreboard showed about 25 games a week. The real number was up to 99. A request was missing one parameter (<code>groups=80</code>), so the upstream API quietly returned only the ranked-leaning subset. The parsers are built to degrade gracefully, so nothing failed and nobody was told. It ran that way for weeks.</dd>
+        <dt>Fix</dt>
+        <dd>Added the parameter and verified it against live data in a real browser: 99 events rendered, 74 of which had been invisible.</dd>
+        <dt>Prevention</dt>
+        <dd>Built an upstream contract monitor: a daily GitHub Actions job that hits the production API proxies, checks every field the client reads, and asserts count invariants, so a "well-formed but incomplete" response fails loudly. It also catches the other failure class I'd already hit once: a proxy receiving a WAF block page instead of JSON.</dd>
+      </dl>
+    </article>
+
+    <article class="story">
+      <div class="story-meta">SportStrata · availability</div>
+      <h3>Closing an open relay before it caused an outage</h3>
+      <dl>
+        <dt>Problem</dt>
+        <dd>A review pass found no rate limiting on any <code>/api/*</code> proxy. Anyone could use them as a free relay to ESPN, Sleeper and MLB, which meant one abuser could get the site's egress IP banned upstream: a full outage.</dd>
+        <dt>Fix</dt>
+        <dd>Shipped edge middleware: 120 requests per rolling minute per IP, <code>429</code> with <code>Retry-After</code>, preflight exempt, bounded memory. The client already handled fetch failures with an error state and retry, so users see no difference.</dd>
+        <dt>Honest limit</dt>
+        <dd>It's per-isolate, so it damps abuse rather than enforcing a hard quota. That's written down in the decision record, with a Cloudflare WAF rule specified as the real backstop.</dd>
+      </dl>
+    </article>
+
+    <article class="story">
+      <div class="story-meta">BotChase · production debugging</div>
+      <h3>Making failures visible</h3>
+      <dl>
+        <dt>Problem</dt>
+        <dd>The metrics endpoint returned a 500 because database row objects weren't JSON-serializable, and parts of the dashboard swallowed errors instead of showing them.</dd>
+        <dt>Fix</dt>
+        <dd>Fixed the serialization, added proper error pages, and removed the silent failure paths so a broken request surfaces instead of rendering an empty screen. Moved outbound email from SMTP to an HTTPS API, and pinned every dependency to an exact version for reproducible builds.</dd>
+      </dl>
+    </article>
+
+    <h2>How I Work</h2>
+    <ul class="why-list">
+      <li><strong>Decisions are written down.</strong> SportStrata has more than 130 numbered decision records: the problem, the options, why one won, and what it costs.</li>
+      <li><strong>Review is a gate, not a vibe.</strong> I ship solo with a team of AI reviewers (design, code audit, deep review) that write findings into the repo and have standing to say no. <a href="/ai-workflow.html">How that works →</a></li>
+      <li><strong>Nothing ships unchecked.</strong> A deploy gate runs tests, CSP consistency, asset-manifest sync, contrast and secrets checks before any push. This portfolio alone carries 300+ automated tests, and the contract monitor runs against the deployed site, not localhost.</li>
+      <li><strong>Calm under change windows.</strong> At my day job I deploy time-sensitive updates to mission-critical treasury applications without service disruption.</li>
+    </ul>
+
+    <h2>Stack</h2>
+    <p><strong>Infrastructure:</strong> Linux and Windows Server administration, AWS, Cloudflare Workers, Pages and D1, Docker, CI/CD with GitHub Actions, DNS, DHCP, TCP/IP.<br />
+    <strong>Code:</strong> JavaScript, TypeScript, Python, SQL, Node.js.<br />
+    <strong>Operations:</strong> monitoring, alerting, incident documentation, ServiceNow and change management in compliance-driven environments.</p>
+
+    <div class="proof">
+      <a href="https://sportstrata.cc/" class="proof-link" target="_blank" rel="noopener">SportStrata <span class="arrow">↗</span></a>
+      <a href="/ai-workflow.html" class="proof-link">AI Workflow Case Study <span class="arrow">→</span></a>
+      <a href="https://github.com/zohnner" class="proof-link" target="_blank" rel="noopener">GitHub <span class="arrow">↗</span></a>
+      <a href="/resume.html" class="proof-link">Résumé <span class="arrow">→</span></a>
+    </div>
+
+    <h2 id="contact">Get in Touch</h2>
+    <div class="contact-box">
+      <p>Hiring for platform, reliability or infrastructure work? Email me at <a href="mailto:zohnwheeler@gmail.com">zohnwheeler@gmail.com</a> or find me on <a href="https://www.linkedin.com/in/zohn-wheeler/" target="_blank" rel="noopener">LinkedIn</a>. I usually reply within a day or two.</p>
+      <p>Looking for a website for your business instead? That's <a href="/hire.html">over here</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    Built by <a href="/classic/">Zohn Wheeler</a> — hand-coded, zero dependencies
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('zw_theme', next); } catch (_) {}
+      const meta = document.getElementById('themeColorMeta');
+      if (meta) meta.setAttribute('content', next === 'light' ? '#ffffff' : '#0a0a0a');
+    });
+  </script>
+</body>
+</html>

@@ -26,6 +26,8 @@ export const PROJECTS = [
     ],
     thumb: '/thumb-sportstrata.jpg',
     healthUrl: 'https://sportstrata.cc/',
+
+    repo: 'zohnner/zohn-sports-stats',
   },
   {
     id: 'botchase',
@@ -37,6 +39,8 @@ export const PROJECTS = [
     links: [{ label: 'Live', href: 'https://botchase.onrender.com/' }],
     thumb: '/thumb-botchase.jpg',
     healthUrl: 'https://botchase.onrender.com/',
+
+    repo: null,
   },
   {
     id: 'zretrobuild',
@@ -51,6 +55,8 @@ export const PROJECTS = [
     ],
     thumb: '/thumb-zretrobuild.jpg',
     healthUrl: 'https://zretrobuild.zohnwheeler.workers.dev/',
+
+    repo: 'zohnner/ZRetroBuild',
   },
   {
     id: 'oraclebot',
@@ -65,6 +71,8 @@ export const PROJECTS = [
     ],
     thumb: null,
     healthUrl: null,
+
+    repo: 'zohnner/OracleChatBot',
   },
   {
     id: 'sitekit',
@@ -76,6 +84,8 @@ export const PROJECTS = [
     links: [{ label: 'Get a quote', href: '/hire.html#contact-form' }],
     thumb: null,
     healthUrl: null,
+
+    repo: 'zohnner/ZohnWheelerPortfolio',
   },
 ];
 
@@ -111,3 +121,87 @@ export const NARRATION = {
   'project.oraclebot': 'The capstone AI bot that helped students study, featured by Mizzou Engineering.',
   'project.sitekit': 'Sitekit: fast, professional websites for local businesses, built to turn visitors into calls.',
 };
+
+// about.txt in the virtual filesystem.
+export const ABOUT = [
+  'Zohn Wheeler: full-stack developer, Kansas City, MO.',
+  '',
+  'Supports mission-critical treasury systems for a federal agency',
+  '(active TS/SCI clearance) and ships full-stack products end to end:',
+  'Cloudflare Workers backends, AI-assisted workflows and fast sites',
+  'for local businesses.',
+  '',
+  'Try: cat contact.txt, cd projects, man zohn',
+];
+
+// `man zohn`.
+export const MAN = [
+  'ZOHN(1)                     User Commands                     ZOHN(1)',
+  '',
+  'NAME',
+  '    zohn - full-stack developer and federal IT professional',
+  '',
+  'SYNOPSIS',
+  '    zohn [--hire] [--build] [--contact]',
+  '',
+  'DESCRIPTION',
+  '    Kansas City developer who ships full-stack products end to end and',
+  '    supports mission-critical treasury systems for a federal agency.',
+  '',
+  'SKILLS',
+  '    JavaScript, TypeScript, Python, SQL, Bash',
+  '    React, Node.js, Docker, Linux, Active Directory',
+  '    Cloudflare Workers + D1, AWS, CI/CD, REST APIs',
+  '',
+  'PROJECTS',
+  '    sportstrata, botchase, zretrobuild, oraclebot, sitekit',
+  '',
+  'SEE ALSO',
+  '    resume(1), contact(1), scan(1), history(1)',
+];
+
+// Printed once at the end of the boot (decorative, aria-hidden).
+export const BANNER = [
+  '╔═╗╔═╗╦ ╦╔╗╔  ╦ ╦╦ ╦╔═╗╔═╗╦  ╔═╗╦═╗',
+  '╔═╝║ ║╠═╣║║║  ║║║╠═╣║╣ ║╣ ║  ║╣ ╠╦╝',
+  '╚═╝╚═╝╩ ╩╝╚╝  ╚╩╝╩ ╩╚═╝╚═╝╩═╝╚═╝╩╚═',
+];
+
+export const FALLBACK_REPLY = "I don't have that on file. Ask about projects, stack, experience, education or hiring, or type 'help'.";
+
+// Scripted knowledge base for plain-English questions. Every reply is written
+// from content already on the portfolio. Keywords are single lowercase tokens
+// in the form answers.tokenize produces (a trailing plural 's' is dropped
+// unless the word ends in ss, us or is).
+export const KB = [
+  { id: 'greeting', keywords: ['hi', 'hello', 'hey', 'yo', 'sup', 'greeting'],
+    reply: "Hello. Ask me about Zohn's projects, stack, experience, education or availability. Or type 'help' to drive the terminal yourself." },
+  { id: 'stack', keywords: ['stack', 'tech', 'language', 'framework', 'tool', 'skill', 'javascript', 'typescript', 'python', 'react', 'node', 'docker', 'aws', 'cloudflare', 'sql'],
+    reply: 'Zohn works in JavaScript, TypeScript, Python, SQL and Bash, with React, Node.js, Docker and Linux. Infrastructure runs on Cloudflare Workers and D1, AWS, CI/CD and REST APIs.' },
+  { id: 'experience', keywords: ['experience', 'job', 'work', 'career', 'employer', 'background', 'administrator', 'engineer'],
+    reply: 'Applications Administrator on federal treasury systems since March 2026, giving Tier 2/3 support for enterprise financial applications. Before that, Junior Engineer at a Missouri state agency from July 2024 to January 2026: infrastructure, identity and automation.' },
+  { id: 'clearance', keywords: ['clearance', 'sci', 'secret', 'security', 'federal', 'government', 'treasury', 'classified'],
+    reply: 'Zohn holds an active TS/SCI clearance and supports classified, air-gapped federal treasury systems as a contractor.' },
+  { id: 'location', keywords: ['where', 'location', 'based', 'city', 'missouri', 'live', 'remote', 'relocate'],
+    reply: 'Zohn is based in Kansas City, Missouri, and open to opportunities.' },
+  { id: 'hire', keywords: ['hire', 'hiring', 'available', 'availability', 'open', 'opportunity', 'recruit', 'recruiter', 'position', 'role', 'interview'],
+    reply: "Zohn is open to full-time roles, contract work and interesting conversations. The fastest route is email: zohnwheeler@gmail.com. Or type 'contact'." },
+  { id: 'education', keywords: ['education', 'school', 'degree', 'college', 'university', 'mizzou', 'graduate', 'study'],
+    reply: "B.S. in Information Technology from the University of Missouri, 2024, with Dean's List honors. The senior capstone AI bot was featured by Mizzou Engineering." },
+  { id: 'sitekit', keywords: ['sitekit', 'website', 'site', 'build', 'quote', 'business', 'price', 'cost', 'local', 'client', 'roofing', 'hvac'],
+    reply: "Through Sitekit, Zohn builds fast, mobile-first sites for local service businesses: service and area pages, SEO fundamentals and a lead form straight to the owner. Type 'track build', then 'contact' for a quote." },
+  { id: 'ai', keywords: ['ai', 'agent', 'claude', 'llm', 'automation', 'workflow', 'persona', 'review'],
+    reply: "Zohn builds with AI agent teams. SportStrata ships with a design reviewer, code auditor and deep-review analyst. I was planned, built and reviewed by agents too. Type 'history' for the receipts." },
+  { id: 'site', keywords: ['site', 'portfolio', 'terminal', 'orb', 'made', 'built', 'core', 'zw'],
+    reply: "You're inside it: plain HTML, CSS and JavaScript modules on Cloudflare Pages, Workers functions for live data and a Three.js core. No framework, no build step. Type 'history' to see how I was made." },
+  { id: 'sportstrata', keywords: ['sportstrata', 'baseball', 'mlb', 'sport', 'stat', 'analytic', 'fantasy', 'statcast', 'broadcast'],
+    reply: "SportStrata is a full-stack MLB analytics platform: live scorecards, Statcast leaderboards and AI-generated broadcast narratives, built solo across 200+ commits. Try 'open sportstrata' or 'scan sportstrata'." },
+  { id: 'botchase', keywords: ['botchase', 'sale', 'lead', 'outreach', 'stripe', 'billing'],
+    reply: "BotChase is an AI sales automation SaaS for local service businesses, with lead scoring, outreach drafts and real Stripe billing. Try 'open botchase' or 'ping botchase'." },
+  { id: 'zretrobuild', keywords: ['zretrobuild', 'arcade', 'game', 'retro', 'snake', 'breakout', 'invader'],
+    reply: "ZRetroBuild is a playable 8-bit arcade (Snake, Breakout, Space Invaders) inside a CRT cabinet, with zero dependencies. Try 'open zretrobuild'." },
+  { id: 'oraclebot', keywords: ['discord', 'bot', 'capstone', 'oracle', 'oraclebot', 'student'],
+    reply: "The capstone Discord bot used AI to help students work through course material. Built by a team of four and featured by Mizzou Engineering. Try 'open oraclebot'." },
+  { id: 'contact', keywords: ['contact', 'email', 'reach', 'linkedin', 'github', 'message', 'touch', 'call'],
+    reply: "Email zohnwheeler@gmail.com, or find Zohn on LinkedIn and GitHub. Type 'contact' for clickable links." },
+];

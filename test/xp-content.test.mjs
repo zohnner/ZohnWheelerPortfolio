@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PROJECTS, TRACKS, NARRATION, OWNER, GITHUB_USER } from '../public/xp/content.js';
+import { PROJECTS, TRACKS, NARRATION, OWNER, GITHUB_USER, KB, MAN, ABOUT, BANNER, FALLBACK_REPLY } from '../public/xp/content.js';
 
 const ids = PROJECTS.map((p) => p.id);
 
@@ -44,4 +44,36 @@ test('every scripted line exists and is short enough for a 30 KB clip', () => {
 test('owner links', () => {
   assert.equal(OWNER.email, 'zohnwheeler@gmail.com');
   assert.equal(GITHUB_USER, 'zohnner');
+});
+
+test('repo fields are owner/name or null', () => {
+  for (const p of PROJECTS) {
+    assert.ok(p.repo === null || /^[\w.-]+\/[\w.-]+$/.test(p.repo), `${p.id} repo`);
+  }
+  assert.equal(PROJECTS.find((p) => p.id === 'sportstrata').repo, 'zohnner/zohn-sports-stats');
+  assert.equal(PROJECTS.find((p) => p.id === 'botchase').repo, null);
+});
+
+test('KB entries are well formed', () => {
+  const kbIds = KB.map((e) => e.id);
+  assert.equal(new Set(kbIds).size, kbIds.length);
+  assert.ok(KB.length >= 14);
+  for (const e of KB) {
+    assert.ok(e.keywords.length > 0, e.id);
+    for (const k of e.keywords) assert.match(k, /^[a-z0-9+#]+$/, `${e.id} keyword ${k}`);
+    assert.ok(e.reply.length > 20 && e.reply.length <= 280, `${e.id} reply length ${e.reply.length}`);
+  }
+});
+
+test('banner is three lines of equal width', () => {
+  assert.equal(BANNER.length, 3);
+  assert.equal(new Set(BANNER.map((l) => [...l].length)).size, 1);
+});
+
+test('no gendered pronouns in visitor-facing copy', () => {
+  const copy = [
+    ...KB.map((e) => e.reply), ...MAN, ...ABOUT, FALLBACK_REPLY,
+    ...Object.values(NARRATION), ...PROJECTS.map((p) => p.story),
+  ].join('\n');
+  assert.doesNotMatch(copy, /\b(he|him|his|she|her|hers|himself|herself)\b/i);
 });

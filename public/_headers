@@ -17,6 +17,9 @@
 /hire
   Cache-Control: public, max-age=0, must-revalidate
 
+/notes/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /platform
   Cache-Control: public, max-age=0, must-revalidate
 

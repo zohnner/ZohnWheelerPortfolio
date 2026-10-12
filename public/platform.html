@@ -183,7 +183,7 @@
         <dt>Fix</dt>
         <dd>Added the parameter and verified it against live data in a real browser: 99 events rendered, 74 of which had been invisible.</dd>
         <dt>Prevention</dt>
-        <dd>Built an upstream contract monitor: a daily GitHub Actions job that hits the production API proxies, checks every field the client reads, and asserts count invariants, so a "well-formed but incomplete" response fails loudly. It also catches the other failure class I'd already hit once: a proxy receiving a WAF block page instead of JSON.</dd>
+        <dd>Built an upstream contract monitor: a daily GitHub Actions job that hits the production API proxies, checks every field the client reads, and asserts count invariants, so a "well-formed but incomplete" response fails loudly. <a href="/notes/silent-subsets.html">Full write-up →</a> It also catches the other failure class I'd already hit once: a proxy receiving a WAF block page instead of JSON.</dd>
       </dl>
     </article>
 
@@ -226,6 +226,7 @@
 
     <div class="proof">
       <a href="https://sportstrata.cc/" class="proof-link" target="_blank" rel="noopener">SportStrata <span class="arrow">↗</span></a>
+      <a href="/notes/silent-subsets.html" class="proof-link">Lab Note: The Bug That Never Threw <span class="arrow">→</span></a>
       <a href="/ai-workflow.html" class="proof-link">AI Workflow Case Study <span class="arrow">→</span></a>
       <a href="https://github.com/zohnner" class="proof-link" target="_blank" rel="noopener">GitHub <span class="arrow">↗</span></a>
       <a href="/resume.html" class="proof-link">Résumé <span class="arrow">→</span></a>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('zw_theme');
+        var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {}
+    })();
+  </script>
+  <title>The Bug That Never Threw — Lab Notes · Zohn Wheeler</title>
+  <meta name="description" content="A scoreboard quietly showed 25 of up to 99 games for weeks, and nothing failed. How I found it, and the nightly contract monitor I built so silent data loss fails loudly." />
+  <meta property="og:title" content="The bug that never threw an error" />
+  <meta property="og:description" content="Silent data loss, why graceful degradation hid it, and a nightly contract monitor that makes it fail loudly." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/notes/silent-subsets.html" />
+  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/notes/silent-subsets.html" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"The bug that never threw an error","datePublished":"2026-10-12","author":{"@type":"Person","name":"Zohn Wheeler","url":"https://zohnwheelerportfolio.pages.dev/platform.html"},"url":"https://zohnwheelerportfolio.pages.dev/notes/silent-subsets.html"}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/notes/notes.css" />
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">zohn<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="/notes/" class="back-link">← Lab Notes</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <article class="post">
+      <div class="eyebrow">Lab Note 001 · SportStrata</div>
+      <h1>The bug that never threw an error</h1>
+      <p class="lede">For weeks, a college football scoreboard showed about a quarter of the real games. Nothing failed, nothing logged, nobody was told. Here's how that happens in a well-built system, and the nightly monitor I built so it can't happen quietly again.</p>
+      <div class="meta">October 12, 2026 · Zohn Wheeler · ~6 min read</div>
+
+      <h2>The symptom</h2>
+      <p><a href="https://sportstrata.cc/" target="_blank" rel="noopener">SportStrata</a> is a sports analytics site I build and run solo. Its college football scores page listed roughly 25 games on a Saturday. A real Saturday has up to 99.</p>
+      <p>The cause was one missing query parameter. ESPN's scoreboard endpoint needs <code>groups=80</code> to return every FBS game. Without it, you get a smaller, ranked-leaning default set. The response is perfectly well-formed JSON with real games and real scores. It's just not all of them.</p>
+      <p>When I added the parameter and checked it against live data in a real browser, 99 events rendered, including <strong>74 unranked-versus-unranked games that had been invisible</strong>: the ones nobody notices are missing until a fan of that team goes looking.</p>
+
+      <h2>Why nothing caught it</h2>
+      <p>It would be easy to call this carelessness. It's actually the predictable result of a good decision.</p>
+      <p>SportStrata sits on undocumented upstream APIs (ESPN, Sleeper, the MLB Stats API) reached through edge proxies. Those APIs change without notice, so every client parser is written to <strong>degrade gracefully</strong>: every field read carries a fallback.</p>
+<pre><code>const abbr   = home?.team?.abbreviation || '?';
+const detail = status?.type?.shortDetail || '';</code></pre>
+      <p>That's the right call for users. An upstream rename should show a <code>?</code>, not a blank page or a stack trace. But it means an upstream change <em>never throws</em>, and neither does a request that quietly returns a subset. Unit tests pass, because the parser handles the data it's given correctly. Nothing logs an error, because nothing errored. Uptime is 100%.</p>
+      <blockquote><p>Graceful degradation turns failures into wrong answers. If you build for it, you also have to build something that notices the wrong answers.</p></blockquote>
+
+      <h2>Two failure classes, one monitor</h2>
+      <p>Looking back through the project's decision log, the data bugs fell into two classes:</p>
+      <ol>
+        <li><strong>Upstream drift.</strong> A field the client reads gets renamed or removed, or the proxy starts receiving an HTML block page from a WAF instead of JSON. That last one had already happened once.</li>
+        <li><strong>Silent subsets.</strong> The response is valid but incomplete. The <code>groups=80</code> bug is the canonical case, and no field-presence check can catch it. Every field is present; there just aren't enough rows.</li>
+      </ol>
+      <p>So I designed an upstream contract monitor: a zero-dependency Node script that runs nightly in GitHub Actions against the <em>production</em> site, through the same <code>/api/*</code> proxies real users hit.</p>
+
+      <div class="callout">
+        <div class="callout-label">The honest limit, written down first</div>
+        <p>Most of this project's historical data bugs were the client misreading a <em>stable</em> API from day one. A contract that encodes what the code reads would have encoded those same wrong assumptions. The monitor only catches the subset class through count invariants, and it doesn't replace testing the rendered page. I put that at the top of the design doc so nobody (including me) would oversell what it does.</p>
+      </div>
+
+      <h2>How a contract works</h2>
+      <p>Each contract mirrors one real client call. It hits the same route with the <strong>same query params</strong> the client sends, because that's the only way a count check can catch a missing-param bug. It lists every field path the client's parser actually reads, taken from the parser source rather than from memory.</p>
+<pre><code>{
+  id: 'nfl-scoreboard',
+  route: d =&gt; `/api/nfl?path=/scoreboard&amp;dates=${d.yyyymmdd}`,
+  mirrors: 'js/nfl.js fetchNFLScoreboard',
+  paths: [
+    'events[].id',
+    'events[].status.type.state',
+    'events[].competitions[0].competitors[].team.abbreviation',
+    'events[].competitions[0].competitors[].score',
+  ],
+  invariants: [ minCount('events', 8) ],
+}</code></pre>
+      <p>On top of the field paths sits a small invariant library:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Invariant</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td><code>isJson()</code> (every route)</td><td>HTML block pages, reported as "likely WAF block" instead of a confusing missing-field error</td></tr>
+            <tr><td><code>minCount(path, n)</code></td><td>Silent subsets: the <code>groups=80</code> class</td></tr>
+            <tr><td><code>exactCount(path, n)</code></td><td>Incomplete standings (32 NFL teams, 30 MLB teams)</td></tr>
+            <tr><td><code>numeric(path)</code></td><td>Scores and stats that stop parsing as numbers</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The thresholds are deliberately loose floors, not expected values. The college football floor is 40 games on a full-slate Saturday: comfortably above the ~25 the bug produced, and comfortably below a real slate.</p>
+
+      <h2>Season awareness without calendar code</h2>
+      <p>Sports data is seasonal, and a monitor that alarms every offseason gets muted within a week. The obvious fix is to teach the script each sport's calendar. I'd already been burned by exactly that: a second copy of season logic that drifted from the first.</p>
+      <p>So the script owns no calendar. For each sport, it walks backward from yesterday, up to 10 days, until it finds a date with at least one final game. That's the <strong>probe date</strong>, and every date-dependent contract runs against it. Finals carry nearly every field the client reads, and past dates make the result independent of what time the job runs. If no final exists in 10 days, the sport reports <code>SKIPPED — offseason</code> instead of failing. If the scoreboard is unreachable on every date tried, that's a failure, not an offseason. "Reachable with no games" and "down" must never look the same.</p>
+
+      <h2>The review that saved me from my own alarms</h2>
+      <p>The first version passed against production. Then a whole-branch review went looking for <em>predictable false alarms</em> and found three, each confirmed against live data:</p>
+      <ul>
+        <li><strong>The week range was hardcoded.</strong> I'd gated the full-slate floor to weeks 2–14. But ESPN's regular-season week count shifts by year: 16 weeks in 2025, 15 in 2026. A fixed range would have failed every 2026 game day in the window that's actually most reliable. The fix reads the last regular-season week off the scoreboard's own calendar data, and if that data is ever missing, the floor turns itself off with a warning instead of failing silently.</li>
+        <li><strong>The offseason guessed the season.</strong> Season-parameterized routes were sent today's year. In the offseason that asks for next season, and one of those routes answers HTTP 502. That's a guaranteed nightly failure every offseason. Now those routes omit the season entirely when there isn't one, which returns valid data.</li>
+        <li><strong>Downgrades hid real breaks.</strong> In the offseason I'd downgraded <em>every</em> invariant failure to a warning, which would have hidden genuine shape changes. Now only count invariants downgrade, and only outside the regular season. Field-path and predicate failures always fail.</li>
+      </ul>
+      <p>The same pass added a 20-second timeout on every request and isolated each sport so one crashing can't stop the others from reporting. An earlier review had caught that "completed game" meant more than <code>"Final"</code>: rain-shortened and tied games use other states, so the check now uses MLB's coded game states instead of display strings.</p>
+
+      <h2>Alerting that cleans up after itself</h2>
+      <p>The script exits <code>0</code> for pass, <code>1</code> for warnings and <code>2</code> for failure. On a failure the workflow goes red, and it opens or updates <strong>one</strong> GitHub issue per failing route, labeled <code>contract-drift</code>, with the failing paths and the raw status and content type. When the route recovers, the issue closes itself. A broken contract (bad path syntax) exits <code>2</code> immediately: a broken monitor must never look like a passing one.</p>
+      <p>A full run makes about 25 sequential requests, well under the site's own 120-per-minute rate limit on the proxies it's testing.</p>
+
+      <h2>What I'd tell another team</h2>
+      <ul>
+        <li><strong>If you degrade gracefully, monitor for correctness, not just errors.</strong> Your error rate will be zero while your data is wrong.</li>
+        <li><strong>Count invariants are cheap and catch a whole class of bugs</strong> that schema checks never will.</li>
+        <li><strong>Test production through the same path users take,</strong> with the same parameters. A contract that builds its own clean request proves nothing about the real one.</li>
+        <li><strong>Design the offseason first.</strong> An alarm that fires on a predictable calendar event will be ignored by the time it fires for real.</li>
+        <li><strong>Write down what it can't catch.</strong> The limit section kept the scope honest and pointed at the next tool needed: rendered-page QA.</li>
+      </ul>
+
+      <div class="post-end">
+        <a href="/notes/" class="pill">← All Lab Notes</a>
+        <a href="https://github.com/zohnner/zohn-sports-stats" class="pill" target="_blank" rel="noopener">SportStrata on GitHub ↗</a>
+        <a href="/platform.html" class="pill">Hiring? Start here →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    Built by <a href="/classic/">Zohn Wheeler</a> — hand-coded, zero dependencies
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('zw_theme', next); } catch (_) {}
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('zw_theme');
+        var theme = stored ? stored : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {}
+    })();
+  </script>
+  <title>Lab Notes — Zohn Wheeler</title>
+  <meta name="description" content="Short technical write-ups from systems I build and run: incidents, fixes and the monitors that keep them from coming back." />
+  <meta property="og:title" content="Lab Notes — Zohn Wheeler" />
+  <meta property="og:description" content="Incidents, fixes and the monitors that keep them from coming back." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/notes/" />
+  <meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/notes/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/notes/notes.css" />
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">zohn<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="/classic/" class="back-link">← Back to Portfolio</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="eyebrow">Lab Notes</div>
+    <h1>Field reports from systems I run</h1>
+    <p class="lede">Short technical write-ups: what broke, why nothing caught it, and what I built so it can't come back quietly.</p>
+
+    <ul class="note-list">
+      <li>
+        <a href="/notes/silent-subsets.html" class="note-card">
+          <div class="meta">001 · October 12, 2026 · SportStrata</div>
+          <h2>The bug that never threw an error</h2>
+          <p>A scoreboard showed 25 of up to 99 games for weeks and nothing failed. Why graceful degradation hid it, and the nightly contract monitor that makes silent data loss fail loudly.</p>
+        </a>
+      </li>
+    </ul>
+  </main>
+
+  <footer>
+    Built by <a href="/classic/">Zohn Wheeler</a> — hand-coded, zero dependencies
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('zw_theme', next); } catch (_) {}
+    });
+  </script>
+</body>
+</html>

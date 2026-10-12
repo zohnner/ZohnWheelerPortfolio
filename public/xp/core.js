@@ -48,11 +48,16 @@ function mountCss(container) {
   orb.className = 'css-orb';
   orb.setAttribute('aria-hidden', 'true');
   container.append(orb);
+  let alertOn = false;
   return {
     mode: 'css',
     setState(state) {
       orb.classList.toggle('is-speaking', state === 'speaking' || state === 'thinking');
-      orb.classList.toggle('is-alert', state === 'alert');
+      orb.classList.toggle('is-alert', alertOn || state === 'alert');
+    },
+    setAlert(on) {
+      alertOn = Boolean(on);
+      orb.classList.toggle('is-alert', alertOn);
     },
     focus(id) { orb.style.setProperty('--orb', colorOf(id)); },
   };
@@ -116,7 +121,7 @@ function mountGl(THREE, container, particles) {
   const baseColor = new THREE.Color(BASE_COLOR);
   const alertColor = new THREE.Color(ALERT_COLOR);
   let spin = 1;
-  let mood = 'idle';
+  let alertOn = false;
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.05);
@@ -132,14 +137,17 @@ function mountGl(THREE, container, particles) {
   return {
     mode: 'webgl',
     setState(state) {
-      mood = state;
       targetAmp = AMP[state] ?? AMP.idle;
       spin = SPIN[state] ?? 1;
-      targetColor.copy(state === 'alert' ? alertColor : baseColor);
+      targetColor.copy(alertOn || state === 'alert' ? alertColor : baseColor);
+    },
+    setAlert(on) {
+      alertOn = Boolean(on);
+      targetColor.copy(alertOn ? alertColor : baseColor);
     },
     focus(id) {
       baseColor.set(colorOf(id));
-      if (mood !== 'alert') targetColor.copy(baseColor);
+      targetColor.copy(alertOn ? alertColor : baseColor);
     },
   };
 }

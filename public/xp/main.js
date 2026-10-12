@@ -44,7 +44,7 @@ const voice = createVoice();
 const operator = createOperator({ term, liveEl: $('#live'), getCore: () => core, restingState, voice: VOICE_ENABLED ? voice : null });
 const reactions = createReactions({
   operator, store, projectById, getState: () => state, screensaver: createScreensaver($('#core')),
-  setAlert: (on) => { state.alert = on; core?.setState(restingState()); },
+  setAlert: (on) => { state.alert = on; core?.setAlert?.(on); core?.setState(restingState()); },
 });
 
 // ---------- Acts 0-2: power on, BIOS, OS boot ----------
@@ -78,6 +78,7 @@ async function boot() {
   await bios();
   if (state.skipped) return;
   await sleep(300);
+  if (state.skipped) return;
   term.clear();
   await term.typeLine('who is zohn_wheeler', { prompt: '> ', typo: { at: 7, wrong: 'zhon' } });
   for (const line of await lines) {
@@ -103,6 +104,7 @@ function skip() {
 async function openCore() {
   if (state.opened) return;
   state.opened = true;
+  term.setFast(false);
   const returning = store.get('zw_visited') === '1';
   store.set('zw_visited', '1');
   document.body.classList.add('is-core');
@@ -110,9 +112,15 @@ async function openCore() {
   if (!phone && (active === document.body || active === $('#skip'))) term.focus();
   term.print("identity core online. type 'help' for commands, or just ask a question.");
   reactions.start();
-  fetchJson('/api/status').then((s) => { if (s) reactions.checkHealth(s); });
   await Promise.race([corePromise, sleep(2500)]);
+  try {
+    await narrate(returning);
+  } finally {
+    fetchJson('/api/status').then((s) => { if (s) reactions.checkHealth(s); });
+  }
+}
 
+async function narrate(returning) {
   const chosen = () => Boolean(state.track || state.focused);
   if (returning) {
     await operator.say(reactions.welcomeLine());
@@ -181,10 +189,13 @@ function markCurrent() {
   });
 }
 
+let returnFocus = null;
+
 function focusProject(id, { moveFocus = true } = {}) {
   const p = projectById.get(id);
   if (!p) return false;
   if (!state.track) chooseTrack('hire', { quiet: true });
+  if ($('#panel').hidden) returnFocus = document.activeElement;
   state.focused = id;
   core?.focus(id);
   markCurrent();
@@ -229,6 +240,9 @@ function closePanel() {
   core?.focus(null);
   core?.setState(restingState());
   markCurrent();
+  const back = returnFocus;
+  returnFocus = null;
+  if (back && back.isConnected && back === $('#term-input')) { back.focus({ preventScroll: true }); return; }
   const ring = document.querySelector(`.ring-node[data-id="${returnTo}"]`) ?? (phone ? $('#rings button') : null);
   if (ring) ring.focus({ preventScroll: true });
   else if (!phone) term.focus();
@@ -252,7 +266,9 @@ $('#track-toggle').addEventListener('click', () => chooseTrack(state.track === '
 document.querySelectorAll('[data-track]').forEach((b) => b.addEventListener('click', () => chooseTrack(b.dataset.track)));
 document.querySelectorAll('[data-cmd]').forEach((b) => b.addEventListener('click', () => term.run(b.dataset.cmd)));
 $('#panel .close').addEventListener('click', closePanel);
+addEventListener('pageshow', (e) => { if (e.persisted) $('#crt-power')?.classList.remove('off'); });
 $('.top-links a').addEventListener('click', (e) => {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
   e.preventDefault();
   powerOff().then(() => { location.href = '/classic/'; });
 });

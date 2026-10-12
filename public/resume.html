@@ -299,9 +299,14 @@
       .screen-bar { display: none; }
       .paper-wrap { margin: 0; padding: 0; max-width: 100%; }
       .paper { box-shadow: none; border-radius: 0; }
-      .resume-header { padding: 1.5rem 2rem 1rem; }
-      .resume-body { padding: 0 2rem 1.5rem; }
-      @page { margin: 0.5in; }
+      html { font-size: 12px; }
+      .resume-header { padding: 0 0 0.9rem; }
+      .resume-body { padding: 0; }
+      .resume-section { margin-top: 0.95rem; }
+      .resume-section-title { margin-bottom: 0.7rem; }
+      .exp-item { margin-bottom: 0.9rem; }
+      .project-item { margin-bottom: 0.7rem; }
+      @page { margin: 0.45in 0.55in; }
     }
   </style>
 </head>
@@ -391,13 +396,21 @@
 
           <div class="project-item">
             <div class="project-header">
-              <div class="project-name">SportStrata — MLB Analytics Platform</div>
+              <div class="project-name">SportStrata — Multi-Sport Analytics Platform</div>
               <a href="https://sportstrata.cc/" target="_blank" class="project-link">sportstrata.cc ↗</a>
             </div>
-            <div class="project-tech">JavaScript · REST APIs · Cloudflare Workers · D1 Edge Cache · Anthropic API</div>
-            <div class="project-desc">Full-stack MLB analytics platform for broadcast pros and fantasy players — live scores with an interactive play-by-play scorecard, Statcast leaderboards, printable game-prep sheets, and a custom stat builder. Ships AI-generated broadcast narratives via an Anthropic API Worker. Developed 200+ commits solo by engineering a multi-agent AI persona team (design reviewer, code auditor, deep-review analyst) that automates review cycles and accelerates the delivery workflow.</div>
+            <div class="project-tech">JavaScript · REST APIs · Cloudflare Workers · D1 Edge Cache · Gemini API</div>
+            <div class="project-desc">Multi-sport analytics platform for broadcast pros and fantasy players. MLB flagship with an interactive play-by-play scorecard, Statcast leaderboards, Monte Carlo playoff odds, and a natural-language stat query bar; NFL, college football, college basketball, and WNBA run alongside it. Ships KV-cached AI broadcast blurbs via a Gemini Worker, so inference cost never scales with traffic. Built solo across 800+ commits with a multi-agent AI persona team (design reviewer, code auditor, deep-review analyst) that automates review cycles.</div>
           </div>
 
+          <div class="project-item">
+            <div class="project-header">
+              <div class="project-name">PickSharp — Sports Betting Price Checker</div>
+              <a href="https://wepicksharp.com/" target="_blank" class="project-link">wepicksharp.com ↗</a>
+            </div>
+            <div class="project-tech">React · Vite · Tailwind · Cloudflare Workers · D1 · Supabase Auth</div>
+            <div class="project-desc">Compares 9 US sportsbooks against Pinnacle's no-vig fair price every game day, flags bets priced above fair, and tracks every flagged bet against the closing line on a public record, misses included. Worker-rendered pages with a React app for the interactive tools.</div>
+          </div>
           <div class="project-item">
             <div class="project-header">
               <div class="project-name">ZRetroBuild — 8-Bit Retro Arcade</div>

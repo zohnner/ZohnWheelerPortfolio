@@ -21,9 +21,9 @@ test('every project has the fields the UI renders', () => {
   }
 });
 
-test('the three featured live projects are health-checked', () => {
+test('the live projects are health-checked', () => {
   const checked = PROJECTS.filter((p) => p.healthUrl).map((p) => p.id);
-  assert.deepEqual(checked, ['sportstrata', 'botchase', 'zretrobuild']);
+  assert.deepEqual(checked, ['sportstrata', 'zretrobuild', 'picksharp']);
 });
 
 test('both tracks exist and only list real projects', () => {

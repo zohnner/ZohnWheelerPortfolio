@@ -33,8 +33,8 @@ const healthy = () => [
   ['api.github.com/users/zohnner/repos', () => json([{ full_name: 'zohnner/zohn-sports-stats' }])],
   ['api.github.com/repos/zohnner/zohn-sports-stats/commits', () => json([{ commit: { message: 'Fix boot timing\n\nlong body', author: { date: '2026-10-10T18:00:00Z' } } }])],
   ['sportstrata.cc', () => new Response('ok', { status: 200 })],
-  ['botchase.onrender.com', () => { throw timeoutError(); }],
   ['zretrobuild', () => new Response('nope', { status: 503 })],
+  ['wepicksharp.com', () => { throw timeoutError(); }],
 ];
 
 const ctx = (cf) => ({ request: { url: 'https://zohnwheelerportfolio.pages.dev/api/status', cf } });
@@ -56,7 +56,7 @@ test('returns location, latest commit and project health', async () => {
   assert.equal(body.city, 'Kansas City');
   assert.equal(body.country, 'US');
   assert.deepEqual(body.commit, { repo: 'zohnner/zohn-sports-stats', message: 'Fix boot timing', date: '2026-10-10T18:00:00Z' });
-  assert.deepEqual(body.projects.map((p) => [p.id, p.status]), [['sportstrata', 'online'], ['botchase', 'sleeping'], ['zretrobuild', 'down']]);
+  assert.deepEqual(body.projects.map((p) => [p.id, p.status]), [['sportstrata', 'online'], ['zretrobuild', 'down'], ['picksharp', 'sleeping']]);
   assert.equal(typeof body.projects[0].ms, 'number');
   assert.equal(body.projects[1].ms, null);
   assert.ok(!Number.isNaN(Date.parse(body.generatedAt)));

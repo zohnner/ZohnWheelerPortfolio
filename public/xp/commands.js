@@ -10,6 +10,8 @@ export function parseInput(raw) {
 
 export function createRegistry() {
   const commands = new Map();
+  let fallback = null;
+  const wrap = (out) => (out == null ? [] : [].concat(out));
 
   return {
     register(name, handler, help = '') {
@@ -20,18 +22,24 @@ export function createRegistry() {
         .filter(([, c]) => c.help)
         .map(([name, c]) => ({ name, help: c.help }));
     },
+    names() {
+      return [...commands.keys()];
+    },
     complete(prefix) {
       const p = String(prefix).toLowerCase();
       return [...commands.keys()].filter((n) => n.startsWith(p)).sort();
+    },
+    setFallback(fn) {
+      fallback = fn;
     },
     async run(raw) {
       const parsed = parseInput(raw);
       if (!parsed) return { ok: true, output: [] };
       const cmd = commands.get(parsed.name);
-      if (!cmd) return { ok: false, output: [`command not found: ${parsed.name}. type 'help' for commands.`] };
+      const handler = cmd ? (args, p) => cmd.handler(args, p) : fallback && ((args, p) => fallback(p));
+      if (!handler) return { ok: false, output: [`command not found: ${parsed.name}. type 'help' for commands.`] };
       try {
-        const out = await cmd.handler(parsed.args, parsed);
-        return { ok: true, output: out == null ? [] : [].concat(out) };
+        return { ok: true, output: wrap(await handler(parsed.args, parsed)) };
       } catch (err) {
         return { ok: false, output: [`${parsed.name}: ${err?.message ?? err}`] };
       }

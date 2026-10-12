@@ -89,3 +89,31 @@ test('history on empty returns empty strings', () => {
   assert.equal(h.prev(), '');
   assert.equal(h.next(), '');
 });
+
+test('names lists every registered command, with or without help', () => {
+  const r = createRegistry();
+  r.register('help', () => {}, 'help: list commands');
+  r.register('whoami', () => 'guest');
+  assert.deepEqual(r.names(), ['help', 'whoami']);
+});
+
+test('fallback handles unknown commands and receives the parsed input', async () => {
+  const r = createRegistry();
+  let seen = null;
+  r.setFallback((parsed) => { seen = parsed; return 'handled'; });
+  assert.deepEqual(await r.run('What is   this?'), { ok: true, output: ['handled'] });
+  assert.deepEqual(seen, { name: 'what', args: ['is', 'this?'], raw: 'What is   this?' });
+});
+
+test('fallback errors become output', async () => {
+  const r = createRegistry();
+  r.setFallback(async () => { throw new Error('nope'); });
+  assert.deepEqual(await r.run('zzz'), { ok: false, output: ['zzz: nope'] });
+});
+
+test('known commands never reach the fallback', async () => {
+  const r = createRegistry();
+  r.register('ls', () => 'files');
+  r.setFallback(() => 'fallback');
+  assert.deepEqual((await r.run('ls')).output, ['files']);
+});

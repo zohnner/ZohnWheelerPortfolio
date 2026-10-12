@@ -44,6 +44,7 @@ export function createTerminal(root) {
     const caret = document.createElement('span');
     caret.className = 'cursor';
     el.append(typed, caret);
+    el.setAttribute('aria-hidden', 'true');
     for (let i = 0; i < text.length && !fast; i++) {
       if (typo && i === typo.at) {
         for (const ch of typo.wrong) { typed.data += ch; await sleep(speed); }
@@ -56,6 +57,7 @@ export function createTerminal(root) {
     }
     typed.data = prompt + text;
     caret.remove();
+    el.removeAttribute('aria-hidden');
     scroll();
     return el;
   }

@@ -41,7 +41,7 @@ export function createNarrator({
         clip.addEventListener('error', resolve, { once: true });
         setTimeout(resolve, 15000);
       });
-      clip.play().catch(() => stopAudio());
+      clip.play().catch(() => { if (mine === token) stopAudio(); });
     }
 
     for (const ch of text) {

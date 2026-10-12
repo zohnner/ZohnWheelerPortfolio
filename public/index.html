@@ -25,20 +25,21 @@
   // Reduced-motion visitors get the plain page unless they opted in this session.
   (function () {
     var opted = false;
+    if (location.hash === '#projects') { window.__zwLeaving = true; location.replace('/classic/#projects'); return; }
     try {
-      if (localStorage.getItem('zw_visited') === '1' && !/[?&]fresh/.test(location.search)) document.documentElement.classList.add('xp-docked');
+      if (localStorage.getItem('zw_visited') === '1' && !/[?&]fresh\b/.test(location.search)) document.documentElement.classList.add('xp-docked');
     } catch (e) {}
     try {
       if (new URLSearchParams(location.search).get('immersive') === '1') sessionStorage.setItem('zw_immersive', '1');
       opted = sessionStorage.getItem('zw_immersive') === '1';
     } catch (e) {}
-    if (!opted && window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) location.replace('/classic/');
+    if (!opted && window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { window.__zwLeaving = true; location.replace('/classic/'); }
   })();
 </script>
 </head>
 <body>
 <div class="top-links"><a href="/classic/">plain version</a></div>
-<button id="skip" class="skip" type="button">skip intro [any key]</button>
+<button id="skip" class="skip" type="button">skip intro [esc]</button>
 
 <main>
   <section id="terminal" class="terminal" aria-label="Terminal">

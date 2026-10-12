@@ -48,4 +48,4 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /xp/voice/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=86400

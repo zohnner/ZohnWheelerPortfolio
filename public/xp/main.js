@@ -24,7 +24,8 @@ const term = createTerminal($('#terminal'));
 
 // Start loading the orb immediately; the boot sequence hides the wait.
 let core = null;
-const corePromise = import('./core.js')
+const leaving = Boolean(window.__zwLeaving);
+const corePromise = (leaving ? Promise.reject(new Error('leaving')) : import('./core.js'))
   .then((m) => m.mountCore($('#core-stage'), { particles: phone ? 900 : 2400, forceCss: params.has('css-core') }))
   .then((c) => { core = c; return c; })
   .catch(() => null);
@@ -89,7 +90,8 @@ async function openCore() {
 function showTrackChoice() {
   const choice = $('#track-choice');
   choice.hidden = false;
-  choice.querySelector('button').focus({ preventScroll: true });
+  const typing = document.activeElement === $('#term-input') && $('#term-input').value !== '';
+  if (!typing) choice.querySelector('button').focus({ preventScroll: true });
 }
 
 // ---------- Act 4: tracks, rings and panel ----------
@@ -100,12 +102,14 @@ function chooseTrack(track, { quiet = false } = {}) {
   store.set('zw_track', track);
   const choice = $('#track-choice');
   const hadFocus = choice.contains(document.activeElement);
+  const ringFocus = document.activeElement?.closest?.('.ring-node')?.dataset.id;
   choice.hidden = true;
   const toggle = $('#track-toggle');
   toggle.hidden = false;
   toggle.textContent = `track: ${track}`;
   renderRings();
   if (hadFocus) $('#rings .ring-node')?.focus({ preventScroll: true });
+  else if (ringFocus) (document.querySelector(`.ring-node[data-id="${ringFocus}"]`) ?? $('#rings .ring-node'))?.focus({ preventScroll: true });
   if (!quiet) narrator.say(`track.${track}`);
   return true;
 }
@@ -174,12 +178,15 @@ function renderPanel(p, moveFocus) {
 function closePanel() {
   const returnTo = state.focused;
   $('#panel').hidden = true;
-  $('#core').classList.remove('panel-open');
   state.focused = null;
   core?.focus(null);
   core?.setState('idle');
   markCurrent();
-  document.querySelector(`.ring-node[data-id="${returnTo}"]`)?.focus({ preventScroll: true });
+  $('#core').classList.remove('panel-open');
+  const ring = document.querySelector(`.ring-node[data-id="${returnTo}"]`)
+    ?? (phone ? $('#rings button') : null);
+  if (ring) ring.focus({ preventScroll: true });
+  else if (!phone) term.focus();
 }
 
 function setSound(on) {
@@ -243,7 +250,9 @@ addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !$('#panel').hidden) closePanel();
 });
 
-if (store.get('zw_visited') === '1') {
+if (leaving) {
+  // The head script is redirecting: no status fetch, no Three.js.
+} else if (store.get('zw_visited') === '1') {
   term.print('> who is zohn_wheeler');
   term.print('welcome back. skipping boot sequence.');
   openCore();

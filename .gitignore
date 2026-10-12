@@ -32,3 +32,5 @@ sites/*
 sites/.briefs/
 sites/.review/
 sites/.bak/
+
+.voices/

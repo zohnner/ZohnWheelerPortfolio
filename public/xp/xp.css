@@ -99,6 +99,11 @@ body.is-core .core-window { display: block; animation: tear-in .7s steps(1, end)
   body.is-core .term-form, html.xp-docked .term-form { display: none; }
   .rings { --r: 36vw; }
   .ring-node { font-size: 11px; padding: 4px 10px; }
-  .panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 62%; }
+  .panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: calc(100% - 96px); }
   .track-choice { bottom: 88px; }
+  .core-bar > span { display: none; }
+  .core-bar { right: 128px; flex-wrap: wrap; }
+  .panel { background: var(--bg-2); overscroll-behavior: contain; }
+  .panel img { max-height: 90px; aspect-ratio: auto; }
+  .core-window.panel-open .caption { bottom: auto; top: 44px; }
 }

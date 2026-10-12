@@ -167,12 +167,14 @@ function renderPanel(p, moveFocus) {
     return a;
   }));
   panel.hidden = false;
+  $('#core').classList.add('panel-open');
   if (moveFocus) panel.querySelector('.close').focus({ preventScroll: true });
 }
 
 function closePanel() {
   const returnTo = state.focused;
   $('#panel').hidden = true;
+  $('#core').classList.remove('panel-open');
   state.focused = null;
   core?.focus(null);
   core?.setState('idle');

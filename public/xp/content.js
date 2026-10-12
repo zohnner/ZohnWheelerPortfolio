@@ -184,7 +184,7 @@ export const KB = [
     reply: 'Zohn holds an active TS/SCI clearance and supports classified, air-gapped federal treasury systems as a contractor.' },
   { id: 'location', keywords: ['where', 'location', 'based', 'city', 'missouri', 'remote', 'relocate'],
     reply: 'Zohn is based in Kansas City, Missouri, and open to opportunities.' },
-  { id: 'hire', keywords: ['hire', 'hiring', 'available', 'availability', 'open', 'opportunity', 'recruit', 'recruiter', 'position', 'role', 'interview'],
+  { id: 'hire', keywords: ['hire', 'hiring', 'available', 'availability', 'opportunity', 'recruit', 'recruiter', 'position', 'role', 'interview'],
     reply: "Zohn is open to full-time roles, contract work and interesting conversations. The fastest route is email: zohnwheeler@gmail.com. Or type 'contact'." },
   { id: 'education', keywords: ['education', 'school', 'degree', 'college', 'university', 'mizzou', 'graduate', 'study'],
     reply: "B.S. in Information Technology from the University of Missouri, 2024, with Dean's List honors. The senior capstone AI bot was featured by Mizzou Engineering." },

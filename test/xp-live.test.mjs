@@ -60,7 +60,8 @@ test('verdicts come only from the stats', () => {
   assert.equal(daysSince('not a date', now), null);
   assert.equal(verdict(SCAN, now), 'Verdict: JavaScript-led, a deep commit history of 214 commits, actively developed (last push 1 day ago).');
   assert.equal(verdict({ ...SCAN, commits: 60, pushedAt: '2026-08-01T00:00:00Z' }, now), 'Verdict: JavaScript-led, a solid commit history of 60 commits, maintained (last push 72 days ago).');
-  assert.equal(verdict({ languages: {}, commits: 3, pushedAt: '2026-01-01T00:00:00Z' }, now), 'Verdict: Polyglot-led, a young codebase of 3 commits, resting for now (last push 284 days ago).');
+  assert.equal(verdict({ languages: {}, commits: 3, pushedAt: '2026-01-01T00:00:00Z' }, now), 'Verdict: language mix unknown, a young codebase of 3 commits, resting for now (last push 284 days ago).');
+  assert.equal(verdict({ languages: { Go: 100 }, pushedAt: '2026-01-01T00:00:00Z' }, now), 'Verdict: Go-led, an unknown number of commits, resting for now (last push 284 days ago).');
   assert.equal(verdict({ ...SCAN, pushedAt: '2026-10-12T00:00:00Z' }, now), 'Verdict: JavaScript-led, a deep commit history of 214 commits, actively developed (last push today).');
 });
 
@@ -69,7 +70,7 @@ test('formatHistory narrates real build numbers', () => {
   assert.deepEqual(lines, [
     'I was assembled in 18 commits, from 2026-10-11 to 2026-10-12.',
     'That came to 120 file changes: +4000 and -300 lines.',
-    '120 unit tests check my logic on every change.',
+    '120 unit tests cover my logic.',
     'My code was written by AI agents (Claude Opus 5.5, Claude Sonnet 5.5), working from a plan, with every task reviewed before it landed.',
     'Zohn wrote the brief, approved the design and made the calls. The agents did the typing.',
   ]);

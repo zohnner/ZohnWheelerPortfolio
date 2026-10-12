@@ -47,7 +47,7 @@ export function formatScan(scan) {
     ...langs.map(([name, pct]) => `  ${name.padEnd(12)} ${bar(pct / 100, 14)} ${String(pct).padStart(3)}%`),
     `  commits      ${scan.commits ?? 'unknown'}`,
     `  last push    ${String(scan.pushedAt ?? '').slice(0, 10) || 'unknown'}`,
-    `  stars        ${scan.stars ?? 0}`,
+    `  stars        ${scan.stars ?? 'unknown'}`,
     bottom,
   ];
 }
@@ -58,23 +58,25 @@ export function daysSince(iso, now) {
 }
 
 export function verdict(scan, now) {
-  const lead = Object.keys(scan.languages ?? {})[0] ?? 'Polyglot';
-  const c = scan.commits ?? 0;
-  const depth = c >= 200 ? 'a deep commit history' : c >= 50 ? 'a solid commit history' : 'a young codebase';
+  const first = Object.keys(scan.languages ?? {})[0];
+  const lead = first ? `${first}-led` : 'language mix unknown';
+  const c = scan.commits ?? null;
+  const depth = c == null ? null : c >= 200 ? 'a deep commit history' : c >= 50 ? 'a solid commit history' : 'a young codebase';
   const days = daysSince(scan.pushedAt, now);
   const ago = days === 0 ? 'today' : days === 1 ? '1 day ago' : `${days} days ago`;
   const activity = days == null ? 'activity unknown'
     : days <= 14 ? `actively developed (last push ${ago})`
       : days <= 90 ? `maintained (last push ${ago})`
         : `resting for now (last push ${ago})`;
-  return `Verdict: ${lead}-led, ${depth} of ${c} commits, ${activity}.`;
+  const history = c == null ? 'an unknown number of commits' : `${depth} of ${c} commits`;
+  return `Verdict: ${lead}, ${history}, ${activity}.`;
 }
 
 export function formatHistory(log) {
   const lines = [
     `I was assembled in ${log.commits} commits, from ${log.firstDate} to ${log.lastDate}.`,
     `That came to ${log.filesChanged} file changes: +${log.insertions} and -${log.deletions} lines.`,
-    `${log.tests} unit tests check my logic on every change.`,
+    `${log.tests} unit tests cover my logic.`,
   ];
   if (log.coAuthors?.length) {
     lines.push(`My code was written by AI agents (${log.coAuthors.join(', ')}), working from a plan, with every task reviewed before it landed.`);

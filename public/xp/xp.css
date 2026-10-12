@@ -87,7 +87,7 @@ body.is-core .core-window { display: block; animation: tear-in .7s steps(1, end)
 .tui-fill { flex: 1; overflow: hidden; color: var(--phosphor-dim); }
 .tui-fill::before { content: "══════════════════════════════════════════════════════════════════════════"; }
 .panel .close { flex: none; margin-left: 6px; font: inherit; font-size: 14px; background: none; border: 0; color: var(--phosphor); cursor: pointer; }
-.panel .ascii { font: 9px/1 var(--mono); letter-spacing: 0; color: var(--phosphor); margin: 8px 0; overflow: hidden; white-space: pre; min-height: 9em; }
+.panel .ascii { font: 9px/1 var(--mono); letter-spacing: 0; color: var(--phosphor); margin: 8px 0; overflow: hidden; white-space: pre; min-height: 20em; }
 .panel p { font-size: 13px; color: var(--text); }
 .panel ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0 10px; margin: 10px 0; font-size: 12px; color: var(--phosphor); }
 .panel li + li::before { content: "· "; color: var(--phosphor-dim); }
@@ -110,7 +110,7 @@ body.is-core .core-window { display: block; animation: tear-in .7s steps(1, end)
   .core-bar > span { display: none; }
   .core-bar { right: 128px; flex-wrap: wrap; }
   .panel { background: var(--bg-2); overscroll-behavior: contain; }
-  .panel .ascii { font-size: 7px; }
+  .panel .ascii { font-size: 7px; min-height: 13em; }
 }
 
 /* ---------- CRT ---------- */

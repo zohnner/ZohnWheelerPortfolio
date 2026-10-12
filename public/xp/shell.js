@@ -66,7 +66,7 @@ export function registerShell({ term, operator, state, store, projectById, focus
 
   term.register('git', async (args) => {
     if ((args[0] ?? '') !== 'log') return 'usage: git log [-n N]';
-    const data = await fetchJson('/api/gitlog');
+    const data = await fetchJson('/api/gitlog', { timeoutMs: 6000 });
     const lines = formatGitLog(data?.commits ?? [], parseCount(args.slice(1)));
     if (!lines.length) { await operator.say("The data link to GitHub is unavailable right now. I won't make commits up."); return []; }
     return lines;

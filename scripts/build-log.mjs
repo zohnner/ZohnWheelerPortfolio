@@ -9,12 +9,12 @@ import { resolve } from 'node:path';
 
 export const PATHS = [
   'public/index.html', 'public/xp', 'public/classic', 'functions/api/status.js', 'functions/api/gitlog.js',
-  'functions/api/scan.js', 'server', 'scripts/render-voice.mjs', 'scripts/build-log.mjs',
+  'functions/api/scan.js', 'functions/api/pipeline.js', 'functions/api/decisions.js', 'server', 'scripts/render-voice.mjs', 'scripts/build-log.mjs',
 ];
 // The immersive site's first commit day. Older history on shared paths
 // (public/index.html, public/classic) belongs to the previous homepage.
 export const SINCE = '2026-10-11T00:00:00';
-export const TEST_FILE =/^(xp-.*|status|gitlog|scan|github|build-log)\.test\.mjs$/;
+export const TEST_FILE =/^(xp-.*|status|gitlog|scan|pipeline|decisions|github|build-log)\.test\.mjs$/;
 
 export function summarize({ dates, trailers, shortstats, testSources }) {
   const sorted = dates.filter(Boolean).map((d) => d.slice(0, 10)).sort();

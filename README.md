@@ -120,3 +120,13 @@ Content files reference images with one of three ref types: `stock:<path>` (the 
 ### Outreach rules
 
 Send pitches from a separate outreach mailbox/domain, not the main portfolio inbox. Keep volume modest — roughly 5–15 a day — and confirm Muse's (or whatever mailing tool's) terms of service allow this kind of commercial outreach before scaling up.
+
+## Immersive homepage
+
+- `/` is the terminal + AI-core experience (`public/xp/`); the old homepage is `/classic/`.
+- Before a deploy, refresh the build log the `history` command narrates:
+  `node scripts/build-log.mjs`, then commit `public/xp/buildlog.json`.
+- Optional: set a `GITHUB_TOKEN` secret in Cloudflare Pages (a free fine-grained
+  token with public-repo read access) so `git log`, `scan` and the boot commit
+  line don't hit GitHub's anonymous rate limit.
+- Voice narration is off behind `VOICE_ENABLED` in `public/xp/content.js`.

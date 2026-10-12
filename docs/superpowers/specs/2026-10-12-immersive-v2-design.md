@@ -1,7 +1,7 @@
 # Immersive Portfolio v2 — Design
 
 **Date:** 2026-10-12
-**Status:** Approved in brainstorming, awaiting written-spec review
+**Status:** Implemented on branch immersive-v2
 **Branch:** `immersive-v2`
 **Builds on:** `docs/superpowers/specs/2026-10-11-immersive-portfolio-design.md` (v1, shipped to `main`). Everything in v1 stays unless this spec changes it.
 

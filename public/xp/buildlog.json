@@ -1,5 +1,5 @@
 {
-  "commits": 22,
+  "commits": 27,
   "firstDate": "2026-09-28",
   "lastDate": "2026-10-12",
   "coAuthors": [
@@ -8,8 +8,8 @@
     "Claude Sonnet 5",
     "Claude Sonnet 5.5"
   ],
-  "filesChanged": 69,
-  "insertions": 3696,
-  "deletions": 89,
+  "filesChanged": 87,
+  "insertions": 4313,
+  "deletions": 268,
   "tests": 101
 }

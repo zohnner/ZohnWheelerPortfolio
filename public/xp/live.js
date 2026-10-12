@@ -85,7 +85,45 @@ export function formatHistory(log) {
   return lines;
 }
 
-export async function fetchJson(url, { timeoutMs = 4000, fetchImpl = globalThis.fetch } = {}) {
+const MARKS = { success: '[ OK ]', failure: '[FAIL]', skipped: '[SKIP]', cancelled: '[SKIP]' };
+const utc = (iso) => `${String(iso ?? '').slice(0, 16).replace('T', ' ')} UTC`;
+const clip = (s, n) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
+
+export function gateLine(step) {
+  return `  ${MARKS[step.conclusion] ?? '[ .. ]'} ${step.name}`;
+}
+
+export function formatPipeline({ ci, monitor }) {
+  const passed = ci.steps.filter((s) => s.conclusion === 'success').length;
+  const footer = [`${passed}/${ci.steps.length} gates passed. result: ${String(ci.conclusion ?? ci.status ?? 'unknown').toUpperCase()}.`];
+  if (monitor) footer.push(`nightly contract monitor: last run ${utc(monitor.date)}, ${String(monitor.conclusion ?? monitor.status ?? 'unknown').toUpperCase()}.`);
+  return {
+    header: [`${ci.workflow} on main @ ${ci.sha7}  "${ci.title}"`, `ran ${utc(ci.date)}`],
+    footer,
+  };
+}
+
+export function formatDecisionList({ total, recent }) {
+  return [
+    `SportStrata decision log: ${total} entries. latest:`,
+    ...recent.map((e) => `  ${e.id.padEnd(6)} ${clip(e.title, 64)}`),
+    "type 'decisions D-135' to read one.",
+  ];
+}
+
+export function formatDecision(e) {
+  const lines = [`${e.id}  ${e.title}`];
+  const meta = [e.status, e.date].filter(Boolean).join(' · ');
+  if (meta) lines.push(`status: ${meta}`);
+  if (e.excerpt) lines.push('', e.excerpt);
+  return lines;
+}
+
+export function formatNotes(notes) {
+  return notes.map((n) => ({ prefix: `${n.id}  ${n.date}  `, text: n.title, href: n.href }));
+}
+
+export async function fetchJson(url,{ timeoutMs = 4000, fetchImpl = globalThis.fetch } = {}) {
   try {
     const res = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs), headers: { accept: 'application/json' } });
     if (!res.ok) return null;

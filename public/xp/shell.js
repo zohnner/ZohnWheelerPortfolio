@@ -1,10 +1,13 @@
 // Every terminal command, plus tab completion and the plain-English fallback.
 // Commands reach the rest of the page only through the deps main.js passes.
 
-import { PROJECTS, TRACKS, OWNER, VOICE_ENABLED, KB, MAN, ABOUT, FALLBACK_REPLY } from './content.js';
+import { PROJECTS, TRACKS, OWNER, VOICE_ENABLED, KB, MAN, ABOUT, FALLBACK_REPLY, LAB_NOTES } from './content.js';
 import { buildTree, ls, cd, cat, tree as drawTree, formatCwd, completePath } from './fs.js';
 import { answer, suggest } from './answers.js';
-import { pingLine, pingSummary, parseCount, formatGitLog, formatTop, formatScan, verdict, formatHistory, fetchJson, pingOnce } from './live.js';
+import {
+  pingLine, pingSummary, parseCount, formatGitLog, formatTop, formatScan, verdict, formatHistory, fetchJson, pingOnce,
+  gateLine, formatPipeline, formatDecisionList, formatDecision, formatNotes,
+} from './live.js';
 import { bar } from './tui.js';
 import { applyPalette, PALETTE_NAMES, powerOff } from './crt.js';
 
@@ -72,11 +75,38 @@ export function registerShell({ term, operator, state, store, projectById, focus
     return lines;
   }, 'git log [-n N]: recent public commits');
 
-  term.register('top', async () => {
+  const top = async () => {
     const s = await fetchJson('/api/status');
     if (!s?.projects?.length) { await operator.say('Live status is unavailable right now.'); return []; }
     return formatTop(s.projects, PROJECTS);
-  }, 'top: projects as live processes');
+  };
+  term.register('top', top, 'top: projects as live processes');
+  term.register('status', top, 'status: live health of every project');
+
+  const deploy = async () => {
+    term.print("deploy: guests can't ship to production.");
+    term.print("replaying the gates SportStrata's latest real deploy had to pass ...");
+    const data = await fetchJson('/api/pipeline', { timeoutMs: 8000 });
+    if (!data?.ok) { await operator.say("I can't reach GitHub Actions right now, so I won't fake a pipeline. Try again shortly."); return []; }
+    const { header, footer } = formatPipeline(data);
+    for (const line of header) term.print(line);
+    for (const step of data.ci.steps) { term.print(gateLine(step)); await sleep(140); }
+    for (const line of footer) term.print(line);
+    return data.ci.url ? [{ prefix: 'run log: ', text: 'github actions', href: data.ci.url }] : [];
+  };
+  term.register('deploy', deploy, 'deploy: replay the real CI gates');
+  term.register('pipeline', deploy);
+
+  term.register('decisions', async (args) => {
+    const id = args.join(' ').trim();
+    const data = await fetchJson(id ? `/api/decisions?id=${encodeURIComponent(id)}` : '/api/decisions', { timeoutMs: 8000 });
+    if (!data) { await operator.say("I can't reach the decision log right now, so I won't paraphrase it from memory."); return []; }
+    if (!data.ok) return data.error === 'no such decision' ? `decisions: ${id}: no such entry. type 'decisions' for the latest.` : 'decisions: the log is unavailable right now.';
+    const lines = data.entry ? formatDecision(data.entry) : formatDecisionList(data);
+    return [...lines, { prefix: 'source: ', text: 'DECISIONS.md', href: data.source }];
+  }, 'decisions [id]: read the real decision log');
+
+  term.register('notes', () => [...formatNotes(LAB_NOTES), { prefix: 'all notes: ', text: '/notes/', href: '/notes/' }], 'notes: Lab Notes, incident write-ups');
 
   term.register('scan', async (args) => {
     const id = projectId(args[0]);

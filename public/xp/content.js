@@ -153,6 +153,11 @@ export const NARRATION = {
   'project.sitekit': 'Sitekit: fast, professional websites for local businesses, built to turn visitors into calls.',
 };
 
+// Lab Notes, newest first. The `notes` command lists these.
+export const LAB_NOTES = [
+  { id: '001', date: '2026-10-12', title: 'The bug that never threw an error', href: '/notes/silent-subsets.html' },
+];
+
 // about.txt in the virtual filesystem.
 export const ABOUT = [
   "Zohn Wheeler: I build systems that don't break. Kansas City, MO.",
@@ -238,6 +243,12 @@ export const KB = [
     reply: "ZRetroBuild is a playable 8-bit arcade (Snake, Breakout, Space Invaders) inside a CRT cabinet, with zero dependencies. Try 'open zretrobuild'." },
   { id: 'oraclebot', keywords: ['discord', 'bot', 'capstone', 'oracle', 'oraclebot', 'student'],
     reply: "The capstone Discord bot used AI to help students work through course material. Built by a team of four and featured by Mizzou Engineering. Try 'open oraclebot'." },
+  { id: 'decisions', keywords: ['decision', 'adr', 'tradeoff', 'architecture', 'why', 'reasoning'],
+    reply: "SportStrata keeps a written decision log: the problem, the options and why one won. Type 'decisions' for the latest entries, or 'decisions D-135' to read one." },
+  { id: 'deploy', keywords: ['deploy', 'pipeline', 'ci', 'gate', 'release', 'reliability', 'ship'],
+    reply: "Type 'deploy' to replay the gates SportStrata's latest real CI run passed on main, plus the nightly contract monitor's last result. Live from GitHub Actions." },
+  { id: 'notes', keywords: ['note', 'blog', 'writing', 'article', 'lab', 'incident', 'postmortem'],
+    reply: "Zohn writes up incidents as Lab Notes: what broke, why nothing caught it, and the fix. Type 'notes' for the list." },
   { id: 'contact', keywords: ['contact', 'email', 'reach', 'linkedin', 'github', 'message', 'touch', 'call'],
     reply: "Email zohnwheeler@gmail.com, or find Zohn on LinkedIn and GitHub. Type 'contact' for clickable links." },
 ];

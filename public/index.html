@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zohn Wheeler — Full-Stack Developer</title>
+<meta name="description" content="Zohn Wheeler is a Kansas City full-stack developer and federal IT professional. Explore SportStrata, BotChase, ZRetroBuild and Sitekit through an interactive terminal.">
+<link rel="canonical" href="https://zohnwheelerportfolio.pages.dev/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zohn Wheeler — Full-Stack Developer">
+<meta property="og:description" content="Boot the terminal. Meet the developer.">
+<meta property="og:url" content="https://zohnwheelerportfolio.pages.dev/">
+<meta property="og:image" content="https://zohnwheelerportfolio.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#04070a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/xp/xp.css">
+<link rel="stylesheet" href="/xp/core-fallback.css">
+<script>
+  // Reduced-motion visitors get the plain page unless they opted in this session.
+  (function () {
+    var opted = false;
+    try {
+      if (new URLSearchParams(location.search).get('immersive') === '1') sessionStorage.setItem('zw_immersive', '1');
+      opted = sessionStorage.getItem('zw_immersive') === '1';
+    } catch (e) {}
+    if (!opted && window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) location.replace('/classic/');
+  })();
+</script>
+</head>
+<body>
+<div class="top-links"><a href="/classic/">plain version</a></div>
+<button id="skip" class="skip" type="button">skip intro [any key]</button>
+
+<main>
+  <section id="terminal" class="terminal" aria-label="Terminal">
+    <div class="term-out" data-term-out role="log"></div>
+    <form class="term-form" data-term-form autocomplete="off">
+      <label for="term-input" class="sr-only">Type a command</label>
+      <span aria-hidden="true">&gt;</span>
+      <input id="term-input" data-term-input type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+    </form>
+    <div class="chips" aria-label="Quick commands">
+      <button type="button" data-cmd="help">help</button>
+      <button type="button" data-cmd="ls projects">ls projects</button>
+      <button type="button" data-cmd="track hire">track hire</button>
+      <button type="button" data-cmd="track build">track build</button>
+      <button type="button" data-cmd="cat resume">cat resume</button>
+      <button type="button" data-cmd="contact">contact</button>
+    </div>
+  </section>
+
+  <section id="core" class="core-window" aria-label="ZW-Core">
+    <div class="core-bar">
+      <span>ZW-CORE</span>
+      <button id="sound" type="button" aria-pressed="false">sound: off</button>
+      <button id="track-toggle" type="button" hidden></button>
+    </div>
+    <div id="core-stage" class="core-stage"></div>
+    <nav id="rings" class="rings" aria-label="Projects"></nav>
+    <p id="caption" class="caption" aria-hidden="true"></p>
+    <p id="live" class="sr-only" aria-live="polite"></p>
+    <div id="track-choice" class="track-choice" hidden>
+      <button type="button" data-track="hire">I'm hiring</button>
+      <button type="button" data-track="build">I need something built</button>
+    </div>
+    <aside id="panel" class="panel" hidden aria-labelledby="panel-title">
+      <button type="button" class="close" aria-label="Close project">&times;</button>
+      <img alt="" hidden>
+      <h2 id="panel-title"></h2>
+      <ul data-stack aria-label="Stack"></ul>
+      <p data-story></p>
+      <div class="links" data-links></div>
+    </aside>
+  </section>
+
+  <article id="about-copy" class="sr-only">
+    <h1>Zohn Wheeler, full-stack developer in Kansas City</h1>
+    <p>Zohn Wheeler is an IT professional and software developer in Kansas City, Missouri. Zohn supports mission-critical treasury systems for a federal agency, holds an active security clearance, and builds full-stack products from Cloudflare Workers backends to AI-assisted workflows.</p>
+    <h2>Projects</h2>
+    <ul>
+      <li><a href="https://sportstrata.cc/">SportStrata</a>: full-stack MLB analytics platform with live scorecards, Statcast leaderboards and AI-generated broadcast narratives.</li>
+      <li><a href="https://botchase.onrender.com/">BotChase</a>: AI sales automation SaaS for local service businesses, with Stripe billing.</li>
+      <li><a href="https://zretrobuild.zohnwheeler.workers.dev/">ZRetroBuild</a>: a playable 8-bit arcade in a CRT cabinet, with zero dependencies.</li>
+      <li><a href="https://github.com/zohnner/OracleChatBot">Discord Educational Bot</a>: a senior capstone AI study bot featured by Mizzou Engineering.</li>
+      <li><a href="/hire.html">Sitekit</a>: fast websites for local service businesses.</li>
+    </ul>
+    <h2>Contact</h2>
+    <p><a href="mailto:zohnwheeler@gmail.com">zohnwheeler@gmail.com</a> · <a href="/resume.html">Résumé</a> · <a href="https://github.com/zohnner">GitHub</a> · <a href="https://www.linkedin.com/in/zohn-wheeler/">LinkedIn</a></p>
+  </article>
+</main>
+
+<noscript>
+  <style>.skip,.terminal,.core-window,.top-links{display:none!important}#about-copy{position:static;width:auto;height:auto;clip:auto;overflow:visible;white-space:normal;margin:0 auto;padding:24px 16px;max-width:720px}</style>
+  <p style="padding:24px 16px"><a href="/classic/">Open the plain version of this site</a></p>
+</noscript>
+<script type="module" src="/xp/main.js"></script>
+</body>
+</html>

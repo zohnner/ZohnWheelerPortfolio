@@ -11,7 +11,10 @@ export const PATHS = [
   'public/index.html', 'public/xp', 'public/classic', 'functions/api/status.js', 'functions/api/gitlog.js',
   'functions/api/scan.js', 'server', 'scripts/render-voice.mjs', 'scripts/build-log.mjs',
 ];
-export const TEST_FILE = /^(xp-.*|status|gitlog|scan|github|build-log)\.test\.mjs$/;
+// The immersive site's first commit day. Older history on shared paths
+// (public/index.html, public/classic) belongs to the previous homepage.
+export const SINCE = '2026-10-11T00:00:00';
+export const TEST_FILE =/^(xp-.*|status|gitlog|scan|github|build-log)\.test\.mjs$/;
 
 export function summarize({ dates, trailers, shortstats, testSources }) {
   const sorted = dates.filter(Boolean).map((d) => d.slice(0, 10)).sort();
@@ -34,7 +37,7 @@ export function summarize({ dates, trailers, shortstats, testSources }) {
 function main() {
   const testFiles = readdirSync('test').filter((f) => TEST_FILE.test(f)).map((f) => `test/${f}`);
   const spec = ['--', ...PATHS, ...testFiles];
-  const git = (args) => execFileSync('git', [...args, ...spec], { encoding: 'utf8' });
+  const git = (args) => execFileSync('git', [...args, `--since=${SINCE}`, ...spec], { encoding: 'utf8' });
   const lines = (s) => s.split('\n').filter(Boolean);
   const log = summarize({
     dates: lines(git(['log', '--format=%aI'])),

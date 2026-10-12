@@ -26,6 +26,9 @@
   (function () {
     var opted = false;
     try {
+      if (localStorage.getItem('zw_visited') === '1' && !/[?&]fresh/.test(location.search)) document.documentElement.classList.add('xp-docked');
+    } catch (e) {}
+    try {
       if (new URLSearchParams(location.search).get('immersive') === '1') sessionStorage.setItem('zw_immersive', '1');
       opted = sessionStorage.getItem('zw_immersive') === '1';
     } catch (e) {}

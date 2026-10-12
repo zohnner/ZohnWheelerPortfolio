@@ -62,14 +62,16 @@ public/
   classic/index.html    current homepage, moved; relative links made root-absolute
   xp/
     content.js          data only: projects, tracks, narration script, command help
-    terminal.js         typing effect, command parser, history, tab completion
+    commands.js         pure command registry, parser and history (no DOM; unit tested)
+    terminal.js         DOM terminal: typing effect, output, input, tab completion
     boot.js             fetch /api/status, build boot lines, fallbacks
-    core.js             Three.js orb + project rings (lazy loaded)
+    core.js             Three.js orb + orbit lines (lazy loaded)
     core-fallback.css   CSS-only orb used when WebGL or Three.js is unavailable
     narrator.js         captions (always) + optional audio clips
     main.js             wires units together and runs the act sequence
     xp.css              terminal, window, panel and caption styles
-    voice/*.opus        pre-rendered narration clips
+    voice/*.mp3         pre-rendered narration clips
+    package.json        {"type":"module"} so Node tests can import these files
 functions/api/status.js new Pages Function
 scripts/render-voice.mjs regenerates voice clips from content.js with Piper
 ```
@@ -79,9 +81,10 @@ scripts/render-voice.mjs regenerates voice clips from content.js with Piper
 | Unit | Responsibility | Interface |
 |---|---|---|
 | `content.js` | Single source of truth for all text and project data | Exported constants; no logic |
-| `terminal.js` | Render and type lines, parse and run commands | `typeLine(text, opts)`, `print(text)`, `register(name, handler, help)`, `run(input)` |
+| `commands.js` | Parse input, hold commands, keep history | `parseInput(raw)`, `createRegistry()`, `createHistory(limit)` |
+| `terminal.js` | Render and type lines, accept input | `createTerminal(root)` returning `typeLine`, `print`, `register`, `run`, `setFast`, `clear`, `focus` |
 | `boot.js` | Turn status JSON into boot lines | `getBootLines({ timeoutMs })` returns `Promise<string[]>` and never rejects |
-| `core.js` | Orb and rings | `mount(el)`, `setState(state)` with idle / speaking / focus, `focus(projectId)`, `setTrack(track)` |
+| `core.js` | Orb and orbit-line visuals (the clickable rings are HTML buttons owned by `main.js`) | `mountCore(el, { particles })` returning `setState(state)` with idle / speaking / focus, `focus(projectId | null)`, `mode` |
 | `narrator.js` | Captions and audio | `say(lineId)` returns a promise that resolves when the caption finishes; `setSound(on)` |
 | `status.js` | Live boot data | `GET /api/status` returns JSON (schema below) |
 
@@ -95,9 +98,9 @@ other directly; `main.js` wires them. Any unit may read `content.js`.
 `sudo hire zohn` and `whoami`. Unknown input prints a short hint pointing to
 `help`. On phones, commands are shown as tappable chips instead of typed.
 
-`cat resume` links to the existing `resume.html`. `contact` links to the
-existing `hire.html` for the hire track and to the Sitekit inquiry path for
-the build track.
+`cat resume` links to the existing `resume.html`. `contact` gives employers
+(hire track) an email link, and gives clients (build track) the existing quote
+form at `/hire.html#contact-form`.
 
 ## Live data: `/api/status`
 
@@ -120,9 +123,10 @@ Response shape:
 - **Latency** is measured by the browser timing its own fetch of
   `/api/status`. It is not part of the response.
 - **Latest commit** comes from the public GitHub API for the `zohnner`
-  account, unauthenticated, cached in the edge Cache API for 10 minutes. On
+  account (most recently pushed repo, then its newest commit), unauthenticated,
+  with a 1.2-second timeout, cached in the edge Cache API for 10 minutes. On
   any error, `commit` is `null`.
-- **Project health** is a GET with a 2-second timeout to each featured
+- **Project health** is a GET with a 1.2-second timeout to each featured
   project's live URL, cached for 5 minutes. A 2xx or 3xx response is
   `online`. A timeout is `sleeping`, because BotChase runs on Render's free
   tier and cold-starts. Any other failure is `down`.
@@ -131,7 +135,8 @@ Response shape:
 ## Voice
 
 Scripted lines are pre-rendered once, locally, with **Piper**, a free
-open-source TTS engine. They are encoded to Opus and committed under
+open-source TTS engine. They are encoded to mono MP3 (Opus playback is still
+uneven in Safari) and committed under
 `public/xp/voice/`. The voice model is chosen during implementation by
 listening to a few candidates. `scripts/render-voice.mjs` regenerates every
 clip from the narration text in `content.js`, so captions and audio cannot
@@ -169,7 +174,7 @@ visual is identical with sound off.
 - The boot terminal is HTML and CSS only and paints immediately.
 - Three.js and the orb load in the background during the boot sequence.
 - Page weight before the orb loads: 250 KB or less.
-- Each voice clip: 30 KB or less (Opus).
+- Each voice clip: 30 KB or less (32 kbps mono MP3).
 - Phones render fewer particles.
 
 ## SEO
@@ -184,8 +189,10 @@ enhance that content into the experience instead of replacing it.
 - **Unit tests** with the Node test runner (`npm test`):
   - `functions/api/status.js` with mocked `fetch` and `caches`, covering
     success, timeout as sleeping, GitHub failure, and the always-200 rule.
-  - The command parser in `terminal.js`: known commands, arguments, unknown
-    input, and history.
+  - `commands.js`: known commands, arguments, unknown input, completion and
+    history.
+  - `boot.js`: status-to-lines formatting and every fallback path.
+  - `content.js` integrity: every track and narration id points at a real project.
 - **Browser pass** with Chrome DevTools: screenshots at desktop and 390 px
   phone widths; reduced motion on; `/api/status` blocked; WebGL disabled; and
   keyboard only from landing to opening a project.
